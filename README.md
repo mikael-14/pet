@@ -12,6 +12,7 @@
     <a href="https://laravel-livewire.com"><img alt="Livewire v2.x" src="https://img.shields.io/badge/Livewire-v2.x-FB70A9?style=for-the-badge"></a>
     <a href="https://php.net"><img alt="PHP 8.0" src="https://img.shields.io/badge/PHP-8.0-777BB4?style=for-the-badge&logo=php"></a>
 </p>
+
 ## Instalation
 
 ```
@@ -21,6 +22,18 @@ php artisan migrate
 
 php artisan vendor:publish --tag=filament-shield-config
 ```
+
+## Create Migration
+```
+
+```
+## Create Model
+```
+```
+
+## Create resource 
+``
+php artisan make:filament-resource Pet --generate --soft-deletes
 ## About Laravel
 
 Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
