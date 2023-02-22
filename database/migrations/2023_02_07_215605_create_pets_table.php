@@ -17,11 +17,14 @@ return new class extends Migration
             $table->id();
             $table->string('name');
             $table->string('image')->nullable();
-            $table->string('chip',20)->nullable();
+            $table->set('gender', ['male', 'female']);
+            $table->string('chip',20)->nullable()->unique();
+            $table->date('chip_date')->nullable();
             $table->date('birth_date')->nullable();
             $table->date('entry_date');
-            $table->string('sterilized')->nullable();
+            $table->boolean('sterilized');
             $table->date('sterilized_date')->nullable();
+            $table->string('sterilized_local',50)->nullable();
             $table->float('weight',8,2,true)->nullable();
             $table->float('height',8,2,true)->nullable();
             $table->string('color',50)->nullable();

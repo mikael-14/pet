@@ -20,20 +20,32 @@ composer install
 
 php artisan migrate
 
-php artisan vendor:publish --tag=filament-shield-config
 ```
 
 ## Create Migration
+Example
 ```
+php artisan make:migration create_pets_table
+```
+### Rerun a migration; 
 
-```
+Example
+
+* drop the table(s)
+* php artisan migrate:refresh --path=database\migrations\2023_02_07_215605_create_pets_table.php 
 ## Create Model
+<a href="https://github.com/reliese/laravel">https://github.com/reliese/laravel</a>
+You can scaffold a specific table like this:
 ```
+php artisan code:models --table=pets
 ```
 
 ## Create resource 
-``
+Examples 
+```
 php artisan make:filament-resource Pet --generate --soft-deletes
+php artisan make:filament-resource Pet --generate --simple 
+```
 ## About Laravel
 
 Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
