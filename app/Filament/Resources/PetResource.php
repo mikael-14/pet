@@ -34,22 +34,24 @@ class PetResource extends Resource
                         ->maxLength(255),
                     SpatieMediaLibraryFileUpload::make('media')
                         ->collection('image'),
-                    Forms\Components\TextInput::make('gender')
-                        ->required(),
+                    Forms\Components\Radio::make('gender')
+                        ->options([
+                            'male' => 'Male',
+                            'female' => 'Female',
+                        ])->required(),
                     Forms\Components\TextInput::make('chip')
                         ->maxLength(20),
                     Forms\Components\DatePicker::make('chip_date'),
-                    Forms\Components\DatePicker::make('birth_date'),
+                    Forms\Components\DatePicker::make('birth_date')
+                    ->displayFormat('d/m/Y')->format('d/m/Y')->required(),
                     Forms\Components\DatePicker::make('entry_date')
-                        ->required(),
-                    Forms\Components\TextInput::make('sterilized')
-                        ->required()
-                        ->maxLength(20),
-                    Forms\Components\DatePicker::make('sterilized_date'),
+                    ->displayFormat('d/m/Y')->format('d/m/Y')->required(),
+                    Forms\Components\Radio::make('sterilized')
+                    ->boolean()->required(),
+                    Forms\Components\DatePicker::make('sterilized_date')
+                    ->displayFormat('d/m/Y')->format('d/m/Y'),
                     Forms\Components\TextInput::make('sterilized_local')
                         ->maxLength(50),
-                    Forms\Components\TextInput::make('weight'),
-                    Forms\Components\TextInput::make('height'),
                     Forms\Components\TextInput::make('color')
                         ->maxLength(50),
                     Forms\Components\TextInput::make('coat')
@@ -102,14 +104,6 @@ class PetResource extends Resource
                     ->toggledHiddenByDefault(),
                 Tables\Columns\TextColumn::make('sterilized_local')
                     ->searchable()
-                    ->sortable()
-                    ->toggleable()
-                    ->toggledHiddenByDefault(),
-                Tables\Columns\TextColumn::make('weight')
-                    ->sortable()
-                    ->toggleable()
-                    ->toggledHiddenByDefault(),
-                Tables\Columns\TextColumn::make('height')
                     ->sortable()
                     ->toggleable()
                     ->toggledHiddenByDefault(),
