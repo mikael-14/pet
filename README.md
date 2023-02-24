@@ -20,6 +20,7 @@ composer install
 ```
 Configurar o ficheiro .env
 ```
+php artisan key:generate
 php artisan migrate
 
 ```
