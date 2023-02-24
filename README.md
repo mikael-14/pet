@@ -17,13 +17,15 @@
 
 ```
 composer install
-
+```
+Configurar o ficheiro .env
+```
 php artisan migrate
 
 ```
 
 ## Create Migration
-Example
+Example for table pets
 ```
 php artisan make:migration create_pets_table
 ```
@@ -41,10 +43,16 @@ php artisan code:models --table=pets
 ```
 
 ## Create resource 
-Examples 
+Example
+
+Crud
 ```
 php artisan make:filament-resource Pet --generate --soft-deletes
-php artisan make:filament-resource Pet --generate --simple 
+```
+
+Crud com modals (edit/create is a modal)
+```
+php artisan make:filament-resource Pet --generate --simple --soft-deletes
 ```
 ## About Laravel
 

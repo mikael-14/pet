@@ -25,8 +25,6 @@ return new class extends Migration
             $table->boolean('sterilized');
             $table->date('sterilized_date')->nullable();
             $table->string('sterilized_local',50)->nullable();
-            $table->float('weight',8,2,true)->nullable();
-            $table->float('height',8,2,true)->nullable();
             $table->string('color',50)->nullable();
             $table->string('coat',50)->nullable();
             $table->string('observation',50)->nullable();

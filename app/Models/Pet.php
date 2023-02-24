@@ -47,8 +47,7 @@ class Pet extends Model implements HasMedia
 	protected $table = 'pets';
 
 	protected $casts = [
-		'weight' => 'float',
-		'height' => 'float'
+		'sterilized' => 'boolean'
 	];
 
 	protected $dates = [
@@ -66,11 +65,8 @@ class Pet extends Model implements HasMedia
 		'chip_date',
 		'birth_date',
 		'entry_date',
-		'sterilized',
 		'sterilized_date',
 		'sterilized_local',
-		'weight',
-		'height',
 		'color',
 		'coat',
 		'observation'
