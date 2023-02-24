@@ -12,6 +12,7 @@
     <a href="https://laravel-livewire.com"><img alt="Livewire v2.x" src="https://img.shields.io/badge/Livewire-v2.x-FB70A9?style=for-the-badge"></a>
     <a href="https://php.net"><img alt="PHP 8.0" src="https://img.shields.io/badge/PHP-8.0-777BB4?style=for-the-badge&logo=php"></a>
 </p>
+
 ## Instalation
 
 ```
@@ -19,7 +20,31 @@ composer install
 
 php artisan migrate
 
-php artisan vendor:publish --tag=filament-shield-config
+```
+
+## Create Migration
+Example
+```
+php artisan make:migration create_pets_table
+```
+### Rerun a migration; 
+
+Example
+
+* drop the table(s)
+* php artisan migrate:refresh --path=database\migrations\2023_02_07_215605_create_pets_table.php 
+## Create Model
+<a href="https://github.com/reliese/laravel">https://github.com/reliese/laravel</a>
+You can scaffold a specific table like this:
+```
+php artisan code:models --table=pets
+```
+
+## Create resource 
+Examples 
+```
+php artisan make:filament-resource Pet --generate --soft-deletes
+php artisan make:filament-resource Pet --generate --simple 
 ```
 ## About Laravel
 
