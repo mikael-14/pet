@@ -1,10 +1,10 @@
 <?php
 
-namespace App\Filament\Resources;
+namespace App\Filament\Resources\Definitions;
 
-use App\Filament\Resources\VacineResource\Pages;
-use App\Filament\Resources\VacineResource\RelationManagers;
-use App\Models\Vacine;
+use App\Filament\Resources\Definitions\PetLocationResource\Pages;
+use App\Filament\Resources\Definitions\PetLocationResource\RelationManagers;
+use App\Models\PetLocation;
 use Filament\Forms;
 use Filament\Resources\Form;
 use Filament\Resources\Resource;
@@ -13,17 +13,17 @@ use Filament\Tables;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 
-class VacineResource extends Resource
+class PetLocationResource extends Resource
 {
-    protected static ?string $model = Vacine::class;
+    protected static ?string $model = PetLocation::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-collection';
 
-    protected static ?string $navigationGroup = 'Definitions';
-    
-    protected static ?string $slug = 'definitions/vacine';
+    protected static ?string $slug = 'defintions/pet-location';
 
-    protected static ?int $navigationSort = 10;
+    protected static ?string $recordTitleAttribute = 'name';
+
+    protected static ?string $navigationGroup = 'Definitions';
 
     public static function form(Form $form): Form
     {
@@ -31,8 +31,9 @@ class VacineResource extends Resource
             ->schema([
                 Forms\Components\TextInput::make('name')
                     ->required()
-                    ->maxLength(100),
-            ])->columns(1);
+                    ->maxLength(20),
+                Forms\Components\ColorPicker::make('color'),
+            ]);
     }
 
     public static function table(Table $table): Table
@@ -40,39 +41,28 @@ class VacineResource extends Resource
         return $table
             ->columns([
                 Tables\Columns\TextColumn::make('name'),
+                Tables\Columns\ColorColumn::make('color'),
                 Tables\Columns\TextColumn::make('created_at')
                     ->dateTime(),
-                Tables\Columns\TextColumn::make('deleted_at')
+                Tables\Columns\TextColumn::make('updated_at')
                     ->dateTime(),
             ])
             ->filters([
-                Tables\Filters\TrashedFilter::make(),
+                //
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),
                 Tables\Actions\DeleteAction::make(),
-                Tables\Actions\ForceDeleteAction::make(),
-                Tables\Actions\RestoreAction::make(),
             ])
             ->bulkActions([
                 Tables\Actions\DeleteBulkAction::make(),
-                Tables\Actions\ForceDeleteBulkAction::make(),
-                Tables\Actions\RestoreBulkAction::make(),
             ]);
     }
     
     public static function getPages(): array
     {
         return [
-            'index' => Pages\ManageVacines::route('/'),
+            'index' => Pages\ManagePetLocations::route('/'),
         ];
     }    
-    
-    public static function getEloquentQuery(): Builder
-    {
-        return parent::getEloquentQuery()
-            ->withoutGlobalScopes([
-                SoftDeletingScope::class,
-            ]);
-    }
 }

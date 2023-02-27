@@ -21,13 +21,13 @@ use Spatie\MediaLibrary\InteractsWithMedia;
  * @property string $gender
  * @property string|null $chip
  * @property Carbon|null $chip_date
+ * @property int $pet_statuses_id
+ * @property int $pet_locations_id
  * @property Carbon|null $birth_date
  * @property Carbon $entry_date
- * @property string $sterilized
+ * @property bool $sterilized
  * @property Carbon|null $sterilized_date
  * @property string|null $sterilized_local
- * @property float|null $weight
- * @property float|null $height
  * @property string|null $color
  * @property string|null $coat
  * @property string|null $observation
@@ -35,7 +35,9 @@ use Spatie\MediaLibrary\InteractsWithMedia;
  * @property Carbon|null $updated_at
  * @property string|null $deleted_at
  * 
- * @property Collection|Vacine[] $vacines
+ * @property PetLocation $pet_location
+ * @property PetStatus $pet_status
+ * @property Collection|Vaccine[] $vaccines
  *
  * @package App\Models
  */
@@ -47,7 +49,9 @@ class Pet extends Model implements HasMedia
 	protected $table = 'pets';
 
 	protected $casts = [
-		'sterilized' => 'boolean'
+		'pet_statuses_id' => 'int',
+		'pet_locations_id' => 'int',
+		'sterilized' => 'bool'
 	];
 
 	protected $dates = [
@@ -63,8 +67,11 @@ class Pet extends Model implements HasMedia
 		'gender',
 		'chip',
 		'chip_date',
+		'pet_statuses_id',
+		'pet_locations_id',
 		'birth_date',
 		'entry_date',
+		'sterilized',
 		'sterilized_date',
 		'sterilized_local',
 		'color',
@@ -72,10 +79,20 @@ class Pet extends Model implements HasMedia
 		'observation'
 	];
 
-	public function vacines()
+	public function pet_location()
 	{
-		return $this->belongsToMany(Vacine::class, 'pets_has_vacines', 'pets_id', 'vacines_id')
-					->withPivot('id', 'vacination_date', 'local', 'aplication', 'observation', 'deleted_at')
+		return $this->belongsTo(PetLocation::class, 'pet_locations_id');
+	}
+
+	public function pet_status()
+	{
+		return $this->belongsTo(PetStatus::class, 'pet_statuses_id');
+	}
+
+	public function vaccines()
+	{
+		return $this->belongsToMany(Vaccine::class, 'pets_has_vaccines', 'pets_id', 'vaccines_id')
+					->withPivot('id', 'vaccine_date', 'local', 'aplication', 'observation', 'deleted_at')
 					->withTimestamps();
 	}
 }

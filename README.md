@@ -21,7 +21,13 @@ composer install
 Configurar o ficheiro .env
 ```
 php artisan migrate
+```
+Generate premission/roles and super-admin 
 
+```
+php artisan shield:generate --all
+
+php artisan shield:super-admi
 ```
 
 ## Create Migration

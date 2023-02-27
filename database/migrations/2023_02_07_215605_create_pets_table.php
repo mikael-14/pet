@@ -20,6 +20,8 @@ return new class extends Migration
             $table->set('gender', ['male', 'female']);
             $table->string('chip',20)->nullable()->unique();
             $table->date('chip_date')->nullable();
+            $table->foreignId('pet_statuses_id')->constrained(); 
+            $table->foreignId('pet_locations_id')->constrained(); 
             $table->date('birth_date')->nullable();
             $table->date('entry_date');
             $table->boolean('sterilized');
