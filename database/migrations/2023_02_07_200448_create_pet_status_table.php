@@ -13,11 +13,11 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('vacines', function (Blueprint $table) {
+        Schema::create('pet_statuses', function (Blueprint $table) {
             $table->id();
-            $table->string('name',100)->unique();
+            $table->string('name',20);
+            $table->string('color','7')->default('#cccccc')->nullable();
             $table->timestamps();
-            $table->softDeletes();
         });
     }
 
@@ -28,6 +28,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('vacines');
+        Schema::dropIfExists('pet_statuses');
     }
 };

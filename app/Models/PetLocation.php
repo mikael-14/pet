@@ -9,34 +9,31 @@ namespace App\Models;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\SoftDeletes;
 
 /**
- * Class Vacine
+ * Class PetLocation
  * 
  * @property int $id
  * @property string $name
+ * @property string|null $color
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
- * @property string|null $deleted_at
  * 
  * @property Collection|Pet[] $pets
  *
  * @package App\Models
  */
-class Vacine extends Model
+class PetLocation extends Model
 {
-	use SoftDeletes;
-	protected $table = 'vacines';
+	protected $table = 'pet_locations';
 
 	protected $fillable = [
-		'name'
+		'name',
+		'color'
 	];
 
 	public function pets()
 	{
-		return $this->belongsToMany(Pet::class, 'pets_has_vacines', 'vacines_id', 'pets_id')
-					->withPivot('id', 'vacination_date', 'local', 'aplication', 'observation', 'deleted_at')
-					->withTimestamps();
+		return $this->hasMany(Pet::class, 'pet_locations_id');
 	}
 }
