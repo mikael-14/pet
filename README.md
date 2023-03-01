@@ -13,17 +13,40 @@
     <a href="https://php.net"><img alt="PHP 8.0" src="https://img.shields.io/badge/PHP-8.0-777BB4?style=for-the-badge&logo=php"></a>
 </p>
 
-## Instalation
+# Docker 
+
+If you are not using docker jump to [Instalation](#instalation) part.
+This use docker compose system. In this project you have to build container and them up them. Check more [here](https://www.digitalocean.com/community/tutorials/how-to-install-and-set-up-laravel-with-docker-compose-on-ubuntu-22-04)
+```
+docker-compose build app
+docker-compose up -d
+docker-compose ps #to check if containers are running 
+```
+
+After that to execute any command inside container you need <b>docker-compose exec app <i>$command</i></b> 
+
+Example
+```
+docker-compose exec app composer install
+docker-compose exec app php artisan key:generate
+```
+To stop all containers 
+```
+docker-compose down
+```
+
+***
+# Instalation
 
 ```
 composer install
 ```
-Configurar o ficheiro .env
+Configure file .env 
 ```
 php artisan key:generate
 php artisan migrate
 ```
-Generate premission/roles and super-admin 
+Generate premission/roles and super-admin. More info [here](https://github.com/bezhanSalleh/filament-shield)
 
 ```
 php artisan shield:generate --all
@@ -31,7 +54,10 @@ php artisan shield:generate --all
 php artisan shield:super-admi
 ```
 
-## Create Migration
+Now instalation is <b>complete</b>
+***
+
+### Create Migration
 Example for table pets
 ```
 php artisan make:migration create_pets_table
@@ -42,14 +68,15 @@ Example
 
 * drop the table(s)
 * php artisan migrate:refresh --path=database\migrations\2023_02_07_215605_create_pets_table.php 
-## Create Model
+
+### Create Model
 <a href="https://github.com/reliese/laravel">https://github.com/reliese/laravel</a>
 You can scaffold a specific table like this:
 ```
 php artisan code:models --table=pets
 ```
 
-## Create resource 
+### Create resource 
 Example
 
 Crud
@@ -60,23 +87,6 @@ php artisan make:filament-resource Pet --generate --soft-deletes
 Crud com modals (edit/create is a modal)
 ```
 php artisan make:filament-resource Pet --generate --simple --soft-deletes
-```
-
-# Docker 
-
-If using docker compose you have to build container and them up them. Check more [here](https://www.digitalocean.com/community/tutorials/how-to-install-and-set-up-laravel-with-docker-compose-on-ubuntu-22-04)
-```
-docker-compose build app
-docker-compose up -d
-docker-compose ps #to check if containers are running 
-```
-
-After that to execute any command inside container you need <b>docker-compose exec app <i>$command</i></b> 
-
-Example:
-```
-docker-compose exec app composer install
-docker-compose exec app php artisan key:generate
 ```
 
 ## Security Vulnerabilities
