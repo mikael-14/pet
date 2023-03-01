@@ -1,0 +1,58 @@
+version: "3.8"
+services:
+  app:
+    build:
+      args:
+        user: sammy
+        uid: 1000
+      context: ./
+      dockerfile: docker/Dockerfile
+    image: pet
+    container_name: pet-app
+    restart: unless-stopped
+    working_dir: /var/www/
+    volumes:
+      - ./:/var/www
+    networks:
+      dockernet:
+        ipv4_address: 192.168.10.2
+
+  petdb:
+    image: mysql:8.0
+    container_name: pet-db
+    restart: unless-stopped
+    environment:
+      MYSQL_DATABASE: ${DB_DATABASE}
+      MYSQL_ROOT_PASSWORD: ${DB_PASSWORD}
+      MYSQL_PASSWORD: ${DB_PASSWORD}
+      MYSQL_USER: ${DB_USERNAME}
+      SERVICE_TAGS: dev
+      SERVICE_NAME: mysql
+    volumes:
+      - ./docker/mysql:/docker-entrypoint-initdb.d
+    networks:
+      dockernet:
+        ipv4_address: 192.168.10.3
+
+  nginx:
+    image: nginx:alpine
+    container_name: pet-nginx
+    restart: unless-stopped
+    ports:
+      - 8000:80
+    volumes:
+      - ./:/var/www
+      - ./docker/nginx:/etc/nginx/conf.d/
+    networks:
+      dockernet:
+        ipv4_address: 192.168.10.4
+
+networks:
+  dockernet:
+    driver: bridge
+    ipam:
+      driver: default
+      config:
+        - subnet: 192.168.10.0/24
+
+
