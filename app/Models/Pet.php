@@ -63,6 +63,7 @@ class Pet extends Model implements HasMedia
 
 	protected $fillable = [
 		'name',
+		'species',
 		'image',
 		'gender',
 		'chip',

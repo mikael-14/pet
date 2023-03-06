@@ -13,7 +13,6 @@ use Filament\Resources\Table;
 use Filament\Tables;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
-use Filament\Forms\Components\RichEditor;
 
 class PetResource extends Resource
 {
@@ -28,37 +27,34 @@ class PetResource extends Resource
     {
         return $form
             ->schema([
-                Forms\Components\Card::make()->schema([
-                    Forms\Components\TextInput::make('name')
-                        ->required()
-                        ->maxLength(255),
-                    SpatieMediaLibraryFileUpload::make('media')
-                        ->collection('image'),
-                    Forms\Components\Radio::make('gender')
-                        ->options([
-                            'male' => 'Male',
-                            'female' => 'Female',
-                        ])->required(),
-                    Forms\Components\TextInput::make('chip')
-                        ->maxLength(20),
-                    Forms\Components\DatePicker::make('chip_date'),
-                    Forms\Components\DatePicker::make('birth_date')
-                    ->displayFormat('d/m/Y')->format('d/m/Y')->required(),
-                    Forms\Components\DatePicker::make('entry_date')
-                    ->displayFormat('d/m/Y')->format('d/m/Y')->required(),
-                    Forms\Components\Radio::make('sterilized')
-                    ->boolean()->required(),
-                    Forms\Components\DatePicker::make('sterilized_date')
-                    ->displayFormat('d/m/Y')->format('d/m/Y'),
-                    Forms\Components\TextInput::make('sterilized_local')
-                        ->maxLength(50),
-                    Forms\Components\TextInput::make('color')
-                        ->maxLength(50),
-                    Forms\Components\TextInput::make('coat')
-                        ->maxLength(50),
-                    Forms\Components\RichEditor::make('observation')
-                    ->columnSpan('full'),
-                ])->columns(2),
+                Forms\Components\TextInput::make('pet_statuses_id'),
+                Forms\Components\TextInput::make('pet_locations_id'),
+                Forms\Components\TextInput::make('name')
+                    ->required()
+                    ->maxLength(255),
+                Forms\Components\TextInput::make('species')
+                    ->maxLength(20),
+                Forms\Components\TextInput::make('image')
+                    ->maxLength(255),
+                Forms\Components\TextInput::make('gender')
+                    ->required(),
+                Forms\Components\TextInput::make('chip')
+                    ->maxLength(20),
+                Forms\Components\DatePicker::make('chip_date'),
+                Forms\Components\DatePicker::make('birth_date'),
+                Forms\Components\DatePicker::make('entry_date')
+                    ->required(),
+                Forms\Components\Toggle::make('sterilized')
+                    ->required(),
+                Forms\Components\DatePicker::make('sterilized_date'),
+                Forms\Components\TextInput::make('sterilized_local')
+                    ->maxLength(50),
+                Forms\Components\TextInput::make('color')
+                    ->maxLength(50),
+                Forms\Components\TextInput::make('coat')
+                    ->maxLength(50),
+                Forms\Components\TextInput::make('observation')
+                    ->maxLength(50),
             ]);
     }
 
@@ -66,77 +62,40 @@ class PetResource extends Resource
     {
         return $table
             ->columns([
-                Tables\Columns\TextColumn::make('name')
-                    ->searchable(isIndividual: true)
-                    ->sortable()
-                    ->toggleable(),
+                Tables\Columns\TextColumn::make('pet_statuses_id'),
+                Tables\Columns\TextColumn::make('pet_locations_id'),
+                Tables\Columns\TextColumn::make('name'),
+                Tables\Columns\TextColumn::make('species'),
                 Tables\Columns\TextColumn::make('image'),
-                Tables\Columns\TextColumn::make('gender')
-                    ->sortable()
-                    ->toggleable(),
-                Tables\Columns\TextColumn::make('chip')
-                    ->searchable(isIndividual: true)
-                    ->sortable()
-                    ->toggleable(),
+                Tables\Columns\TextColumn::make('gender'),
+                Tables\Columns\TextColumn::make('chip'),
                 Tables\Columns\TextColumn::make('chip_date')
-                    ->date()
-                    ->searchable()
-                    ->sortable()
-                    ->toggleable(),
+                    ->date(),
                 Tables\Columns\TextColumn::make('birth_date')
-                    ->date()
-                    ->searchable()
-                    ->sortable()
-                    ->toggleable(),
+                    ->date(),
                 Tables\Columns\TextColumn::make('entry_date')
-                    ->date()
-                    ->searchable()
-                    ->sortable()
-                    ->toggleable(),
-                Tables\Columns\TextColumn::make('sterilized')
-                    ->sortable()
-                    ->toggleable(),
+                    ->date(),
+                Tables\Columns\IconColumn::make('sterilized')
+                    ->boolean(),
                 Tables\Columns\TextColumn::make('sterilized_date')
-                    ->date()
-                    ->searchable()
-                    ->sortable()
-                    ->toggleable()
-                    ->toggledHiddenByDefault(),
-                Tables\Columns\TextColumn::make('sterilized_local')
-                    ->searchable()
-                    ->sortable()
-                    ->toggleable()
-                    ->toggledHiddenByDefault(),
-                Tables\Columns\TextColumn::make('color')
-                    ->searchable()
-                    ->sortable()
-                    ->toggleable(),
-                Tables\Columns\TextColumn::make('coat')
-                    ->searchable()
-                    ->sortable()
-                    ->toggleable()
-                    ->toggledHiddenByDefault(),
+                    ->date(),
+                Tables\Columns\TextColumn::make('sterilized_local'),
+                Tables\Columns\TextColumn::make('color'),
+                Tables\Columns\TextColumn::make('coat'),
+                Tables\Columns\TextColumn::make('observation'),
                 Tables\Columns\TextColumn::make('created_at')
-                    ->dateTime()
-                    ->sortable()
-                    ->toggleable()
-                    ->toggledHiddenByDefault(),
+                    ->dateTime(),
                 Tables\Columns\TextColumn::make('updated_at')
-                    ->dateTime()
-                    ->sortable()
-                    ->toggleable()
-                    ->toggledHiddenByDefault(),
+                    ->dateTime(),
                 Tables\Columns\TextColumn::make('deleted_at')
-                    ->dateTime()
-                    ->sortable()
-                    ->toggleable()
-                    ->toggledHiddenByDefault(),
+                    ->dateTime(),
             ])
             ->filters([
                 Tables\Filters\TrashedFilter::make(),
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),
+                Tables\Actions\ViewAction::make(),
             ])
             ->bulkActions([
                 Tables\Actions\DeleteBulkAction::make(),
@@ -151,11 +110,6 @@ class PetResource extends Resource
             //
         ];
     }
-    protected function shouldPersistTableSearchInSession(): bool
-    {
-        return true;
-    }
-     
     protected function shouldPersistTableColumnSearchInSession(): bool
     {
         return true;
@@ -166,9 +120,10 @@ class PetResource extends Resource
             'index' => Pages\ListPets::route('/'),
             'create' => Pages\CreatePet::route('/create'),
             'edit' => Pages\EditPet::route('/{record}/edit'),
+            'view' => Pages\ViewPet::route('/{record}'),
         ];
     }
-
+  
     public static function getEloquentQuery(): Builder
     {
         return parent::getEloquentQuery()

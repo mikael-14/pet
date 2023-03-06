@@ -88,7 +88,10 @@ Crud com modals (edit/create is a modal)
 ```
 php artisan make:filament-resource Pet --generate --simple --soft-deletes
 ```
-
+Add a view to existing resource 
+```
+php artisan make:filament-page ViewPet --resource=PetResource --type=ViewRecord
+```
 ## Security Vulnerabilities
 
 ## License
