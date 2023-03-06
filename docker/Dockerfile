@@ -3,6 +3,7 @@ FROM php:8.0-fpm
 # Arguments defined in docker-compose.yml
 ARG user
 ARG uid
+ARG app_debug
 
 # Install system dependencies
 RUN apt-get update && apt-get install -y \
@@ -22,6 +23,13 @@ RUN docker-php-ext-install pdo_mysql mbstring exif pcntl bcmath gd
 
 # Get latest Composer
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
+
+
+# Enable xdebug if APP_DEBUG is true on .env
+RUN if [ $app_debug = "true" ] ; then \
+    pecl install xdebug \
+    && docker-php-ext-enable xdebug; \
+fi ;
 
 # Create system user to run Composer and Artisan Commands
 RUN useradd -G www-data,root -u $uid -d /home/$user $user
