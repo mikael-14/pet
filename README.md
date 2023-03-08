@@ -51,7 +51,7 @@ Generate premission/roles and super-admin. More info [here](https://github.com/b
 ```
 php artisan shield:generate --all
 
-php artisan shield:super-admi
+php artisan shield:super-admin
 ```
 
 Now instalation is <b>complete</b>

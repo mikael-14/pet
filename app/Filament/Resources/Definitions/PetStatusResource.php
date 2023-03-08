@@ -44,8 +44,6 @@ class PetStatusResource extends Resource
                 Tables\Columns\ColorColumn::make('color'),
                 Tables\Columns\TextColumn::make('created_at')
                     ->dateTime(),
-                Tables\Columns\TextColumn::make('updated_at')
-                    ->dateTime(),
             ])
             ->filters([
                 //
@@ -55,7 +53,7 @@ class PetStatusResource extends Resource
                 Tables\Actions\DeleteAction::make(),
             ])
             ->bulkActions([
-                Tables\Actions\DeleteBulkAction::make(),
+               
             ]);
     }
     
