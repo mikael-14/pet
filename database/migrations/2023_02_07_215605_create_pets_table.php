@@ -30,7 +30,7 @@ return new class extends Migration
             $table->string('sterilized_local',50)->nullable();
             $table->string('color',50)->nullable();
             $table->string('coat',50)->nullable();
-            $table->string('observation',50)->nullable();
+            $table->text('observation')->nullable();
             $table->timestamps();
             $table->softDeletes();
         });
