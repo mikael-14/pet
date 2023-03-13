@@ -16,3 +16,9 @@ use Illuminate\Support\Facades\Route;
 Route::get('/', function () {
     return view('welcome');
 });
+
+Route::get("notice/admin/verify", function () {
+    return view('notice');
+})
+    ->middleware(["throttle:6,1", "auth:" . config('filament.auth.guard')])
+    ->name("admin.verification.notice");
