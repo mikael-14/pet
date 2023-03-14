@@ -14,5 +14,8 @@ return [
     */
 
     'default_locales' => ['pt'],
-
+    'available_locales' => [
+        'en' => 'English',
+        'pt' => 'Portuguese',
+    ],
 ];

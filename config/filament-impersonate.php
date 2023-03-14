@@ -22,6 +22,6 @@ return [
         'fixed' => env('FILAMENT_IMPERSONATE_BANNER_FIXED', true),
 
         // Currently supports 'top' and 'bottom'.
-        'position' => env('FILAMENT_IMPERSONATE_BANNER_POSITION', 'top'),
+        'position' => env('FILAMENT_IMPERSONATE_BANNER_POSITION', 'bottom'),
     ],
 ];

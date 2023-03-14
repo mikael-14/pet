@@ -3,6 +3,8 @@
 namespace App\Filament\Resources\UserResource\Pages;
 
 use App\Filament\Resources\UserResource;
+use App\Models\ModelHasRole;
+use App\Models\Role;
 use App\Models\User;
 use Closure;
 use Filament\Facades\Filament;
@@ -20,7 +22,14 @@ use Illuminate\Support\Facades\Hash;
 class EditUser extends EditRecord
 {
     use InteractsWithForms;
+
     protected static string $resource = UserResource::class;
+
+    public function mutateFormDataBeforeFill(array $data): array
+    {
+        $data['roles'] = ModelHasRole::where('model_id', $data['id'])->pluck('role_id')->toArray();
+        return $data;
+    }
 
     protected function getActions(): array
     {
@@ -43,16 +52,20 @@ class EditUser extends EditRecord
                         ->helperText('Make sure this email is valid and unique.')
                         ->required(),
                     \Filament\Forms\Components\Select::make('locale')->options(
-                        [
-                            'pt' => 'Portuguese',
-                            'en' => 'English',
-                        ]
+                        config('filament-spatie-laravel-translatable-plugin.available_locales')
                     )->default('pt')
                         ->disablePlaceholderSelection(),
                     \Filament\Forms\Components\Toggle::make('status')
                         ->inline(false)
                         ->helperText('Admin panel access')
                         ->disabled(!Filament::auth()->user()->isAdmin())
+                        ->dehydrated(Filament::auth()->user()->isAdmin()),
+                    \Filament\Forms\Components\Select::make('roles')
+                        ->multiple()
+                        ->options(
+                            Role::all()->pluck('name', 'id')
+                                ->toArray()
+                        )->disabled(!Filament::auth()->user()->isAdmin())
                         ->dehydrated(Filament::auth()->user()->isAdmin()),
                 ])
                 ->columns(2),
@@ -64,33 +77,50 @@ class EditUser extends EditRecord
                         ->dehydrateStateUsing(fn ($state) => Hash::make($state))
                         ->dehydrated(fn ($state) => filled($state))
                         ->same('confirm_password')
-                        ->visible(fn (Closure $get): bool => Filament::auth()->user()->email == $get('email')),
+                        ->visible(fn (Closure $get): bool => Filament::auth()->user()->id == $this->record->id),
                     \Filament\Forms\Components\TextInput::make('confirm_password')
                         ->dehydrated(false)
                         ->password()
-                        ->visible(fn (Closure $get): bool => Filament::auth()->user()->email == $get('email')),
+                        ->visible(fn (Closure $get): bool => Filament::auth()->user()->id == $this->record->id),
                 ])
-                ->visible(fn (Closure $get): bool => Filament::auth()->user()->email == $get('email'))
+                ->visible(fn (Closure $get): bool => Filament::auth()->user()->id == $this->record->id)
                 ->columns(2)
         ];
     }
-
+    protected function getRedirectUrl(): string
+    {
+        //don't know how to fix this (livewire component) field refresh 
+        //for now let's refresh the page 
+        return request()->header('Referer');
+    }
     protected function afterSave(): void
     {
-        
         $state = $this->form->getState();
         //change language
-        if (in_array($state['locale'], config('filament-spatie-laravel-translatable-plugin.default_locales'))) {
+        if (Filament::auth()->user()->id == $this->record->id && array_key_exists($state['locale'], config('filament-spatie-laravel-translatable-plugin.available_locales'))) {
             session()->put('locale', $state['locale']);
             app()->setLocale($state['locale']);
         }
-
+        //change password
         if (key_exists('password', $state)) {
             session()->forget('password_hash_' . config('filament.auth.guard'));
             Filament::auth()->login(Filament::auth()->user());
-            $state['password']='';
-            $state['confirm_password']='';
-            $this->form->fill($state);
+            $state['password'] = '';
+            $state['confirm_password'] = '';
         }
+        //change roles
+        if (!empty($state['roles'])) {
+            ModelHasRole::where('model_id',$this->record->id)->delete();
+            $new_data= array();
+            foreach($state['roles'] as $value){
+                $new_data[]= [
+                    'role_id' => $value,
+                    'model_type' => 'App\Models\User',
+                    'model_id' => $this->record->id
+                ];
+            }
+            ModelHasRole::insert($new_data);
+        }
+        $this->form->fill($state);
     }
 }

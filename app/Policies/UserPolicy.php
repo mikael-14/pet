@@ -141,4 +141,16 @@ class UserPolicy
     {
         return $user->can('{{ Reorder }}');
     }
+
+    /**
+     * Determine whether the user can view any models.
+     *
+     * @param  \App\Models\User  $user
+     * @return \Illuminate\Auth\Access\Response|bool
+     */
+    public function viewOwned(User $user)
+    {
+        return $user->can('view_owned_user');
+    }
+    
 }

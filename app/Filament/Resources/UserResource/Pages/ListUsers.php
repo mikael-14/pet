@@ -4,6 +4,7 @@ namespace App\Filament\Resources\UserResource\Pages;
 
 use App\Filament\Resources\UserResource;
 use Closure;
+use Filament\Facades\Filament;
 use Filament\Pages\Actions;
 use Filament\Resources\Pages\ListRecords;
 use Filament\Tables\Actions\BulkAction;
@@ -34,7 +35,18 @@ class ListUsers extends ListRecords
                     }
                 }))
                 ->deselectRecordsAfterCompletion()
-                ->color('danger')
+                ->visible(Filament::auth()->user()->isAdmin())
+                ->color('danger'),
+            BulkAction::make('enable')
+                ->action(fn (Collection $records) => $records->each(function($record, $key) {
+                    if($record->id !== Auth::id()) {
+                        $record->update(['status' => 1]);
+                    }
+                }))
+                ->visible(Filament::auth()->user()->isAdmin())
+                ->deselectRecordsAfterCompletion()
+                ->color('success')
         ];
     }
+    
 }

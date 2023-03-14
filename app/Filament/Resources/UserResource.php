@@ -15,6 +15,7 @@ use Illuminate\Database\Eloquent\SoftDeletingScope;
 use BezhanSalleh\FilamentShield\Contracts\HasShieldPermissions;
 use BezhanSalleh\FilamentShield\FilamentShield;
 use Closure;
+use Filament\Facades\Filament;
 use Illuminate\Support\Facades\Auth;
 use XliteDev\FilamentImpersonate\Tables\Actions\ImpersonateAction;
 
@@ -36,6 +37,7 @@ class UserResource extends Resource implements HasShieldPermissions
             'update',
             'delete',
             'delete_any',
+            'view_owned',
         ];
     }
 
@@ -80,5 +82,12 @@ class UserResource extends Resource implements HasShieldPermissions
             'create' => Pages\CreateUser::route('/create'),
             'edit' => Pages\EditUser::route('/{record}/edit'),
         ];
+    }
+    public static function getEloquentQuery(): Builder
+    {
+        if(Filament::auth()->user()->can('view_owned_user')){
+            return parent::getEloquentQuery()->where(['id'=>auth()->user()->id]);
+        }
+        return parent::getEloquentQuery();
     }
 }
