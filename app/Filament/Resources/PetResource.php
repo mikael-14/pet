@@ -50,25 +50,29 @@ class PetResource extends Resource
                                     ])->required(),
                                 Forms\Components\DatePicker::make('birth_date'),
                                 Forms\Components\TextInput::make('chip')
-                                    ->maxLength(20),
+                                    ->maxLength(20)
+                                    ->hint(fn ($state) => 'Digits: '. strlen($state) . '')
+                                    ->lazy(),
                                 Forms\Components\DatePicker::make('chip_date'),
                                 Forms\Components\TextInput::make('color')
                                     ->maxLength(50),
                                 Forms\Components\TextInput::make('coat')
                                     ->maxLength(50),
-                                Forms\Components\SpatieMediaLibraryFileUpload::make('image')->acceptedFileTypes(['image/*'])
-                                    ->enableOpen()
-                                    ->enableDownload()
-                                    ->columnSpan('full'),
                                 Forms\Components\RichEditor::make('observation')->columnSpan('full'),
                             ])->columns(2),
                     ])->columnSpan(['lg' => 2]),
 
                 Forms\Components\Group::make()
                     ->schema([
+                        Forms\Components\Section::make('Image')
+                            ->schema([
+                                Forms\Components\SpatieMediaLibraryFileUpload::make('image')->acceptedFileTypes(['image/*'])
+                                ->enableOpen()
+                                ->enableDownload()
+                                ->columnSpan('full'),
+                            ]),
                         Forms\Components\Section::make('Status')
                             ->schema([
-
                                 Forms\Components\Select::make('pet_statuses_id')
                                     ->allowHtml()
                                     ->searchable()

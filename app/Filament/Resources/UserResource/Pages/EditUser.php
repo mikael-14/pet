@@ -27,7 +27,7 @@ class EditUser extends EditRecord
 
     public function mutateFormDataBeforeFill(array $data): array
     {
-        $data['roles'] = ModelHasRole::where('model_id', $data['id'])->pluck('role_id')->toArray();
+        $data['role'] = ModelHasRole::where('model_id', $data['id'])->pluck('role_id')->toArray();
         return $data;
     }
 
@@ -50,7 +50,8 @@ class EditUser extends EditRecord
                     \Filament\Forms\Components\TextInput::make('email')
                         ->placeholder('email@example.com')
                         ->helperText('Make sure this email is valid and unique.')
-                        ->required(),
+                        ->required()
+                        ->unique(table: 'users', column: 'email', ignorable: fn () => $this->getRecord(), ignoreRecord: true),
                     \Filament\Forms\Components\Select::make('locale')->options(
                         config('filament-spatie-laravel-translatable-plugin.available_locales')
                     )->default('pt')
@@ -60,8 +61,7 @@ class EditUser extends EditRecord
                         ->helperText('Admin panel access')
                         ->disabled(!Filament::auth()->user()->isAdmin())
                         ->dehydrated(Filament::auth()->user()->isAdmin()),
-                    \Filament\Forms\Components\Select::make('roles')
-                        ->multiple()
+                    \Filament\Forms\Components\Select::make('role')
                         ->options(
                             Role::all()->pluck('name', 'id')
                                 ->toArray()
@@ -87,12 +87,12 @@ class EditUser extends EditRecord
                 ->columns(2)
         ];
     }
-    protected function getRedirectUrl(): string
-    {
-        //don't know how to fix this (livewire component) field refresh 
-        //for now let's refresh the page 
-        return request()->header('Referer');
-    }
+    // protected function getRedirectUrl(): string
+    // {
+    //     //don't know how to fix this (livewire component) field refresh 
+    //     //for now let's refresh the page 
+    //     return request()->header('Referer');
+    // }
     protected function afterSave(): void
     {
         $state = $this->form->getState();
@@ -108,19 +108,16 @@ class EditUser extends EditRecord
             $state['password'] = '';
             $state['confirm_password'] = '';
         }
-        //change roles
-        if (!empty($state['roles'])) {
-            ModelHasRole::where('model_id',$this->record->id)->delete();
-            $new_data= array();
-            foreach($state['roles'] as $value){
-                $new_data[]= [
-                    'role_id' => $value,
-                    'model_type' => 'App\Models\User',
-                    'model_id' => $this->record->id
-                ];
-            }
-            ModelHasRole::insert($new_data);
+        //change role
+        ModelHasRole::where('model_id', $this->record->id)->delete();
+        if (isset($state['role'][0])) {
+            ModelHasRole::insert([
+                'role_id' => $state['role'][0],
+                'model_type' => 'App\Models\User',
+                'model_id' => $this->record->id
+            ]);
         }
+
         $this->form->fill($state);
     }
 }

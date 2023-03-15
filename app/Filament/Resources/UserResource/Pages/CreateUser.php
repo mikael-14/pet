@@ -27,7 +27,7 @@ class CreateUser extends CreateRecord
                     \Filament\Forms\Components\TextInput::make('email')
                         ->placeholder('email@example.com')
                         ->helperText('Make sure this email is valid and unique.')
-                        ->unique(table: User::class,column: 'email', ignoreRecord: true)
+                        ->unique(table: User::class, column: 'email', ignoreRecord: true)
                         ->required(),
                     \Filament\Forms\Components\Select::make('locale')->options(
                         config('filament-spatie-laravel-translatable-plugin.available_locales')
@@ -37,14 +37,13 @@ class CreateUser extends CreateRecord
                         ->inline(false)
                         ->helperText('Admin panel access')
                         ->default(1),
-                    \Filament\Forms\Components\Select::make('roles')
-                        ->multiple()
+                    \Filament\Forms\Components\Select::make('role')
                         ->options(
                             Role::all()->pluck('name', 'id')
                                 ->toArray()
                         ),
                 ])->columns(2),
-                \Filament\Forms\Components\Card::make()
+            \Filament\Forms\Components\Card::make()
                 ->schema([
                     \Filament\Forms\Components\TextInput::make('password')
                         ->label('Define a password')
@@ -65,19 +64,14 @@ class CreateUser extends CreateRecord
     protected function afterCreate(): void
     {
         // Runs after the form fields are saved to the database.
-        //insert roles in the table
+        //insert role in the table
         $state = $this->form->getState();
-        $id = $this->record->id;
-        if (!empty($state['roles'])) {
-            $new_data= array();
-            foreach($state['roles'] as $value){
-                $new_data[]= [
-                    'role_id' => $value,
-                    'model_type' => 'App\Models\User',
-                    'model_id' => $this->record->id
-                ];
-            }
-            ModelHasRole::insert($new_data);
+         if (isset($state['role'][0])) {
+            ModelHasRole::insert([
+                'role_id' => $state['role'][0],
+                'model_type' => 'App\Models\User',
+                'model_id' => $this->record->id
+            ]);
         }
     }
 }
