@@ -9,10 +9,11 @@ use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
 use Spatie\Permission\Traits\HasRoles;
 use Illuminate\Support\Facades\Auth;
+use Filament\Models\Contracts\FilamentUser;
 
-class User extends Authenticatable
+class User extends Authenticatable implements FilamentUser
 {
-    use HasApiTokens, HasFactory, Notifiable,HasRoles;
+    use HasApiTokens, HasFactory, Notifiable, HasRoles;
 
     /**
      * The attributes that are mass assignable.
@@ -23,6 +24,8 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
+        'status',
+        'locale',
     ];
 
     /**
@@ -43,30 +46,32 @@ class User extends Authenticatable
     protected $casts = [
         'email_verified_at' => 'datetime',
     ];
-
+    // https://github.com/xlite-dev/filament-impersonate
     /**
      * By default, only Filament admins can impersonate other users. 
      * You can control this by adding a 'canImpersonate' method to your FilamentUser class
      */
-    public function canImpersonate()
+    public function canImpersonate(): bool
     {
-        if($this->hasRole('super_admin'))
-        {
-            return true;
-        } 
-        return false;
+        return $this->hasRole('super_admin') ? true : false;
     }
     /**
      * You can also control which targets can be impersonated.
      * Just add a 'canBeImpersonated' method to the user class with whatever logic you need
      */
-    public function canBeImpersonated()
+    public function canBeImpersonated(): bool
     {
         // Let's prevent impersonating other users that are super admins
-        if(!$this->hasRole('super_admin'))
-        {
-            return true;
-        } 
-        return false;
+        return !$this->hasRole('super_admin') ? true : false;
+    }
+    public function canAccessFilament(): bool
+    {
+        // add this method to acept only verified email addresses
+        # $this->hasVerifiedEmail(); 
+        return ($this->status === 1) ? true : false;
+    }
+    public function isAdmin(): bool
+    {
+        return $this->hasRole('super_admin') ? true : false;
     }
 }

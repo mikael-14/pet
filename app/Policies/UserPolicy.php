@@ -3,10 +3,10 @@
 namespace App\Policies;
 
 use App\Models\User;
-use Spatie\Permission\Models\Role;
+
 use Illuminate\Auth\Access\HandlesAuthorization;
 
-class RolePolicy
+class UserPolicy
 {
     use HandlesAuthorization;
 
@@ -18,19 +18,18 @@ class RolePolicy
      */
     public function viewAny(User $user)
     {
-        return $user->can('view_any_shield::role');
+        return $user->can('view_any_user');
     }
 
     /**
      * Determine whether the user can view the model.
      *
      * @param  \App\Models\User  $user
-     * @param  \Spatie\Permission\Models\Role  $role
      * @return \Illuminate\Auth\Access\Response|bool
      */
-    public function view(User $user, Role $role)
+    public function view(User $user)
     {
-        return $user->can('view_shield::role');
+        return $user->can('view_user');
     }
 
     /**
@@ -41,31 +40,29 @@ class RolePolicy
      */
     public function create(User $user)
     {
-        return $user->can('create_shield::role');
+        return $user->can('create_user');
     }
 
     /**
      * Determine whether the user can update the model.
      *
      * @param  \App\Models\User  $user
-     * @param  \Spatie\Permission\Models\Role  $role
      * @return \Illuminate\Auth\Access\Response|bool
      */
-    public function update(User $user, Role $role)
+    public function update(User $user)
     {
-        return $user->can('update_shield::role');
+        return $user->can('update_user');
     }
 
     /**
      * Determine whether the user can delete the model.
      *
      * @param  \App\Models\User  $user
-     * @param  \Spatie\Permission\Models\Role  $role
      * @return \Illuminate\Auth\Access\Response|bool
      */
-    public function delete(User $user, Role $role)
+    public function delete(User $user)
     {
-        return $user->can('delete_shield::role');
+        return $user->can('delete_user');
     }
 
     /**
@@ -76,17 +73,16 @@ class RolePolicy
      */
     public function deleteAny(User $user)
     {
-        return $user->can('delete_any_shield::role');
+        return $user->can('delete_any_user');
     }
 
     /**
      * Determine whether the user can permanently delete.
      *
      * @param  \App\Models\User  $user
-     * @param  \Spatie\Permission\Models\Role  $role
      * @return \Illuminate\Auth\Access\Response|bool
      */
-    public function forceDelete(User $user, Role $role)
+    public function forceDelete(User $user)
     {
         return $user->can('{{ ForceDelete }}');
     }
@@ -106,10 +102,9 @@ class RolePolicy
      * Determine whether the user can restore.
      *
      * @param  \App\Models\User  $user
-     * @param  \Spatie\Permission\Models\Role  $role
      * @return \Illuminate\Auth\Access\Response|bool
      */
-    public function restore(User $user, Role $role)
+    public function restore(User $user)
     {
         return $user->can('{{ Restore }}');
     }
@@ -126,13 +121,12 @@ class RolePolicy
     }
 
     /**
-     * Determine whether the user can replicate.
+     * Determine whether the user can bulk restore.
      *
      * @param  \App\Models\User  $user
-     * @param  \Spatie\Permission\Models\Role  $role
      * @return \Illuminate\Auth\Access\Response|bool
      */
-    public function replicate(User $user, Role $role)
+    public function replicate(User $user)
     {
         return $user->can('{{ Replicate }}');
     }
@@ -148,4 +142,15 @@ class RolePolicy
         return $user->can('{{ Reorder }}');
     }
 
+    /**
+     * Determine whether the user can view any models.
+     *
+     * @param  \App\Models\User  $user
+     * @return \Illuminate\Auth\Access\Response|bool
+     */
+    public function viewOwned(User $user)
+    {
+        return $user->can('view_owned_user');
+    }
+    
 }
