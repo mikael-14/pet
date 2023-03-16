@@ -25,8 +25,10 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-        //
-        
+        //load my stylesheet
+            Filament::registerStyles([
+                asset('css/my-styles.css'),
+            ]);
             Filament::serving(function () {
                 if (Filament::auth()->user()) {
                 Filament::registerUserMenuItems([
