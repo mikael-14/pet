@@ -20,7 +20,7 @@ class PetResource extends Resource
 {
     protected static ?string $model = Pet::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-collection';
+    protected static ?string $navigationIcon = 'tabler-paw';
 
     protected static ?string $recordTitleAttribute = 'name';
 
@@ -51,19 +51,19 @@ class PetResource extends Resource
 
                 Tables\Columns\TextColumn::make('chip'),
                 Tables\Columns\TextColumn::make('birth_date')
-                    ->date()
+                    ->date(config('filament.date_format'))
                     ->toggleable(isToggledHiddenByDefault: true),
                 Tables\Columns\TextColumn::make('entry_date')
-                    ->date()
+                    ->date(config('filament.date_format'))
                     ->toggleable(isToggledHiddenByDefault: true),
                 Tables\Columns\IconColumn::make('sterilized')
                     ->boolean(),
                 Tables\Columns\TextColumn::make('color'),
                 Tables\Columns\TextColumn::make('coat'),
                 Tables\Columns\TextColumn::make('created_at')
-                    ->dateTime()->toggleable(isToggledHiddenByDefault: true),
+                    ->dateTime(config('filament.date_time_format'))->toggleable(isToggledHiddenByDefault: true),
                 Tables\Columns\TextColumn::make('deleted_at')
-                    ->dateTime()->toggleable(isToggledHiddenByDefault: true),
+                    ->dateTime(config('filament.date_time_format'))->toggleable(isToggledHiddenByDefault: true),
             ])
             ->filters([
                 Tables\Filters\TrashedFilter::make(),

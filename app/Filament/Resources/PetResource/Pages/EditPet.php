@@ -41,12 +41,14 @@ class EditPet extends EditRecord
                                             'male' => 'Male',
                                             'female' => 'Female',
                                         ])->required(),
-                                    DatePicker::make('birth_date'),
+                                    DatePicker::make('birth_date')
+                                        ->displayFormat(config('filament.date_format')),
                                     TextInput::make('chip')
                                         ->maxLength(20)
                                         ->hint(fn ($state) => 'Digits: ' . strlen($state) . '')
                                         ->lazy(),
-                                    DatePicker::make('chip_date'),
+                                    DatePicker::make('chip_date')
+                                        ->displayFormat(config('filament.date_format')),
                                     TextInput::make('color')
                                         ->maxLength(50),
                                     TextInput::make('coat')
@@ -60,6 +62,7 @@ class EditPet extends EditRecord
                             Section::make('Image')
                                 ->schema([
                                     SpatieMediaLibraryFileUpload::make('image')->acceptedFileTypes(['image/*'])
+                                        ->collection('main-image')
                                         ->enableOpen()
                                         ->enableDownload()
                                         ->columnSpan('full'),
@@ -81,10 +84,12 @@ class EditPet extends EditRecord
                                             PetResource::getOptionWithColor(PetLocation::all())
                                         )->required(),
                                     DatePicker::make('entry_date')
+                                        ->displayFormat(config('filament.date_format'))
                                         ->required(),
                                     Toggle::make('sterilized')
                                         ->inline(false)->reactive(),
                                     DatePicker::make('sterilized_date')
+                                        ->displayFormat(config('filament.date_format'))
                                         ->visible(fn ($get) => $get('sterilized')),
                                     TextInput::make('sterilized_local')
                                         ->visible(fn ($get) => $get('sterilized'))

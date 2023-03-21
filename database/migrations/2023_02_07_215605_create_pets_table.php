@@ -17,7 +17,7 @@ return new class extends Migration
             $table->id();
             $table->string('name');
             $table->string('species',20)->nullable();
-            $table->string('image')->nullable();
+            //$table->string('image')->nullable(); // no need if using spatie plugin
             $table->set('gender', ['male', 'female']);
             $table->string('chip',20)->nullable()->unique();
             $table->date('chip_date')->nullable();

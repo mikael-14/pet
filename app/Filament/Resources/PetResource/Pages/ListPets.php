@@ -19,7 +19,7 @@ class ListPets extends ListRecords
     }
     protected function getTableEmptyStateIcon(): ?string 
     {
-        return 'heroicon-o-collection';
+        return 'tabler-paw';
     }
  
     protected function getTableEmptyStateHeading(): ?string

@@ -97,7 +97,7 @@ class EditUser extends EditRecord
     {
         $state = $this->form->getState();
         //change language
-        if (Filament::auth()->user()->id == $this->record->id && array_key_exists($state['locale'], config('filament-spatie-laravel-translatable-plugin.available_locales'))) {
+        if (!empty($state['locale']) && Filament::auth()->user()->id == $this->record->id && array_key_exists($state['locale'], config('filament-spatie-laravel-translatable-plugin.available_locales'))) {
             session()->put('locale', $state['locale']);
             app()->setLocale($state['locale']);
         }

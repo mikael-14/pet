@@ -19,7 +19,7 @@ class PetStatusResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-collection';
 
-    protected static ?string $slug = 'defintions/pet-status';
+    protected static ?string $slug = 'definitions/pet-status';
 
     protected static ?string $recordTitleAttribute = 'name';
 
@@ -43,7 +43,7 @@ class PetStatusResource extends Resource
                 Tables\Columns\TextColumn::make('name'),
                 Tables\Columns\ColorColumn::make('color'),
                 Tables\Columns\TextColumn::make('created_at')
-                    ->dateTime(),
+                    ->dateTime(config('filament.date_time_format')),
             ])
             ->filters([
                 //
