@@ -7,6 +7,7 @@ use Closure;
 use Filament\Facades\Filament;
 use Filament\Pages\Actions;
 use Filament\Resources\Pages\ListRecords;
+use Filament\Tables\Actions\Action;
 use Filament\Tables\Actions\BulkAction;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Auth;
@@ -48,5 +49,5 @@ class ListUsers extends ListRecords
                 ->color('success')
         ];
     }
-    
+
 }

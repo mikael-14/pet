@@ -7,6 +7,7 @@
     "require": {
         "php": "^8.0.2",
         "bezhansalleh/filament-shield": "^2.3",
+        "blade-ui-kit/blade-icons": "^1.5",
         "filament/filament": "^2.17",
         "filament/spatie-laravel-media-library-plugin": "^2.17",
         "filament/spatie-laravel-translatable-plugin": "^2.17",
@@ -15,6 +16,7 @@
         "laravel/framework": "^9.19",
         "laravel/sanctum": "^3.0",
         "laravel/tinker": "^2.7",
+        "ryangjchandler/blade-tabler-icons": "^1.5",
         "xlite-dev/filament-impersonate": "^1.1"
     },
     "require-dev": {

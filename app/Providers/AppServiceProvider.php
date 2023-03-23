@@ -2,6 +2,7 @@
 
 namespace App\Providers;
 
+use App\Filament\Resources\UserResource;
 use Filament\Facades\Filament;
 use Filament\Navigation\UserMenuItem;
 use Illuminate\Support\ServiceProvider;
@@ -32,7 +33,7 @@ class AppServiceProvider extends ServiceProvider
             Filament::serving(function () {
                 if (Filament::auth()->user()) {
                 Filament::registerUserMenuItems([
-                    'account' => UserMenuItem::make()->url('users/' . Filament::auth()->user()->id . '/edit'),
+                    'account' => UserMenuItem::make()->url(UserResource::getUrl('edit', Filament::auth()->user()->id )),
                     // ...
                 ]);
             }

@@ -17,9 +17,10 @@ return new class extends Migration
             $table->id();
             $table->foreignId('pets_id')->constrained(); 
             $table->foreignId('vaccines_id')->constrained(); 
-            $table->date('vaccine_date');
+            $table->date('date');
+            $table->date('expiration_date')->nullable();
             $table->string('local',50)->nullable();
-            $table->string('aplication',100)->nullable();
+            $table->string('application',100)->nullable();
             $table->string('observation',300)->nullable();
             $table->timestamps();
             $table->softDeletes();

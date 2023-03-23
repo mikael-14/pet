@@ -334,5 +334,22 @@ return [
             MirrorConfigToSubpackages::class,
         ],
     ],
-
+    /*
+    |--------------------------------------------------------------------------
+    | Filament Date Format
+    |--------------------------------------------------------------------------
+    |
+    | The default format for date inputs and displays
+    |
+    */
+    'date_format' => 'd/m/Y',
+    /*
+    |--------------------------------------------------------------------------
+    | Filament Date Format
+    |--------------------------------------------------------------------------
+    |
+    | The default format for date time inputs and displays
+    |
+    */
+    'date_time_format' => 'd/m/Y H:i',
 ];

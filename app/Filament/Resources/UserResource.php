@@ -38,6 +38,7 @@ class UserResource extends Resource implements HasShieldPermissions
             'delete',
             'delete_any',
             'view_owned',
+            'view_all',
         ];
     }
 
@@ -85,7 +86,7 @@ class UserResource extends Resource implements HasShieldPermissions
     }
     public static function getEloquentQuery(): Builder
     {
-        if(Filament::auth()->user()->can('view_owned_user')){
+        if(Filament::auth()->user()->can('view_owned_user') && !Filament::auth()->user()->can('view_all_user') ){
             return parent::getEloquentQuery()->where(['id'=>auth()->user()->id]);
         }
         return parent::getEloquentQuery();

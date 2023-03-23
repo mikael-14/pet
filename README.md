@@ -92,6 +92,10 @@ Add a view to existing resource
 ```
 php artisan make:filament-page ViewPet --resource=PetResource --type=ViewRecord
 ```
+
+### Template
+Icons https://blade-ui-kit.com/blade-icons (installed herocions; tabler)
+
 ## Security Vulnerabilities
 
 ## License
