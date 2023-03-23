@@ -31,7 +31,7 @@ class PetResource extends Resource
     {
         return $table
             ->columns([
-                Tables\Columns\SpatieMediaLibraryImageColumn::make('image')->square(),
+                Tables\Columns\SpatieMediaLibraryImageColumn::make('image')->collection('main-image')->square(),
                 Tables\Columns\TextColumn::make('name')->searchable(),
                 Tables\Columns\TextColumn::make('gender')
                     ->toggleable(),

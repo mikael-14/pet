@@ -5,6 +5,7 @@ namespace App\Filament\Resources\PetResource\Pages;
 use App\Filament\Resources\PetResource;
 use App\Models\PetLocation;
 use App\Models\PetStatus;
+use Carbon\Carbon;
 use Filament\Forms\Components\Card;
 use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\Group;
@@ -16,6 +17,7 @@ use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
 use Filament\Pages\Actions;
 use Filament\Resources\Pages\CreateRecord;
+use Livewire\TemporaryUploadedFile;
 
 class CreatePet extends CreateRecord
 {
@@ -55,18 +57,38 @@ class CreatePet extends CreateRecord
                                         ->maxLength(50),
                                     RichEditor::make('observation')->columnSpan('full'),
                                 ])->columns(2),
-                        ])->columnSpan(['lg' => 2]),
 
+                            Section::make('Files')
+                                ->schema([
+                                    SpatieMediaLibraryFileUpload::make('additional-files')
+                                        ->extraAttributes(['class' => 'two-columns-items'])
+                                        ->getUploadedFileNameForStorageUsing(function (TemporaryUploadedFile $file): string {
+                                            return (string) str($file->getClientOriginalName())->prepend('additional-file-' . Carbon::today()->format('Y_m_d') . '-');
+                                        })
+                                        ->collection('additional-files')
+                                        ->loadingIndicatorPosition('left')
+                                        ->removeUploadedFileButtonPosition('right')
+                                        ->enableDownload()
+                                        ->multiple()
+                                        ->maxFiles(10),
+                                ])
+                                ->collapsible(),
+                        ])->columnSpan(['lg' => 2]),
                     Group::make()
                         ->schema([
                             Section::make('Image')
                                 ->schema([
-                                    SpatieMediaLibraryFileUpload::make('image')->acceptedFileTypes(['image/*'])
+                                    SpatieMediaLibraryFileUpload::make('image')
+                                        ->acceptedFileTypes(['image/*'])
+                                        ->getUploadedFileNameForStorageUsing(function (TemporaryUploadedFile $file): string {
+                                            return (string) str($file->getClientOriginalName())->prepend('main-image-' . Carbon::today()->format('Y_m_d') . '-');
+                                        })
                                         ->collection('main-image')
                                         ->enableOpen()
                                         ->enableDownload()
                                         ->columnSpan('full'),
                                 ]),
+
                             Section::make('Status')
                                 ->schema([
                                     Select::make('pet_statuses_id')
