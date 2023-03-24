@@ -7,6 +7,7 @@
 namespace App\Models;
 
 use Carbon\Carbon;
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -17,6 +18,7 @@ use Spatie\MediaLibrary\InteractsWithMedia;
  * 
  * @property int $id
  * @property string $name
+ * @property string|null $species
  * @property string|null $image
  * @property string $gender
  * @property string|null $chip
@@ -89,11 +91,24 @@ class Pet extends Model implements HasMedia
 	{
 		return $this->belongsTo(PetStatus::class, 'pet_statuses_id');
 	}
-
+	public function pet_has_vaccine()
+	{
+		return $this->hasMany(PetsHasVaccine::class, 'pets_id');
+	}
+	public function pet_has_test()
+	{
+		return $this->hasMany(PetsHasTest::class, 'pets_id');
+	}
+	public function tests()
+	{
+		return $this->belongsToMany(Test::class, 'pets_has_tests', 'pets_id', 'tests_id')
+					->withPivot('id', 'date', 'result', 'local', 'application', 'observation', 'deleted_at')
+					->withTimestamps();
+	}
 	public function vaccines()
 	{
 		return $this->belongsToMany(Vaccine::class, 'pets_has_vaccines', 'pets_id', 'vaccines_id')
-					->withPivot('id', 'vaccine_date', 'local', 'aplication', 'observation', 'deleted_at')
+					->withPivot('id', 'date', 'expires_at', 'local', 'application', 'observation', 'deleted_at')
 					->withTimestamps();
 	}
 }

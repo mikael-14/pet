@@ -92,6 +92,15 @@ Add a view to existing resource
 ```
 php artisan make:filament-page ViewPet --resource=PetResource --type=ViewRecord
 ```
+### Relationships 
+See more in https://filamentphp.com/docs/2.x/admin/resources/relation-managers 
+```
+php artisan make:filament-relation-manager CategoryResource posts title
+```
+- CategoryResource is the name of the resource class for the parent model.
+- posts is the name of the relationship you want to manage.
+- title is the name of the attribute that will be used to identify posts.
+
 
 ### Template
 Icons https://blade-ui-kit.com/blade-icons (installed herocions; tabler)

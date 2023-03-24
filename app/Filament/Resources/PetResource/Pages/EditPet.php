@@ -39,7 +39,8 @@ class EditPet extends EditRecord
                                     Select::make('species')
                                         ->options(
                                             config('pet-species')
-                                        )->disablePlaceholderSelection(),
+                                        )->default(array_key_first(config('pet-species')))
+                                        ->disablePlaceholderSelection(),
                                     Select::make('gender')
                                         ->options([
                                             'male' => 'Male',
