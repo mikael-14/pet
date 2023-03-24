@@ -33,7 +33,10 @@ class PetResource extends Resource
             ->columns([
                 Tables\Columns\SpatieMediaLibraryImageColumn::make('image')->collection('main-image')->square(),
                 Tables\Columns\TextColumn::make('name')->searchable(),
-                Tables\Columns\TextColumn::make('gender')
+                Tables\Columns\BadgeColumn::make('gender')->icons([
+                    'tabler-gender-male' =>'male',
+                    'tabler-gender-female' =>'female',
+                ])->iconPosition('after')
                     ->toggleable(),
                 Tables\Columns\TextColumn::make('pet_status.name')->extraAttributes(static function (Pet $record): array {
                     return ['style' => 'background-color:' . $record->pet_status->color, 'class' => 'table-text-column-badge'];
@@ -49,7 +52,7 @@ class PetResource extends Resource
                 Tables\Columns\TextColumn::make('species')
                     ->toggleable(isToggledHiddenByDefault: true),
 
-                Tables\Columns\TextColumn::make('chip'),
+                Tables\Columns\TextColumn::make('chip')->searchable(),
                 Tables\Columns\TextColumn::make('birth_date')
                     ->date(config('filament.date_format'))
                     ->toggleable(isToggledHiddenByDefault: true),
@@ -102,7 +105,8 @@ class PetResource extends Resource
     public static function getRelations(): array
     {
         return [
-            //
+            RelationManagers\PetHasVaccineRelationManager::class,
+            RelationManagers\PetHasTestRelationManager::class,
         ];
     }
     protected function shouldPersistTableColumnSearchInSession(): bool

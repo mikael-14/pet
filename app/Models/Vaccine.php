@@ -16,7 +16,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * 
  * @property int $id
  * @property string $name
- * @property int $expiration
+ * @property int $expires
  * @property int $notification
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
@@ -32,13 +32,13 @@ class Vaccine extends Model
 	protected $table = 'vaccines';
 
 	protected $casts = [
-		'expiration' => 'int',
+		'expires' => 'int',
 		'notification' => 'int'
 	];
 
 	protected $fillable = [
 		'name',
-		'expiration',
+		'expires',
 		'notification'
 	];
 
