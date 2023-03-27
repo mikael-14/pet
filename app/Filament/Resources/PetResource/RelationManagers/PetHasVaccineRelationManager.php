@@ -17,9 +17,6 @@ class PetHasVaccineRelationManager extends RelationManager
 
     protected static ?string $title = 'Vaccine';
 
-    protected static ?string $recordTitleAttribute = 'vaccineName';
-
-    
     public static function form(Form $form): Form
     {
         return $form
@@ -64,11 +61,11 @@ class PetHasVaccineRelationManager extends RelationManager
                 //
             ])
             ->headerActions([
-                Tables\Actions\CreateAction::make(),
+                Tables\Actions\CreateAction::make()->modalHeading(__('filament-support::actions/create.single.modal.heading', ['label' => self::getTitle()])),
             ])
             ->actions([
-                Tables\Actions\ViewAction::make(),
-                Tables\Actions\EditAction::make(),
+                Tables\Actions\ViewAction::make()->modalHeading(fn ($record) => __('filament-support::actions/view.single.modal.heading', ['label' => $record->vaccine()?->first()->name ?? self::getTitle()])),
+                Tables\Actions\EditAction::make()->modalHeading(fn ($record) => __('filament-support::actions/edit.single.modal.heading', ['label' => $record->vaccine()?->first()->name ?? self::getTitle()])),
                 Tables\Actions\DeleteAction::make(),
             ])
             ->bulkActions([

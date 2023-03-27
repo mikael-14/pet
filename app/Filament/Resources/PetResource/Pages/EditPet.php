@@ -70,6 +70,7 @@ class EditPet extends EditRecord
                                         ->collection('additional-files')
                                         ->loadingIndicatorPosition('left')
                                         ->removeUploadedFileButtonPosition('right')
+                                        ->enableReordering()
                                         ->enableDownload()
                                         ->multiple()
                                         ->maxFiles(10),

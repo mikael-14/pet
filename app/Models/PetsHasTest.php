@@ -64,13 +64,4 @@ class PetsHasTest extends Model
 	{
 		return $this->belongsTo(Test::class, 'tests_id');
 	}
-	/**
-     * Get the test name.
-     */
-    protected function testName(): Attribute
-    {
-        return Attribute::make(
-            get: fn () => $this->test() ? $this->test()->first()->name : 'Test',
-        );
-    }
 }

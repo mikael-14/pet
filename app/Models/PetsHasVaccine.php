@@ -65,13 +65,4 @@ class PetsHasVaccine extends Model
 	{
 		return $this->belongsTo(Vaccine::class, 'vaccines_id');
 	}
-	/**
-     * Get the vaccine name.
-     */
-    protected function vaccineName(): Attribute
-    {
-        return Attribute::make(
-            get: fn () => $this->vaccine() ? $this->vaccine()->first()->name : 'Vaccine',
-        );
-    }
 }
