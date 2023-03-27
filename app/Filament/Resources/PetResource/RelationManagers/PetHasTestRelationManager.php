@@ -17,7 +17,6 @@ class PetHasTestRelationManager extends RelationManager
 
     protected static ?string $title = 'Test';
 
-    protected static ?string $recordTitleAttribute = 'testName';
 
     public static function form(Form $form): Form
     {
@@ -35,7 +34,9 @@ class PetHasTestRelationManager extends RelationManager
                         'unknown' => 'Unkown',
                         'positive' => 'Positive',
                         'negative' => 'Negative',
-                    ])->required(),
+                    ])
+                        ->disablePlaceholderSelection()
+                    ->required(),
                 Forms\Components\TextInput::make('local')->maxLength(50),
                 Forms\Components\TextInput::make('application')->maxLength(100),
                 Forms\Components\Textarea::make('observation')->maxLength(300)->columnSpanFull(),
@@ -51,7 +52,12 @@ class PetHasTestRelationManager extends RelationManager
                 Tables\Columns\TextColumn::make('date')
                     ->sortable()
                     ->date(config('filament.date_format')),
-                Tables\Columns\TextColumn::make('result')
+                Tables\Columns\BadgeColumn::make('result')
+                    ->colors([
+                        'warning' => 'unknown',
+                        'success' => 'positive',
+                        'danger' => 'negative',
+                    ])
                     ->sortable(),
                 Tables\Columns\TextColumn::make('local')
                     ->sortable()
@@ -70,11 +76,11 @@ class PetHasTestRelationManager extends RelationManager
                 ]),
             ])
             ->headerActions([
-                Tables\Actions\CreateAction::make(),
+                Tables\Actions\CreateAction::make()->modalHeading( __('filament-support::actions/create.single.modal.heading', ['label' => self::getTitle()])),
             ])
             ->actions([
-                Tables\Actions\ViewAction::make(),
-                Tables\Actions\EditAction::make(),
+                Tables\Actions\ViewAction::make()->modalHeading(fn ($record) => __('filament-support::actions/view.single.modal.heading', ['label' => $record->test()?->first()->name ?? self::getTitle()])),
+                Tables\Actions\EditAction::make()->modalHeading(fn ($record) => __('filament-support::actions/edit.single.modal.heading', ['label' => $record->test()?->first()->name ?? self::getTitle()])),
                 Tables\Actions\DeleteAction::make(),
             ])
             ->bulkActions([

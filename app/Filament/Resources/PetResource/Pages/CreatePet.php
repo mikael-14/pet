@@ -70,6 +70,7 @@ class CreatePet extends CreateRecord
                                         ->loadingIndicatorPosition('left')
                                         ->removeUploadedFileButtonPosition('right')
                                         ->enableDownload()
+                                        ->enableReordering()
                                         ->multiple()
                                         ->maxFiles(10),
                                 ])
