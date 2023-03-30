@@ -29,6 +29,9 @@ Example
 ```
 docker-compose exec app composer install
 docker-compose exec app php artisan key:generate
+docker-compose exec app php artisan migrate
+docker-compose exec app php artisan shield:generate --all
+docker-compose exec app php artisan shield:super-admin
 ```
 To stop all containers 
 ```

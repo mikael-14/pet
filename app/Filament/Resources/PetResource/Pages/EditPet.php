@@ -60,22 +60,6 @@ class EditPet extends EditRecord
                                         ->maxLength(50),
                                     RichEditor::make('observation')->columnSpan('full'),
                                 ])->columns(2),
-                            Section::make('Files')
-                                ->schema([
-                                    SpatieMediaLibraryFileUpload::make('additional-files')
-                                        ->extraAttributes(['class' => 'two-columns-items'])
-                                        ->getUploadedFileNameForStorageUsing(function (TemporaryUploadedFile $file): string {
-                                            return (string) str($file->getClientOriginalName())->prepend('additional-file-' . Carbon::today()->format('Y_m_d') . '-') ;
-                                        })
-                                        ->collection('additional-files')
-                                        ->loadingIndicatorPosition('left')
-                                        ->removeUploadedFileButtonPosition('right')
-                                        ->enableReordering()
-                                        ->enableDownload()
-                                        ->multiple()
-                                        ->maxFiles(10),
-                                ])
-                                ->collapsible(),
                         ])->columnSpan(['lg' => 2]),
 
                     Group::make()
