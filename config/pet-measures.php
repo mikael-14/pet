@@ -1,11 +1,29 @@
 <?php 
 /*
 * values for the table (measures)
+*
+* TODO: maybe instead array of configs, set in table 
+*
+*   Example:
+* 
+*   'unique key' =>  [
+*       'name' => 'Weight',
+*       'unit' => 'Kg',
+*       'variation' => 0.1,
+*   ],
 */
 return [
-    //'unique key' => display name ,
-    'weight' => 'Weight',
-    'height' => 'Height',
+    
+    'weight' => [
+        'name' => 'Weight',
+        'unit' => 'Kg',
+        'variation' => 0.1,
+    ],
+    'height' => [
+        'name' => 'height',
+        'unit' => 'cm',
+        'variation' => null,
+    ],
 ]
 
 ?>

@@ -39,6 +39,8 @@ use Spatie\MediaLibrary\InteractsWithMedia;
  * 
  * @property PetLocation $pet_location
  * @property PetStatus $pet_status
+ * @property Collection|PetsHasMeasure[] $pets_has_measures
+ * @property Collection|Test[] $tests
  * @property Collection|Vaccine[] $vaccines
  *
  * @package App\Models
@@ -99,6 +101,11 @@ class Pet extends Model implements HasMedia
 	{
 		return $this->hasMany(PetsHasTest::class, 'pets_id');
 	}
+	public function pets_has_measures()
+	{
+		return $this->hasMany(PetsHasMeasure::class, 'pets_id');
+	}
+
 	public function tests()
 	{
 		return $this->belongsToMany(Test::class, 'pets_has_tests', 'pets_id', 'tests_id')
