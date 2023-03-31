@@ -3,6 +3,8 @@
 namespace App\Filament\Resources\PetResource\RelationManagers;
 
 use App\Models\Vaccine;
+use Carbon\Carbon;
+use Closure;
 use Filament\Forms;
 use Filament\Resources\Form;
 use Filament\Resources\RelationManagers\RelationManager;
@@ -23,12 +25,39 @@ class PetHasVaccineRelationManager extends RelationManager
             ->schema([
                 Forms\Components\Select::make('vaccines_id')
                     ->options(Vaccine::all()->pluck('name', 'id'))
+                    ->reactive()
+                    ->afterStateUpdated(function (Closure $set, Closure $get, $state) {
+                        if ($get('id') === null) {
+                            $expires = Vaccine::find($state)?->expires ?? 0;
+                            if ($expires > 0 && !empty($get('date'))) {
+                                $new_date_expires = Carbon::parse($get('date'))->addDays($expires);
+                                $set('expires_at', $new_date_expires);
+                            }
+                        }
+                    })
                     ->columnSpanFull()
                     ->required(),
                 Forms\Components\DatePicker::make('date')
                     ->displayFormat(config('filament.date_format'))
+                    ->reactive()
+                    ->afterStateUpdated(function (Closure $set, Closure $get, $state) {
+                        if ($get('id') === null) {
+                            $expires = Vaccine::find($get('vaccines_id'))?->expires ?? 0;
+                            if ($expires > 0 && !empty($state)) {
+                                $new_date_expires = Carbon::parse($state)->addDays($expires);
+                                $set('expires_at', $new_date_expires);
+                            }
+                        }
+                    })
                     ->required(),
                 Forms\Components\DatePicker::make('expires_at')
+                    ->helperText(function (Closure $get) {
+                        $expires = Vaccine::find($get('vaccines_id'))?->expires ?? 0;
+                        if ($expires > 0) {
+                            return "Default expiration in {$expires} days" . $get('id') . '';
+                        }
+                        return 'No expiration defined';
+                    })
                     ->afterOrEqual('date')
                     ->displayFormat(config('filament.date_format')),
                 Forms\Components\TextInput::make('local')->maxLength(50),

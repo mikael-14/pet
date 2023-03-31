@@ -101,7 +101,7 @@ class Pet extends Model implements HasMedia
 	{
 		return $this->hasMany(PetsHasTest::class, 'pets_id');
 	}
-	public function pets_has_measures()
+	public function pet_has_measures()
 	{
 		return $this->hasMany(PetsHasMeasure::class, 'pets_id');
 	}
