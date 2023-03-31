@@ -58,22 +58,6 @@ class CreatePet extends CreateRecord
                                         ->maxLength(50),
                                     RichEditor::make('observation')->columnSpan('full'),
                                 ])->columns(2),
-                        ])->columnSpan(['lg' => 2]),
-                    Group::make()
-                        ->schema([
-                            Section::make('Image')
-                                ->schema([
-                                    SpatieMediaLibraryFileUpload::make('image')
-                                        ->acceptedFileTypes(['image/*'])
-                                        ->getUploadedFileNameForStorageUsing(function (TemporaryUploadedFile $file): string {
-                                            return (string) str($file->getClientOriginalName())->prepend('main-image-' . Carbon::today()->format('Y_m_d') . '-');
-                                        })
-                                        ->collection('main-image')
-                                        ->enableOpen()
-                                        ->enableDownload()
-                                        ->columnSpan('full'),
-                                ]),
-
                             Section::make('Status')
                                 ->schema([
                                     Select::make('pet_statuses_id')
@@ -101,7 +85,23 @@ class CreatePet extends CreateRecord
                                     TextInput::make('sterilized_local')
                                         ->visible(fn ($get) => $get('sterilized'))
                                         ->maxLength(50),
+                                ])->columns(2),
+                        ])->columnSpan(['lg' => 2]),
+                    Group::make()
+                        ->schema([
+                            Section::make('Image')
+                                ->schema([
+                                    SpatieMediaLibraryFileUpload::make('image')
+                                        ->acceptedFileTypes(['image/*'])
+                                        ->getUploadedFileNameForStorageUsing(function (TemporaryUploadedFile $file): string {
+                                            return (string) str($file->getClientOriginalName())->prepend('main-image-' . Carbon::today()->format('Y_m_d') . '-');
+                                        })
+                                        ->collection('main-image')
+                                        ->enableOpen()
+                                        ->enableDownload()
+                                        ->columnSpan('full'),
                                 ]),
+
                         ])->columnSpan(['lg' => 1]),
                 ])
                 ->columns(3)

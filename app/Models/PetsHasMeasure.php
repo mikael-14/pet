@@ -8,9 +8,10 @@ namespace App\Models;
 
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Blade;
 
 /**
- * Class PetsHasMeasure
+ * Class PetHasMeasure
  * 
  * @property int $id
  * @property int $pets_id
@@ -53,5 +54,29 @@ class PetsHasMeasure extends Model
 	public function pet()
 	{
 		return $this->belongsTo(Pet::class, 'pets_id');
+	}
+	public function calculateVariation(): float
+	{
+		$variation = 0;
+		$getPreviousRecord = PetsHasMeasure::where('id', '!=', $this->id)->where('date', '<', $this->date)->where('type', $this->type)->orderBy('date', 'DESC')->first();
+		if ($getPreviousRecord) {
+			$variation = $this->value - $getPreviousRecord->value;
+		}
+		return $variation;
+	}
+	public function getConfigMeasureVariation(): float|null
+	{
+		$configMeasures = config('pet-measures', []);
+		return $configMeasures[$this->type]['variation'] ?? null;
+	}
+	public function getConfigMeasureUnit(): string
+	{
+		$configMeasures = config('pet-measures', []);
+		return $configMeasures[$this->type]['unit'] ?? '';
+	}
+	public function getConfigMeasureName(): string
+	{
+		$configMeasures = config('pet-measures', []);
+		return $configMeasures[$this->type]['name'] ?? $this->type;
 	}
 }

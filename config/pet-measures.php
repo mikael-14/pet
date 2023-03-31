@@ -9,7 +9,7 @@
 *   'unique key' =>  [
 *       'name' => 'Weight',
 *       'unit' => 'Kg',
-*       'variation' => 0.1,
+*       'variation' => -0.1, //perigo se perder mais que -0.1 
 *   ],
 */
 return [
@@ -20,7 +20,7 @@ return [
         'variation' => 0.1,
     ],
     'height' => [
-        'name' => 'height',
+        'name' => 'Height',
         'unit' => 'cm',
         'variation' => null,
     ],

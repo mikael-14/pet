@@ -2,7 +2,7 @@
 
 namespace App\Filament\Resources\PetResource\RelationManagers;
 
-use App\Models\PetsHasMeasure;
+use App\Models\PetHasMeasure;
 use Filament\Forms;
 use Filament\Resources\Form;
 use Filament\Resources\RelationManagers\RelationManager;
@@ -10,10 +10,12 @@ use Filament\Resources\Table;
 use Filament\Tables;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
+use Illuminate\Support\Facades\Blade;
+use Illuminate\Support\HtmlString;
 
-class PetsHasMeasuresRelationManager extends RelationManager
+class PetHasMeasuresRelationManager extends RelationManager
 {
-    protected static string $relationship = 'pets_has_measures';
+    protected static string $relationship = 'pet_has_measures';
 
     protected static ?string $title = 'Measure';
 
@@ -21,12 +23,15 @@ class PetsHasMeasuresRelationManager extends RelationManager
 
     public static function form(Form $form): Form
     {
-        return $form
-            ->schema([
-                Forms\Components\TextInput::make('type')
-                    ->required()
-                    ->maxLength(255),
-                Forms\Components\TextInput::make('value')
+        $configs = config('pet-measures', []);
+        $schema = [];
+        foreach ($configs as $key => $config) {
+            $schema = array_merge($schema, [
+                Forms\Components\Hidden::make('value'.$key)->default($key),
+                Forms\Components\TextInput::make('type-'.$key)
+                    ->default($config['name'])
+                    ->disabled(),
+                Forms\Components\TextInput::make('value-display-'.$key)
                     ->numeric()
                     ->mask(
                         fn (Forms\Components\TextInput\Mask $mask) => $mask
@@ -36,26 +41,26 @@ class PetsHasMeasuresRelationManager extends RelationManager
                             ->mapToDecimalSeparator([',']) // Map additional characters to the decimal separator.
                             ->minValue(0) // Set the minimum value that the number can be.
                             ->padFractionalZeros() // Pad zeros at the end of the number to always maintain the maximum number of decimal places.
-                    )
-                    ->required(),
-                Forms\Components\DatePicker::make('date')
-                    ->displayFormat(config('filament.date_format'))
-                    ->required(),
-                Forms\Components\TextInput::make('local')->maxLength(50),
-                Forms\Components\TextInput::make('application')->maxLength(100),
-                Forms\Components\Textarea::make('observation')->maxLength(300)->columnSpanFull(),
+                    ),
             ]);
+        }
+        $schema = array_merge($schema, [
+            Forms\Components\DatePicker::make('date')->displayFormat(config('filament.date_format'))->required(),
+            Forms\Components\TextInput::make('local')->maxLength(50),
+            Forms\Components\TextInput::make('application')->maxLength(100),
+            Forms\Components\Textarea::make('observation')->maxLength(300)->columnSpanFull(),
+        ]);
+        return $form
+            ->schema($schema);
     }
 
     public static function table(Table $table): Table
     {
         return $table
             ->columns([
-                Tables\Columns\TextColumn::make('type')->searchable(),
-                Tables\Columns\TextColumn::make('value'),
-                Tables\Columns\TextColumn::make('variation_value')->getStateUsing(function (PetsHasMeasure $record): string {
-                    return  '<heroicon-o-plus />';
-                })->html(),
+                Tables\Columns\TextColumn::make('type')->getStateUsing(fn ($record) => $record->getConfigMeasureName())
+                ->searchable(),
+                Tables\Columns\ViewColumn::make('value')->view('filament.tables.columns.label-variation'),
                 Tables\Columns\TextColumn::make('date')
                     ->sortable()
                     ->date(config('filament.date_format')),
@@ -74,7 +79,11 @@ class PetsHasMeasuresRelationManager extends RelationManager
                 //
             ])
             ->headerActions([
-                Tables\Actions\CreateAction::make(),
+                Tables\Actions\CreateAction::make()->beforeFormValidated(function () {
+                    $state = $this->form->getState();
+                    $a = 1;
+                    // Runs before the form fields are validated when the form is submitted.
+                }),
             ])
             ->actions([
                 Tables\Actions\ViewAction::make(),
@@ -94,4 +103,5 @@ class PetsHasMeasuresRelationManager extends RelationManager
     {
         return 'desc';
     }
+     
 }

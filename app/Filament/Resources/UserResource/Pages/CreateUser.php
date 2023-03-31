@@ -66,7 +66,7 @@ class CreateUser extends CreateRecord
         // Runs after the form fields are saved to the database.
         //insert role in the table
         $state = $this->form->getState();
-         if (isset($state['role'][0])) {
+        if (isset($state['role'][0])) {
             ModelHasRole::insert([
                 'role_id' => $state['role'][0],
                 'model_type' => 'App\Models\User',
