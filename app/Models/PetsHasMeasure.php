@@ -62,7 +62,7 @@ class PetsHasMeasure extends Model
 		if ($getPreviousRecord) {
 			$variation = $this->value - $getPreviousRecord->value;
 		}
-		return $variation;
+		return round($variation,3);
 	}
 	public function getConfigMeasureVariation(): float|null
 	{
