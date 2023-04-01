@@ -87,7 +87,7 @@ class EditPet extends EditRecord
                                     TextInput::make('sterilized_local')
                                         ->visible(fn ($get) => $get('sterilized'))
                                         ->maxLength(50),
-                                ])->columns(2),
+                                ])->collapsible()->columns(2),
                         ])->columnSpan(['lg' => 2]),
 
                     Group::make()
@@ -103,7 +103,7 @@ class EditPet extends EditRecord
                                         ->enableOpen()
                                         ->enableDownload()
                                         ->columnSpan('full'),
-                                ]),
+                                ])->collapsible(),
 
                         ])->columnSpan(['lg' => 1]),
 

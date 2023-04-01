@@ -85,7 +85,7 @@ class CreatePet extends CreateRecord
                                     TextInput::make('sterilized_local')
                                         ->visible(fn ($get) => $get('sterilized'))
                                         ->maxLength(50),
-                                ])->columns(2),
+                                ])->columns(2)->collapsible(),
                         ])->columnSpan(['lg' => 2]),
                     Group::make()
                         ->schema([
@@ -100,7 +100,7 @@ class CreatePet extends CreateRecord
                                         ->enableOpen()
                                         ->enableDownload()
                                         ->columnSpan('full'),
-                                ]),
+                                ])->collapsible(),
 
                         ])->columnSpan(['lg' => 1]),
                 ])
