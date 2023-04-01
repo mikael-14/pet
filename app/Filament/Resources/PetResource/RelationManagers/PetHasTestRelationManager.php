@@ -2,8 +2,10 @@
 
 namespace App\Filament\Resources\PetResource\RelationManagers;
 
+use App\Models\PetsHasTest;
 use App\Models\Test;
 use Filament\Forms;
+use Filament\Forms\Components\SpatieMediaLibraryFileUpload;
 use Filament\Resources\Form;
 use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Resources\Table;
@@ -35,11 +37,18 @@ class PetHasTestRelationManager extends RelationManager
                         'positive' => 'Positive',
                         'negative' => 'Negative',
                     ])
+                    ->default('unknown')
                     ->disablePlaceholderSelection()
                     ->required(),
                 Forms\Components\TextInput::make('local')->maxLength(50),
                 Forms\Components\TextInput::make('application')->maxLength(100),
                 Forms\Components\Textarea::make('observation')->maxLength(300)->columnSpanFull(),
+                SpatieMediaLibraryFileUpload::make('file')
+                ->disk('petsTests')
+                ->collection('pets-tests')
+                ->enableOpen()
+                ->enableDownload()
+                ->columnSpan('full'),
             ]);
     }
 
@@ -79,6 +88,13 @@ class PetHasTestRelationManager extends RelationManager
                 Tables\Actions\CreateAction::make()->modalHeading( __('filament-support::actions/create.single.modal.heading', ['label' => self::getTitle()])),
             ])
             ->actions([
+                Tables\Actions\Action::make('file')
+                ->label('View file')
+                ->color('info')
+                ->url(fn  (PetsHasTest $record) => $record->getMedia('pets-tests')[0]?->getFullUrl())
+                ->visible(fn (PetsHasTest $record): bool => isset($record->getMedia('pets-tests')[0]) ? true : false)
+                ->openUrlInNewTab()
+                ->icon('tabler-file-download'),
                 Tables\Actions\ViewAction::make()->modalHeading(fn ($record) => __('filament-support::actions/view.single.modal.heading', ['label' => $record->test()?->first()->name ?? self::getTitle()])),
                 Tables\Actions\EditAction::make()->modalHeading(fn ($record) => __('filament-support::actions/edit.single.modal.heading', ['label' => $record->test()?->first()->name ?? self::getTitle()])),
                 Tables\Actions\DeleteAction::make(),

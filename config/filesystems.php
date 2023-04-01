@@ -55,7 +55,21 @@ return [
             'use_path_style_endpoint' => env('AWS_USE_PATH_STYLE_ENDPOINT', false),
             'throw' => false,
         ],
-
+        /* custom file storage */
+        'petsMainImage' => [
+            'driver' => 'local',
+            'root'   => storage_path('app/public/pets/main/image'),
+            'url'        => env('APP_URL').'/storage'.'/pets/main/image',
+            'visibility' => 'public',
+            'throw' => false,
+        ],
+        'petsTests' => [
+            'driver' => 'local',
+            'root'   => storage_path('app/public/pets/tests'),
+            'url'        => env('APP_URL').'/storage'.'/pets/tests',
+            'visibility' => 'public',
+            'throw' => false,
+        ],
     ],
 
     /*

@@ -10,6 +10,8 @@ use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Spatie\MediaLibrary\HasMedia;
+use Spatie\MediaLibrary\InteractsWithMedia;
 
 /**
  * Class PetsHasTest
@@ -31,9 +33,11 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  *
  * @package App\Models
  */
-class PetsHasTest extends Model
+class PetsHasTest extends Model implements HasMedia
 {
 	use SoftDeletes;
+	use InteractsWithMedia;
+	
 	protected $table = 'pets_has_tests';
 
 	protected $casts = [
@@ -52,7 +56,7 @@ class PetsHasTest extends Model
 		'result',
 		'local',
 		'application',
-		'observation'
+		'observation',
 	];
 
 	public function pet()

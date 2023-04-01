@@ -13,6 +13,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\InteractsWithMedia;
+
 /**
  * Class Pet
  * 
@@ -118,4 +119,8 @@ class Pet extends Model implements HasMedia
 					->withPivot('id', 'date', 'expires_at', 'local', 'application', 'observation', 'deleted_at')
 					->withTimestamps();
 	}
+	// determines whether the associated media files should be deleted when the Eloquent model is deleted. True for don't delete the media files
+	// public function shouldDeletePreservingMedia() :bool{
+	// 	return true;
+	// }
 }
