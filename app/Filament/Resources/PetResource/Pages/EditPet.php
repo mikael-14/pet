@@ -19,7 +19,6 @@ use Filament\Forms\Components\Select;
 use Filament\Forms\Components\SpatieMediaLibraryFileUpload;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
-use Livewire\TemporaryUploadedFile;
 
 class EditPet extends EditRecord
 {
@@ -96,10 +95,8 @@ class EditPet extends EditRecord
                                 ->schema([
                                     SpatieMediaLibraryFileUpload::make('image')
                                         ->acceptedFileTypes(['image/*'])
-                                        ->getUploadedFileNameForStorageUsing(function (TemporaryUploadedFile $file): string {
-                                            return (string) str($file->getClientOriginalName())->prepend('main-image-' . Carbon::today()->format('Y_m_d') . '-');
-                                        })
-                                        ->collection('main-image')
+                                        ->disk('petsMainImage')
+                                        ->collection('pets-main-image')
                                         ->enableOpen()
                                         ->enableDownload()
                                         ->columnSpan('full'),

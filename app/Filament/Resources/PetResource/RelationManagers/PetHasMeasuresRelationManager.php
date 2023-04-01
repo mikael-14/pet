@@ -107,6 +107,7 @@ class PetHasMeasuresRelationManager extends RelationManager
             ])
             ->headerActions([
                 Tables\Actions\CreateAction::make()->afterFormValidated(function (CreateAction $action, array $data) {
+                    // Runs after the form fields are validated when the form is submitted.
                     $filteredArr = array_filter(
                         $data,
                         fn ($key) => str_starts_with($key, 'value-'),
@@ -115,7 +116,6 @@ class PetHasMeasuresRelationManager extends RelationManager
                     $filteredArr = array_filter($filteredArr);
                     if (count($filteredArr) === 0)
                         $action->halt();
-                    // Runs before the form fields are validated when the form is submitted.
                 })->using(function (HasRelationshipTable $livewire, array $data) {
                     $filteredArr = array_filter(
                         $data,
@@ -124,14 +124,14 @@ class PetHasMeasuresRelationManager extends RelationManager
                     );
                     $newdata = [];
                     foreach ($filteredArr as $type) {
-                        if($data['value-'.$type]) {
-                            $data['value'] = $data['value-'.$type];
+                        if ($data['value-' . $type]) {
+                            $data['value'] = $data['value-' . $type];
                             $data['type'] = $type;
-                            $newdata[]=$data;
+                            $newdata[] = $data;
                         }
                     }
                     array_pop($newdata);
-                    foreach($newdata as $row) {
+                    foreach ($newdata as $row) {
                         $livewire->getRelationship()->create($row);
                     }
                     return $livewire->getRelationship()->create($data);
