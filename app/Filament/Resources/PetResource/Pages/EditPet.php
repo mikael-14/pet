@@ -101,7 +101,6 @@ class EditPet extends EditRecord
                                         ->enableDownload()
                                         ->columnSpan('full'),
                                 ])->collapsible(),
-
                         ])->columnSpan(['lg' => 1]),
 
                 ])
