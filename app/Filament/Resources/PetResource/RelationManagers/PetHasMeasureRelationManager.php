@@ -18,9 +18,9 @@ use Filament\Notifications\Notification;
 use Filament\Tables\Actions\CreateAction;
 use Filament\Tables\Contracts\HasRelationshipTable;
 
-class PetHasMeasuresRelationManager extends RelationManager
+class PetHasMeasureRelationManager extends RelationManager
 {
-    protected static string $relationship = 'pet_has_measures';
+    protected static string $relationship = 'pet_has_measure';
 
     protected static ?string $title = 'Measure';
 
