@@ -3,6 +3,7 @@
 namespace App\Filament\Resources\PetResource\Pages;
 
 use App\Filament\Resources\PetResource;
+use App\Models\Pet;
 use App\Models\PetLocation;
 use App\Models\PetStatus;
 use Carbon\Carbon;
@@ -47,6 +48,7 @@ class CreatePet extends CreateRecord
                                     DatePicker::make('birth_date')
                                         ->displayFormat(config('filament.date_format')),
                                     TextInput::make('chip')
+                                        ->unique(table: Pet::class, column: 'chip', ignoreRecord: true)
                                         ->maxLength(20)
                                         ->hint(fn ($state) => 'Digits: ' . strlen($state) . '')
                                         ->lazy(),

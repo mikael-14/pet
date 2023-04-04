@@ -102,11 +102,30 @@ class Pet extends Model implements HasMedia
 	{
 		return $this->hasMany(PetsHasTest::class, 'pets_id');
 	}
-	public function pet_has_measures()
+	public function pet_has_measure()
 	{
 		return $this->hasMany(PetsHasMeasure::class, 'pets_id');
 	}
-
+	public function pet_has_diet()
+	{
+		return $this->hasMany(PetsHasDiet::class, 'pets_id');
+	}
+	public function pet_has_deworming()
+	{
+		return $this->hasMany(PetsHasDeworming::class, 'pets_id');
+	}
+	public function dewormings()
+	{
+		return $this->belongsToMany(Deworming::class, 'pets_has_dewormings', 'pets_id', 'dewormings_id')
+					->withPivot('id', 'date', 'expiration_date', 'local', 'application', 'observation')
+					->withTimestamps();
+	}
+	public function diets()
+	{
+		return $this->belongsToMany(Diet::class, 'pets_has_diets', 'pets_id', 'diets_id')
+					->withPivot('id', 'date', 'portion', 'observation')
+					->withTimestamps();
+	}
 	public function tests()
 	{
 		return $this->belongsToMany(Test::class, 'pets_has_tests', 'pets_id', 'tests_id')
@@ -118,6 +137,11 @@ class Pet extends Model implements HasMedia
 		return $this->belongsToMany(Vaccine::class, 'pets_has_vaccines', 'pets_id', 'vaccines_id')
 					->withPivot('id', 'date', 'expires_at', 'local', 'application', 'observation', 'deleted_at')
 					->withTimestamps();
+	}
+	public function getConfigSpecie(): string
+	{
+		$configSpecies =config('pet-species', []);
+		return $configSpecies[$this->species] ?? $this->species;
 	}
 	// determines whether the associated media files should be deleted when the Eloquent model is deleted. True for don't delete the media files
 	// public function shouldDeletePreservingMedia() :bool{

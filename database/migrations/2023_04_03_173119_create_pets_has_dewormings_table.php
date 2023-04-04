@@ -13,17 +13,16 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('pets_has_vaccines', function (Blueprint $table) {
+        Schema::create('pets_has_dewormings', function (Blueprint $table) {
             $table->id();
             $table->foreignId('pets_id')->constrained(); 
-            $table->foreignId('vaccines_id')->constrained(); 
+            $table->foreignId('dewormings_id')->constrained(); 
             $table->date('date');
             $table->date('expires_at')->nullable();
             $table->string('local',50)->nullable();
             $table->string('application',100)->nullable();
             $table->string('observation',300)->nullable();
             $table->timestamps();
-            $table->softDeletes();
         });
     }
 
@@ -34,6 +33,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('pets_has_vaccines');
+        Schema::dropIfExists('pets_has_dewormings');
     }
 };

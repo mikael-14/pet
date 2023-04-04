@@ -13,11 +13,14 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('tests', function (Blueprint $table) {
+        Schema::create('pets_has_diets', function (Blueprint $table) {
             $table->id();
-            $table->string('name',100);
+            $table->foreignId('pets_id')->constrained(); 
+            $table->foreignId('diets_id')->constrained(); 
+            $table->date('date');
+            $table->string('portion',50)->nullable();
+            $table->string('observation',300)->nullable();
             $table->timestamps();
-            $table->softDeletes();
         });
     }
 
@@ -28,6 +31,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('tests');
+        Schema::dropIfExists('pets_has_diets');
     }
 };

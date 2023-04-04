@@ -48,6 +48,7 @@ class EditPet extends EditRecord
                                     DatePicker::make('birth_date')
                                         ->displayFormat(config('filament.date_format')),
                                     TextInput::make('chip')
+                                        ->unique(table: Pet::class, column: 'chip', ignorable: fn () => $this->getRecord(), ignoreRecord: true)
                                         ->maxLength(20)
                                         ->hint(fn ($state) => 'Digits: ' . strlen($state) . '')
                                         ->lazy(),

@@ -51,7 +51,7 @@ class EditUser extends EditRecord
                         ->placeholder('email@example.com')
                         ->helperText('Make sure this email is valid and unique.')
                         ->required()
-                        ->unique(table: 'users', column: 'email', ignorable: fn () => $this->getRecord(), ignoreRecord: true),
+                        ->unique(table: User::class, column: 'email', ignorable: fn () => $this->getRecord(), ignoreRecord: true),
                     \Filament\Forms\Components\Select::make('locale')->options(
                         config('filament-spatie-laravel-translatable-plugin.available_locales')
                     )->default('pt')
