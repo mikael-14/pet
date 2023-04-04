@@ -18,7 +18,7 @@ return new class extends Migration
             $table->foreignId('pets_id')->constrained(); 
             $table->foreignId('dewormings_id')->constrained(); 
             $table->date('date');
-            $table->date('expiration_date')->nullable();
+            $table->date('expires_at')->nullable();
             $table->string('local',50)->nullable();
             $table->string('application',100)->nullable();
             $table->string('observation',300)->nullable();

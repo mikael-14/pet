@@ -110,7 +110,16 @@ class Pet extends Model implements HasMedia
 	{
 		return $this->hasMany(PetsHasDiet::class, 'pets_id');
 	}
-
+	public function pet_has_deworming()
+	{
+		return $this->hasMany(PetsHasDeworming::class, 'pets_id');
+	}
+	public function dewormings()
+	{
+		return $this->belongsToMany(Deworming::class, 'pets_has_dewormings', 'pets_id', 'dewormings_id')
+					->withPivot('id', 'date', 'expiration_date', 'local', 'application', 'observation')
+					->withTimestamps();
+	}
 	public function diets()
 	{
 		return $this->belongsToMany(Diet::class, 'pets_has_diets', 'pets_id', 'diets_id')
