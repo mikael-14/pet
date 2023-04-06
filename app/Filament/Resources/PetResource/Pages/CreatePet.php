@@ -3,9 +3,9 @@
 namespace App\Filament\Resources\PetResource\Pages;
 
 use App\Filament\Resources\PetResource;
+use App\Models\EntryStatus;
 use App\Models\Pet;
-use App\Models\PetLocation;
-use App\Models\PetStatus;
+use App\Models\ShelterLocation;
 use Carbon\Carbon;
 use Filament\Forms\Components\Card;
 use Filament\Forms\Components\DatePicker;
@@ -58,27 +58,32 @@ class CreatePet extends CreateRecord
                                         ->maxLength(50),
                                     TextInput::make('coat')
                                         ->maxLength(50),
+                                    TextInput::make('breed')
+                                        ->maxLength(50),
+                                    Toggle::make('adoptable')
+                                        ->inline(false),
                                     RichEditor::make('observation')->columnSpan('full'),
                                 ])->columns(2),
                             Section::make('Status')
                                 ->schema([
-                                    Select::make('pet_statuses_id')
+                                    Select::make('shelter_locations_id')
                                         ->allowHtml()
                                         ->searchable()
                                         ->preload()
                                         ->options(
-                                            PetResource::getOptionWithColor(PetStatus::all())
+                                            PetResource::getOptionWithColor(ShelterLocation::all())
                                         )->required(),
-                                    Select::make('pet_locations_id')
+                                    Select::make('entry_statuses_id')
                                         ->allowHtml()
                                         ->searchable()
                                         ->preload()
                                         ->options(
-                                            PetResource::getOptionWithColor(PetLocation::all())
+                                            PetResource::getOptionWithColor(EntryStatus::all())
                                         )->required(),
                                     DatePicker::make('entry_date')
                                         ->displayFormat(config('filament.date_format'))
                                         ->required(),
+                                   
                                     Toggle::make('sterilized')
                                         ->inline(false)->reactive(),
                                     DatePicker::make('sterilized_date')
@@ -91,7 +96,7 @@ class CreatePet extends CreateRecord
                         ])->columnSpan(['lg' => 2]),
                     Group::make()
                         ->schema([
-                            Section::make('Image')
+                            Card::make()
                                 ->schema([
                                     SpatieMediaLibraryFileUpload::make('image')
                                         ->acceptedFileTypes(['image/*'])
@@ -100,7 +105,7 @@ class CreatePet extends CreateRecord
                                         ->enableOpen()
                                         ->enableDownload()
                                         ->columnSpan('full'),
-                                ])->collapsible(),
+                                ]),
 
                         ])->columnSpan(['lg' => 1]),
                 ])

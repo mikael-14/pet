@@ -2,9 +2,9 @@
 
 namespace App\Filament\Resources\Definitions;
 
-use App\Filament\Resources\Definitions\PetStatusResource\Pages;
-use App\Filament\Resources\Definitions\PetStatusResource\RelationManagers;
-use App\Models\PetStatus;
+use App\Filament\Resources\Definitions\EntryStatusResource\Pages;
+use App\Filament\Resources\Definitions\EntryStatusResource\RelationManagers;
+use App\Models\EntryStatus;
 use Filament\Forms;
 use Filament\Resources\Form;
 use Filament\Resources\Resource;
@@ -13,13 +13,13 @@ use Filament\Tables;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 
-class PetStatusResource extends Resource
+class EntryStatusResource extends Resource
 {
-    protected static ?string $model = PetStatus::class;
+    protected static ?string $model = EntryStatus::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-collection';
 
-    protected static ?string $slug = 'definitions/pet-status';
+    protected static ?string $slug = 'definitions/entry-status';
 
     protected static ?string $recordTitleAttribute = 'name';
 
@@ -60,7 +60,7 @@ class PetStatusResource extends Resource
     public static function getPages(): array
     {
         return [
-            'index' => Pages\ManagePetStatuses::route('/'),
+            'index' => Pages\ManageEntryStatus::route('/'),
         ];
     }    
 }

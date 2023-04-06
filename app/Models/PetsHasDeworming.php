@@ -46,7 +46,7 @@ class PetsHasDeworming extends Model
 		'pets_id',
 		'dewormings_id',
 		'date',
-		'expiration_date',
+		'expires_at',
 		'local',
 		'application',
 		'observation'

@@ -13,7 +13,7 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('pet_locations', function (Blueprint $table) {
+        Schema::create('entry_statuses', function (Blueprint $table) {
             $table->id();
             $table->string('name',20);
             $table->string('color','7')->default('#cccccc')->nullable();
@@ -28,6 +28,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('pet_locations');
+        Schema::dropIfExists('entry_statuses');
     }
 };
