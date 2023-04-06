@@ -20,26 +20,29 @@ use Spatie\MediaLibrary\InteractsWithMedia;
  * @property int $id
  * @property string $name
  * @property string|null $species
- * @property string|null $image
  * @property string $gender
+ * @property bool $adoptable
  * @property string|null $chip
  * @property Carbon|null $chip_date
- * @property int $pet_statuses_id
- * @property int $pet_locations_id
- * @property Carbon|null $birth_date
+ * @property int $shelter_locations_id
  * @property Carbon $entry_date
+ * @property int $entry_statuses_id
+ * @property Carbon|null $birth_date
  * @property bool $sterilized
  * @property Carbon|null $sterilized_date
  * @property string|null $sterilized_local
  * @property string|null $color
  * @property string|null $coat
+ * @property string|null $breed
  * @property string|null $observation
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
  * @property string|null $deleted_at
  * 
- * @property PetLocation $pet_location
- * @property PetStatus $pet_status
+ * @property EntryStatus $entry_status
+ * @property ShelterLocation $shelter_location
+ * @property Collection|Deworming[] $dewormings
+ * @property Collection|Diet[] $diets
  * @property Collection|PetsHasMeasure[] $pets_has_measures
  * @property Collection|Test[] $tests
  * @property Collection|Vaccine[] $vaccines
@@ -52,47 +55,50 @@ class Pet extends Model implements HasMedia
 	use InteractsWithMedia;
 
 	protected $table = 'pets';
-
+	
 	protected $casts = [
-		'pet_statuses_id' => 'int',
-		'pet_locations_id' => 'int',
+		'adoptable' => 'bool',
+		'shelter_locations_id' => 'int',
+		'entry_statuses_id' => 'int',
 		'sterilized' => 'bool'
 	];
 
 	protected $dates = [
 		'chip_date',
-		'birth_date',
 		'entry_date',
+		'birth_date',
 		'sterilized_date'
 	];
 
 	protected $fillable = [
 		'name',
 		'species',
-		'image',
 		'gender',
+		'adoptable',
 		'chip',
 		'chip_date',
-		'pet_statuses_id',
-		'pet_locations_id',
-		'birth_date',
+		'shelter_locations_id',
 		'entry_date',
+		'entry_statuses_id',
+		'birth_date',
 		'sterilized',
 		'sterilized_date',
 		'sterilized_local',
 		'color',
 		'coat',
+		'breed',
 		'observation'
 	];
 
-	public function pet_location()
-	{
-		return $this->belongsTo(PetLocation::class, 'pet_locations_id');
-	}
 
-	public function pet_status()
+	public function shelter_location()
 	{
-		return $this->belongsTo(PetStatus::class, 'pet_statuses_id');
+		return $this->belongsTo(ShelterLocation::class, 'shelter_locations_id');
+	}		
+
+	public function entry_status()
+	{
+		return $this->belongsTo(EntryStatus::class, 'entry_statuses_id');
 	}
 	public function pet_has_vaccine()
 	{

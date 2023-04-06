@@ -3,10 +3,10 @@
 namespace App\Policies;
 
 use App\Models\User;
-use App\Models\PetLocation;
+use App\Models\ShelterLocation;
 use Illuminate\Auth\Access\HandlesAuthorization;
 
-class PetLocationPolicy
+class ShelterLocationPolicy
 {
     use HandlesAuthorization;
 
@@ -18,19 +18,19 @@ class PetLocationPolicy
      */
     public function viewAny(User $user)
     {
-        return $user->can('view_any_definitions::pet::location');
+        return $user->can('view_any_definitions::shelter::location');
     }
 
     /**
      * Determine whether the user can view the model.
      *
      * @param  \App\Models\User  $user
-     * @param  \App\Models\PetLocation  $petLocation
+     * @param  \App\Models\ShelterLocation  $shelterLocation
      * @return \Illuminate\Auth\Access\Response|bool
      */
-    public function view(User $user, PetLocation $petLocation)
+    public function view(User $user, ShelterLocation $shelterLocation)
     {
-        return $user->can('view_definitions::pet::location');
+        return $user->can('view_definitions::shelter::location');
     }
 
     /**
@@ -41,31 +41,31 @@ class PetLocationPolicy
      */
     public function create(User $user)
     {
-        return $user->can('create_definitions::pet::location');
+        return $user->can('create_definitions::shelter::location');
     }
 
     /**
      * Determine whether the user can update the model.
      *
      * @param  \App\Models\User  $user
-     * @param  \App\Models\PetLocation  $petLocation
+     * @param  \App\Models\ShelterLocation  $shelterLocation
      * @return \Illuminate\Auth\Access\Response|bool
      */
-    public function update(User $user, PetLocation $petLocation)
+    public function update(User $user, ShelterLocation $shelterLocation)
     {
-        return $user->can('update_definitions::pet::location');
+        return $user->can('update_definitions::shelter::location');
     }
 
     /**
      * Determine whether the user can delete the model.
      *
      * @param  \App\Models\User  $user
-     * @param  \App\Models\PetLocation  $petLocation
+     * @param  \App\Models\ShelterLocation  $shelterLocation
      * @return \Illuminate\Auth\Access\Response|bool
      */
-    public function delete(User $user, PetLocation $petLocation)
+    public function delete(User $user, ShelterLocation $shelterLocation)
     {
-        return $user->can('delete_definitions::pet::location');
+        return $user->can('delete_definitions::shelter::location');
     }
 
     /**
@@ -76,19 +76,19 @@ class PetLocationPolicy
      */
     public function deleteAny(User $user)
     {
-        return $user->can('delete_any_definitions::pet::location');
+        return $user->can('delete_any_definitions::shelter::location');
     }
 
     /**
      * Determine whether the user can permanently delete.
      *
      * @param  \App\Models\User  $user
-     * @param  \App\Models\PetLocation  $petLocation
+     * @param  \App\Models\ShelterLocation  $shelterLocation
      * @return \Illuminate\Auth\Access\Response|bool
      */
-    public function forceDelete(User $user, PetLocation $petLocation)
+    public function forceDelete(User $user, ShelterLocation $shelterLocation)
     {
-        return $user->can('force_delete_definitions::pet::location');
+        return $user->can('force_delete_definitions::shelter::location');
     }
 
     /**
@@ -99,19 +99,19 @@ class PetLocationPolicy
      */
     public function forceDeleteAny(User $user)
     {
-        return $user->can('force_delete_any_definitions::pet::location');
+        return $user->can('force_delete_any_definitions::shelter::location');
     }
 
     /**
      * Determine whether the user can restore.
      *
      * @param  \App\Models\User  $user
-     * @param  \App\Models\PetLocation  $petLocation
+     * @param  \App\Models\ShelterLocation  $shelterLocation
      * @return \Illuminate\Auth\Access\Response|bool
      */
-    public function restore(User $user, PetLocation $petLocation)
+    public function restore(User $user, ShelterLocation $shelterLocation)
     {
-        return $user->can('restore_definitions::pet::location');
+        return $user->can('restore_definitions::shelter::location');
     }
 
     /**
@@ -122,19 +122,19 @@ class PetLocationPolicy
      */
     public function restoreAny(User $user)
     {
-        return $user->can('restore_any_definitions::pet::location');
+        return $user->can('restore_any_definitions::shelter::location');
     }
 
     /**
      * Determine whether the user can replicate.
      *
      * @param  \App\Models\User  $user
-     * @param  \App\Models\PetLocation  $petLocation
+     * @param  \App\Models\ShelterLocation  $shelterLocation
      * @return \Illuminate\Auth\Access\Response|bool
      */
-    public function replicate(User $user, PetLocation $petLocation)
+    public function replicate(User $user, ShelterLocation $shelterLocation)
     {
-        return $user->can('replicate_definitions::pet::location');
+        return $user->can('replicate_definitions::shelter::location');
     }
 
     /**
@@ -145,7 +145,7 @@ class PetLocationPolicy
      */
     public function reorder(User $user)
     {
-        return $user->can('reorder_definitions::pet::location');
+        return $user->can('reorder_definitions::shelter::location');
     }
 
 }

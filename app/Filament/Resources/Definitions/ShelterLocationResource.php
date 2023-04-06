@@ -2,9 +2,9 @@
 
 namespace App\Filament\Resources\Definitions;
 
-use App\Filament\Resources\Definitions\PetLocationResource\Pages;
-use App\Filament\Resources\Definitions\PetLocationResource\RelationManagers;
-use App\Models\PetLocation;
+use App\Filament\Resources\Definitions\ShelterLocationResource\Pages;
+use App\Filament\Resources\Definitions\ShelterLocationResource\RelationManagers;
+use App\Models\ShelterLocation;
 use Filament\Forms;
 use Filament\Resources\Form;
 use Filament\Resources\Resource;
@@ -13,13 +13,13 @@ use Filament\Tables;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 
-class PetLocationResource extends Resource
+class ShelterLocationResource extends Resource
 {
-    protected static ?string $model = PetLocation::class;
+    protected static ?string $model = ShelterLocation::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-collection';
 
-    protected static ?string $slug = 'definitions/pet-location';
+    protected static ?string $slug = 'definitions/shelter-location';
 
     protected static ?string $recordTitleAttribute = 'name';
 
@@ -60,7 +60,7 @@ class PetLocationResource extends Resource
     public static function getPages(): array
     {
         return [
-            'index' => Pages\ManagePetLocations::route('/'),
+            'index' => Pages\ManageShelterLocations::route('/'),
         ];
     }    
 }

@@ -4,9 +4,12 @@ namespace App\Filament\Resources;
 
 use App\Filament\Resources\PetResource\Pages;
 use App\Filament\Resources\PetResource\RelationManagers;
+use App\Models\EntryState;
+use App\Models\EntryStatus;
 use App\Models\Pet;
 use App\Models\PetStatus;
 use App\Models\PetLocation;
+use App\Models\ShelterLocation;
 use Filament\Forms;
 use Filament\Forms\Components\SpatieMediaLibraryFileUpload;
 use Filament\Resources\Form;
@@ -38,17 +41,16 @@ class PetResource extends Resource
                     'tabler-gender-female' =>'female',
                 ])->iconPosition('after')
                     ->toggleable(),
-                Tables\Columns\TextColumn::make('pet_status.name')->extraAttributes(static function (Pet $record): array {
-                    return ['style' => 'background-color:' . $record->pet_status->color, 'class' => 'table-text-column-badge'];
+                Tables\Columns\TextColumn::make('entry_status.name')->extraAttributes(static function (Pet $record): array {
+                    return ['style' => 'background-color:' . $record->entry_status->color, 'class' => 'table-text-column-badge'];
                 })
-
-                    ->sortable()
-                    ->toggleable(),
-                Tables\Columns\TextColumn::make('pet_location.name')->extraAttributes(static function (Pet $record): array {
-                    return ['style' => 'background-color:' . $record->pet_location->color, 'class' => 'table-text-column-badge'];
+                ->toggleable(isToggledHiddenByDefault: true)
+                    ->sortable(),
+                Tables\Columns\TextColumn::make('shelter_location.name')->extraAttributes(static function (Pet $record): array {
+                    return ['style' => 'background-color:' . $record->shelter_location->color, 'class' => 'table-text-column-badge'];
                 })
                     ->sortable()
-                    ->toggleable(),
+                    ->toggleable(isToggledHiddenByDefault: true),
                 Tables\Columns\TextColumn::make('species')
                     ->toggleable(isToggledHiddenByDefault: true),
 
@@ -80,12 +82,12 @@ class PetResource extends Resource
                         1 => 'Yes',
                         0 => 'No',
                     ]),
-                Tables\Filters\SelectFilter::make('pet_statuses_id')
+                Tables\Filters\SelectFilter::make('entry_statuses_id')
                     ->multiple()
-                    ->options(PetStatus::all()->pluck('name', 'id')),
-                Tables\Filters\SelectFilter::make('pet_locations_id')
+                    ->options(EntryStatus::all()->pluck('name', 'id')),
+                Tables\Filters\SelectFilter::make('shelter_locations_id')
                     ->multiple()
-                    ->options(PetLocation::all()->pluck('name', 'id')),
+                    ->options(ShelterLocation::all()->pluck('name', 'id')),
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),
@@ -107,6 +109,7 @@ class PetResource extends Resource
         return [
             RelationManagers\PetHasDietRelationManager::class,
             RelationManagers\PetHasMeasureRelationManager::class,
+            RelationManagers\PetHasDewormingRelationManager::class,
             RelationManagers\PetHasVaccineRelationManager::class,
             RelationManagers\PetHasTestRelationManager::class,
         ];

@@ -3,10 +3,10 @@
 namespace App\Policies;
 
 use App\Models\User;
-use App\Models\PetStatus;
+use App\Models\EntryStatus;
 use Illuminate\Auth\Access\HandlesAuthorization;
 
-class PetStatusPolicy
+class EntryStatusPolicy
 {
     use HandlesAuthorization;
 
@@ -18,19 +18,19 @@ class PetStatusPolicy
      */
     public function viewAny(User $user)
     {
-        return $user->can('view_any_definitions::pet::status');
+        return $user->can('view_any_definitions::entry::status');
     }
 
     /**
      * Determine whether the user can view the model.
      *
      * @param  \App\Models\User  $user
-     * @param  \App\Models\PetStatus  $petStatus
+     * @param  \App\Models\EntryStatus  $entryStatus
      * @return \Illuminate\Auth\Access\Response|bool
      */
-    public function view(User $user, PetStatus $petStatus)
+    public function view(User $user, EntryStatus $entryStatus)
     {
-        return $user->can('view_definitions::pet::status');
+        return $user->can('view_definitions::entry::status');
     }
 
     /**
@@ -41,31 +41,31 @@ class PetStatusPolicy
      */
     public function create(User $user)
     {
-        return $user->can('create_definitions::pet::status');
+        return $user->can('create_definitions::entry::status');
     }
 
     /**
      * Determine whether the user can update the model.
      *
      * @param  \App\Models\User  $user
-     * @param  \App\Models\PetStatus  $petStatus
+     * @param  \App\Models\EntryStatus  $entryStatus
      * @return \Illuminate\Auth\Access\Response|bool
      */
-    public function update(User $user, PetStatus $petStatus)
+    public function update(User $user, EntryStatus $entryStatus)
     {
-        return $user->can('update_definitions::pet::status');
+        return $user->can('update_definitions::entry::status');
     }
 
     /**
      * Determine whether the user can delete the model.
      *
      * @param  \App\Models\User  $user
-     * @param  \App\Models\PetStatus  $petStatus
+     * @param  \App\Models\EntryStatus  $entryStatus
      * @return \Illuminate\Auth\Access\Response|bool
      */
-    public function delete(User $user, PetStatus $petStatus)
+    public function delete(User $user, EntryStatus $entryStatus)
     {
-        return $user->can('delete_definitions::pet::status');
+        return $user->can('delete_definitions::entry::status');
     }
 
     /**
@@ -76,19 +76,19 @@ class PetStatusPolicy
      */
     public function deleteAny(User $user)
     {
-        return $user->can('delete_any_definitions::pet::status');
+        return $user->can('delete_any_definitions::entry::status');
     }
 
     /**
      * Determine whether the user can permanently delete.
      *
      * @param  \App\Models\User  $user
-     * @param  \App\Models\PetStatus  $petStatus
+     * @param  \App\Models\EntryStatus  $entryStatus
      * @return \Illuminate\Auth\Access\Response|bool
      */
-    public function forceDelete(User $user, PetStatus $petStatus)
+    public function forceDelete(User $user, EntryStatus $entryStatus)
     {
-        return $user->can('force_delete_definitions::pet::status');
+        return $user->can('force_delete_definitions::entry::status');
     }
 
     /**
@@ -99,19 +99,19 @@ class PetStatusPolicy
      */
     public function forceDeleteAny(User $user)
     {
-        return $user->can('force_delete_any_definitions::pet::status');
+        return $user->can('force_delete_any_definitions::entry::status');
     }
 
     /**
      * Determine whether the user can restore.
      *
      * @param  \App\Models\User  $user
-     * @param  \App\Models\PetStatus  $petStatus
+     * @param  \App\Models\EntryStatus  $entryStatus
      * @return \Illuminate\Auth\Access\Response|bool
      */
-    public function restore(User $user, PetStatus $petStatus)
+    public function restore(User $user, EntryStatus $entryStatus)
     {
-        return $user->can('restore_definitions::pet::status');
+        return $user->can('restore_definitions::entry::status');
     }
 
     /**
@@ -122,19 +122,19 @@ class PetStatusPolicy
      */
     public function restoreAny(User $user)
     {
-        return $user->can('restore_any_definitions::pet::status');
+        return $user->can('restore_any_definitions::entry::status');
     }
 
     /**
      * Determine whether the user can replicate.
      *
      * @param  \App\Models\User  $user
-     * @param  \App\Models\PetStatus  $petStatus
+     * @param  \App\Models\EntryStatus  $entryStatus
      * @return \Illuminate\Auth\Access\Response|bool
      */
-    public function replicate(User $user, PetStatus $petStatus)
+    public function replicate(User $user, EntryStatus $entryStatus)
     {
-        return $user->can('replicate_definitions::pet::status');
+        return $user->can('replicate_definitions::entry::status');
     }
 
     /**
@@ -145,7 +145,7 @@ class PetStatusPolicy
      */
     public function reorder(User $user)
     {
-        return $user->can('reorder_definitions::pet::status');
+        return $user->can('reorder_definitions::entry::status');
     }
 
 }

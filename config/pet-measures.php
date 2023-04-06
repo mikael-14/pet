@@ -17,13 +17,13 @@ return [
     'weight' => [
         'name' => 'Weight',
         'unit' => 'Kg',
-        'variation' => 0.1,
+        'variation' => 0.099,
     ],
-    'height' => [
-        'name' => 'Height',
-        'unit' => 'cm',
-        'variation' => null,
-    ],
+    // 'height' => [
+    //     'name' => 'Height',
+    //     'unit' => 'cm',
+    //     'variation' => null,
+    // ],
 ]
 
 ?>

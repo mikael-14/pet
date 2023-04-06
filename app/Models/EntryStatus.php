@@ -11,7 +11,7 @@ use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 
 /**
- * Class PetLocation
+ * Class EntryStatus
  * 
  * @property int $id
  * @property string $name
@@ -23,9 +23,9 @@ use Illuminate\Database\Eloquent\Model;
  *
  * @package App\Models
  */
-class PetLocation extends Model
+class EntryStatus extends Model
 {
-	protected $table = 'pet_locations';
+	protected $table = 'entry_statuses';
 
 	protected $fillable = [
 		'name',
@@ -34,6 +34,6 @@ class PetLocation extends Model
 
 	public function pets()
 	{
-		return $this->hasMany(Pet::class, 'pet_locations_id');
+		return $this->hasMany(Pet::class, 'entry_statuses_id');
 	}
 }
