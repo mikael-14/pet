@@ -1,0 +1,17 @@
+/*resources\css\app.css*/
+@import "../../vendor/filament/filament/resources/css/app.css";
+ 
+/* custom css */
+aside.filament-sidebar > header.filament-sidebar-header img{
+    max-height: 55px;
+    margin-left: 40px;
+}
+
+.table-text-column-badge {
+    padding-top: 0 !important;
+    padding-bottom: 0 !important;
+    border-radius: 15px;
+    width: fit-content;
+    margin: auto;
+}
+/* end custom css */
