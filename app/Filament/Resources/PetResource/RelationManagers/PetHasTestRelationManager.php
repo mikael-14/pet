@@ -19,6 +19,9 @@ class PetHasTestRelationManager extends RelationManager
 
     protected static ?string $title = 'Test';
 
+    protected static ?string $modelLabel  = 'test';
+
+    protected static ?string $pluralModelLabel = 'tests';
 
     public static function form(Form $form): Form
     {
@@ -85,7 +88,8 @@ class PetHasTestRelationManager extends RelationManager
                 ]),
             ])
             ->headerActions([
-                Tables\Actions\CreateAction::make()->modalHeading( __('filament-support::actions/create.single.modal.heading', ['label' => self::getTitle()])),
+                Tables\Actions\CreateAction::make()
+                ->modalHeading( __('filament-support::actions/create.single.modal.heading', ['label' => self::getTitle()])),
             ])
             ->actions([
                 Tables\Actions\Action::make('file')

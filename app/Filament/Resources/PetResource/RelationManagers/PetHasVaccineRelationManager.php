@@ -19,6 +19,10 @@ class PetHasVaccineRelationManager extends RelationManager
 
     protected static ?string $title = 'Vaccine';
 
+    protected static ?string $modelLabel  = 'vaccine';
+
+    protected static ?string $pluralModelLabel = 'vaccines';
+
     public static function form(Form $form): Form
     {
         return $form
