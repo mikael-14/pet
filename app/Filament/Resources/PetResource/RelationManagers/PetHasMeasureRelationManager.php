@@ -26,6 +26,10 @@ class PetHasMeasureRelationManager extends RelationManager
 
     protected static ?string $recordTitleAttribute = 'type';
 
+    protected static ?string $modelLabel  = 'measure';
+
+    protected static ?string $pluralModelLabel = 'measures';
+
     public static function form(Form $form): Form
     {
         $configs = config('pet-measures', []);

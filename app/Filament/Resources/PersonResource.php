@@ -7,6 +7,8 @@ use App\Filament\Resources\PersonResource\RelationManagers;
 use App\Models\Person;
 use App\Models\PersonFlag;
 use App\Models\User;
+use BezhanSalleh\FilamentShield\Contracts\HasShieldPermissions;
+use Filament\Facades\Filament;
 use Filament\Forms;
 use Filament\Forms\Components\Card;
 use Filament\Resources\Form;
@@ -16,15 +18,31 @@ use Filament\Tables;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 
-class PersonResource extends Resource
+class PersonResource extends Resource implements HasShieldPermissions
 {
+
     protected static ?string $model = Person::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-collection';
+    protected static ?string $navigationIcon = 'tabler-user';
 
     protected static ?string $recordTitleAttribute = 'name';
 
     protected static ?int $navigationSort = 1;
+
+    public static function getPermissionPrefixes(): array
+    {
+        return [
+            'view',
+            'view_any',
+            'create',
+            'update',
+            'delete',
+            'delete_any',
+            'view_owned',
+            'view_all',
+            'set_user',
+        ];
+    }
 
     public static function form(Form $form): Form
     {
@@ -64,7 +82,7 @@ class PersonResource extends Resource
                         ->displayFormat(config('filament.date_format')),
                         Forms\Components\Select::make('users_id')->options(
                             Person::avaibleUsers()
-                        ),
+                        )->searchable()->visible(Filament::auth()->user()->can('set_user') ),
                         Forms\Components\Textarea::make('observation')
                             ->maxLength(65535),
                         Forms\Components\CheckboxList::make('flags')

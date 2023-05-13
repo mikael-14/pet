@@ -20,7 +20,7 @@ return new class extends Migration
             $table->date('date');
             $table->date('expires_at')->nullable();
             $table->string('local',50)->nullable();
-            $table->string('application',100)->nullable();
+            $table->foreignId('people_id')->constrained(); 
             $table->string('observation',300)->nullable();
             $table->timestamps();
             $table->softDeletes();

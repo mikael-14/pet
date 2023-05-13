@@ -20,7 +20,7 @@ return new class extends Migration
             $table->string('type','20')->comment('defined in config/pet-measures'); //defined in config file
             $table->date('date');
             $table->string('local',50)->nullable();
-            $table->string('application',100)->nullable();
+            $table->foreignId('people_id')->constrained(); 
             $table->string('observation',300)->nullable();
             $table->timestamps();
         });

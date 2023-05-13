@@ -36,6 +36,14 @@ return [
         'name' => 'Adopter',
         'status' => true
     ],
+    'sponsor' => [
+        'name' => 'Sponsor',
+        'status' => true
+    ],
+    'black_list' => [
+        'name' => 'Black List',
+        'status' => true
+    ],
 ]
 
 ?>

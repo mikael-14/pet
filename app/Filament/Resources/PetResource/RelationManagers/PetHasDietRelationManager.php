@@ -17,6 +17,10 @@ class PetHasDietRelationManager extends RelationManager
 
     protected static ?string $title = 'Diet';
 
+    protected static ?string $modelLabel  = 'diet';
+
+    protected static ?string $pluralModelLabel = 'diets';
+
     public static function form(Form $form): Form
     {
         return $form

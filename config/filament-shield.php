@@ -5,7 +5,7 @@ return [
         'should_register_navigation' => true,
         'slug' => 'shield/roles',
         'navigation_sort' => 100,
-        'navigation_badge' => true,
+        'navigation_badge' => false,
         'navigation_group' => true,
         'is_globally_searchable' => false,
         'show_model_path' => true,
@@ -69,10 +69,13 @@ return [
             'AccountWidget', 'FilamentInfoWidget',
         ],
 
-        'resources' => [],
+        'resources' => [
+            'ResourceLockResource'
+        ],
     ],
 
     'register_role_policy' => [
-        'enabled' => true,
+        'enabled' => false,
     ],
+
 ];
