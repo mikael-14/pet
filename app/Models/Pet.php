@@ -13,7 +13,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\InteractsWithMedia;
-
+use Kenepa\ResourceLock\Models\Concerns\HasLocks;
 /**
  * Class Pet
  * 
@@ -53,7 +53,8 @@ class Pet extends Model implements HasMedia
 {
 	use SoftDeletes;
 	use InteractsWithMedia;
-
+	use HasLocks;
+	
 	protected $table = 'pets';
 	
 	protected $casts = [

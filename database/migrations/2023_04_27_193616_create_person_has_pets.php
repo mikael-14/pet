@@ -18,7 +18,7 @@ return new class extends Migration
             $table->id();
             $table->foreignId('pets_id')->constrained(); 
             $table->foreignId('people_id')->constrained();
-            $table->date('start_date')->default(DB::raw('CURRENT_TIMESTAMP'));
+            $table->date('start_date')->useCurrent();
             $table->date('end_date')->nullable();
             $table->string('type',50);
             $table->string('observation',300)->nullable();

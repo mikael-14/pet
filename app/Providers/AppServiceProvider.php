@@ -3,10 +3,11 @@
 namespace App\Providers;
 
 use App\Filament\Resources\UserResource;
+use App\Models\User;
 use Filament\Facades\Filament;
 use Filament\Navigation\UserMenuItem;
 use Illuminate\Support\ServiceProvider;
-
+use Illuminate\Support\Facades\Gate;
 class AppServiceProvider extends ServiceProvider
 {
     /**
@@ -38,6 +39,9 @@ class AppServiceProvider extends ServiceProvider
                     // ...
                 ]);
             }
+        });
+        Gate::define('access-resource-lock', function (User $user) {
+            return $user->can('access_lock_resource_user');
         });
     }
 }

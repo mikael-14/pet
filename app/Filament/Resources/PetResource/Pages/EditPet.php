@@ -20,10 +20,13 @@ use Filament\Forms\Components\Select;
 use Filament\Forms\Components\SpatieMediaLibraryFileUpload;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
-
+use Kenepa\ResourceLock\Resources\Pages\Concerns\UsesResourceLock;
 class EditPet extends EditRecord
 {
+    use UsesResourceLock;
+
     protected static string $resource = PetResource::class;
+    
     public function getFormSchema(): array
     {
         return [
