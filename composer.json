@@ -8,6 +8,7 @@
         "php": "^8.0.2",
         "bezhansalleh/filament-shield": "^2.3",
         "blade-ui-kit/blade-icons": "^1.5",
+        "cheesegrits/filament-google-maps": "^1.0",
         "filament/filament": "^2.17",
         "filament/spatie-laravel-media-library-plugin": "^2.17",
         "filament/spatie-laravel-translatable-plugin": "^2.17",
@@ -68,7 +69,8 @@
         "preferred-install": "dist",
         "sort-packages": true,
         "allow-plugins": {
-            "pestphp/pest-plugin": true
+            "pestphp/pest-plugin": true,
+            "php-http/discovery": true
         }
     },
     "minimum-stability": "stable",

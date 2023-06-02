@@ -1,29 +1,27 @@
 <?php
 
-namespace App\Filament\Resources\Definitions;
+namespace App\Filament\Resources\Definitions\ShelterResource\RelationManagers;
 
-use App\Filament\Resources\Definitions\ShelterLocationResource\Pages;
-use App\Filament\Resources\Definitions\ShelterLocationResource\RelationManagers;
-use App\Models\ShelterLocation;
 use Filament\Forms;
 use Filament\Resources\Form;
-use Filament\Resources\Resource;
+use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Resources\Table;
 use Filament\Tables;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 
-class ShelterLocationResource extends Resource
+class ShelterLocationsRelationManager extends RelationManager
 {
-    protected static ?string $model = ShelterLocation::class;
-
-    protected static ?string $navigationIcon = 'heroicon-o-collection';
-
-    protected static ?string $slug = 'definitions/shelter-location';
+    protected static string $relationship = 'shelter_locations';
 
     protected static ?string $recordTitleAttribute = 'name';
 
-    protected static ?string $navigationGroup = 'Definitions';
+    protected static ?string $title = 'Shelter Location';
+
+    protected static ?string $modelLabel  = 'shelter location';
+
+    protected static ?string $pluralModelLabel = 'shelter locations';
+
 
     public static function form(Form $form): Form
     {
@@ -31,7 +29,7 @@ class ShelterLocationResource extends Resource
             ->schema([
                 Forms\Components\TextInput::make('name')
                     ->required()
-                    ->maxLength(20),
+                    ->maxLength(50),
                 Forms\Components\ColorPicker::make('color'),
             ]);
     }
@@ -48,19 +46,15 @@ class ShelterLocationResource extends Resource
             ->filters([
                 //
             ])
+            ->headerActions([
+                Tables\Actions\CreateAction::make()->modalHeading(__('filament-support::actions/create.single.modal.heading', ['label' => self::getTitle()])),
+            ])
             ->actions([
                 Tables\Actions\EditAction::make(),
                 Tables\Actions\DeleteAction::make(),
             ])
             ->bulkActions([
-            
+                Tables\Actions\DeleteBulkAction::make(),
             ]);
     }
-    
-    public static function getPages(): array
-    {
-        return [
-            'index' => Pages\ManageShelterLocations::route('/'),
-        ];
-    }    
 }

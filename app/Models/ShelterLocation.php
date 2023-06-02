@@ -14,11 +14,13 @@ use Illuminate\Database\Eloquent\Model;
  * Class ShelterLocation
  * 
  * @property int $id
+ * @property int $shelters_id
  * @property string $name
  * @property string|null $color
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
  * 
+ * @property Shelter $shelter
  * @property Collection|Pet[] $pets
  *
  * @package App\Models
@@ -27,10 +29,20 @@ class ShelterLocation extends Model
 {
 	protected $table = 'shelter_locations';
 
+	protected $casts = [
+		'shelters_id' => 'int'
+	];
+
 	protected $fillable = [
+		'shelters_id',
 		'name',
 		'color'
 	];
+
+	public function shelter()
+	{
+		return $this->belongsTo(Shelter::class, 'shelters_id');
+	}
 
 	public function pets()
 	{
