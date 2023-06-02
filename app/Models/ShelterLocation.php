@@ -48,4 +48,12 @@ class ShelterLocation extends Model
 	{
 		return $this->hasMany(Pet::class, 'shelter_locations_id');
 	}
+	public static function shelters()
+	{
+		$tableName = with(new Shelter)->getTable();
+		return ShelterLocation::join($tableName, "shelter_locations.shelters_id", '=', "$tableName.id")
+			->selectRaw("CONCAT($tableName.name, ' (', shelter_locations.name,')') AS name,shelter_locations.id,shelter_locations.color")
+			->where("$tableName.status", 1)
+			->get();
+	}
 }

@@ -144,14 +144,13 @@ class ShelterResource extends Resource
     {
         return $table
             ->columns([
-                Tables\Columns\TextColumn::make('name'),
-                Tables\Columns\TextColumn::make('country'),
-                Tables\Columns\TextColumn::make('state'),
+                Tables\Columns\TextColumn::make('name')->searchable(),
+                Tables\Columns\TextColumn::make('country')
+                ->toggleable(isToggledHiddenByDefault: true),
+                Tables\Columns\TextColumn::make('state')->searchable(),
                 Tables\Columns\TextColumn::make('local'),
                 Tables\Columns\TextColumn::make('street'),
-                Tables\Columns\TextColumn::make('zip'),
-                Tables\Columns\TextColumn::make('latitude'),
-                Tables\Columns\TextColumn::make('longitude'),
+                Tables\Columns\TextColumn::make('zip')->searchable(),
                 Tables\Columns\IconColumn::make('status')
                     ->boolean(),
             ])
@@ -159,6 +158,13 @@ class ShelterResource extends Resource
                 //
             ])
             ->actions([
+                Tables\Actions\Action::make('map')
+                ->label('View in map')
+                ->color('info')
+                ->url(fn  (Shelter $record) => "https://www.google.com/maps?q=$record->latitude,$record->longitude")
+                ->visible(fn (Shelter $record): bool => !empty($record->latitude) && !empty($record->longitude) ? true : false)
+                ->openUrlInNewTab()
+                ->icon('tabler-map-2'),
                 Tables\Actions\EditAction::make(),
                 Tables\Actions\ViewAction::make(),
             ])

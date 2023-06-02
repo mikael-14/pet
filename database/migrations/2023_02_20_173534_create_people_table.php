@@ -22,8 +22,13 @@ return new class extends Migration
             $table->string('vat',20)->unique()->nullable();
             $table->string('cc',30)->unique()->nullable();
             $table->date('birth_date')->nullable();
-            $table->string('address',200)->nullable();
-            $table->string('town',200)->nullable();
+            $table->string('country',100)->nullable(); //país
+            $table->string('state',100)->nullable(); //district/estado
+            $table->string('local',100)->nullable(); //local
+            $table->string('street',100)->nullable(); //rua
+            $table->string('zip',20)->nullable();
+            $table->decimal('latitude',11,8);
+            $table->decimal('longitude',11,8);
             $table->text('observation')->nullable();
             $table->unsignedBigInteger('users_id')->nullable(); 
             $table->foreign('users_id')->references('id')->on('users')->onDelete('set null');
