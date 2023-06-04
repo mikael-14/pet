@@ -61,6 +61,7 @@ class Shelter extends Model
 		'longitude',
 		'status',
 		'location',
+		'map',
     ];
 
     protected $appends = [

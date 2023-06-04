@@ -14,7 +14,11 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 use Cheesegrits\FilamentGoogleMaps\Fields\Map;
 use Cheesegrits\FilamentGoogleMaps\Fields\Geocomplete;
-use Filament\Forms\Components\Tabs;
+use Filament\Forms\Components\Actions\Action;
+use Awcodes\DropInAction\Forms\Components\DropInAction;
+use Closure;
+use Filament\Facades\Filament;
+use Filament\Resources\Pages\ViewRecord;
 
 class ShelterResource extends Resource
 {
@@ -32,112 +36,139 @@ class ShelterResource extends Resource
     {
         return $form
             ->schema([
-                \Filament\Forms\Components\Card::make()
-                ->schema([
-                Forms\Components\TextInput::make('name')
-                    ->required()
-                    ->maxLength(100)
-                    ->columnSpanFull(),
-                Tabs::make('Search Address')->tabs([
-                    Tabs\Tab::make('Typing')
-                        ->icon('tabler-input-search')
-                        ->schema([
-                            Geocomplete::make('location')
-                                ->isLocation()
-                                ->reverseGeocode([
-                                    'country' => '%c',
-                                    'state' => '%A1',
-                                    'local' => '%L',
-                                    'street' => '%S %n',
-                                    'zip' => '%z',
-                                ]) // reverse geocode marker location to form fields, see notes below
-                                ->countries(['pt']) // restrict autocomplete results to these countries
-                                ->updateLatLng() // update the lat/lng fields on your form when a Place is selected
-                                ->maxLength(1024)
-                                ->placeholder('Search ...')
-                                ->hiddenOn('view')
-                                ->hint('Search by Google')
-                                ->helperText('Search an address to help get data')
-                                ->columnSpanFull(),
-                        ])
-                        ->hiddenOn('view'),
-                    Tabs\Tab::make('Marker')
-                        ->icon('tabler-map-search')
-                        ->schema([
-                            Map::make('map')
-                                ->mapControls([
-                                    'mapTypeControl'    => false,
-                                    'scaleControl'      => false,
-                                    'streetViewControl' => false,
-                                    'rotateControl'     => false,
-                                    'fullscreenControl' => false,
-                                    'searchBoxControl'  => false, // creates geocomplete field inside map
-                                    'zoomControl'       => false,
-                                ])
-                                ->reactive()
-                                ->reverseGeocode([
-                                    'country' => '%c',
-                                    'state' => '%A1',
-                                    'local' => '%L',
-                                    'street' => '%S %n',
-                                    'zip' => '%z',
-                                ])
-                                ->afterStateUpdated(function ($state, callable $get, callable $set) {
-                                    $set('latitude', $state['lat']);
-                                    $set('longitude', $state['lng']);
-                                })
-                                ->hint('Map by Google')
-                                ->helperText('Move the pin to help get data')
-                                ->columnSpanFull(),
-                        ]),
-                ])->columnSpanFull(),
+                Forms\Components\Card::make()
+                    ->schema([
+                        Forms\Components\TextInput::make('name')
+                            ->required()
+                            ->maxLength(100)
+                            ->columnSpan(9),
+                        Forms\Components\Toggle::make('status')
+                            ->inline(false)
+                            ->default(1)
+                            ->required()
+                            ->columnSpan(1),
+                    ])->columns(10),
+                Forms\Components\Section::make('Address')
+                    ->schema([
+                        Geocomplete::make('location')
+                            ->isLocation()
+                            ->reverseGeocode([
+                                'country' => '%c',
+                                'state' => '%A1',
+                                'local' => '%L',
+                                'street' => '%S %n',
+                                'zip' => '%z',
+                            ]) // reverse geocode marker location to form fields, see notes below
+                            ->countries(['pt']) // restrict autocomplete results to these countries
+                            ->updateLatLng() // update the lat/lng fields on your form when a Place is selected
+                            ->maxLength(1024)
+                            ->placeholder('Search ...')
+                            ->visible(fn (Closure $get): bool => $get('show_geocomplete'))
+                            ->hint('Search by Google')
+                            ->helperText('Search an address to help get data')
+                            ->hiddenOn('view')
+                            ->columnSpanFull(),
+                        Map::make('map')
+                            ->mapControls([
+                                'mapTypeControl'    => true,
+                                'scaleControl'      => true,
+                                'streetViewControl' => true,
+                                'rotateControl'     => false,
+                                'fullscreenControl' => false,
+                                'searchBoxControl'  => false, // creates geocomplete field inside map
+                                'zoomControl'       => false,
+                            ])
+                            ->defaultLocation([41.2378425, -8.6200656])
+                            ->defaultZoom(14)
+                            ->reverseGeocode([
+                                'country' => '%c',
+                                'state' => '%A1',
+                                'local' => '%L',
+                                'street' => '%S %n',
+                                'zip' => '%z',
+                            ])
+                            ->draggable() // allow dragging to move marker
+                            ->clickable() // allow clicking to move marker
+                            ->afterStateUpdated(function ($state, callable $get, callable $set) {
+                                $set('latitude', $state['lat']);
+                                $set('longitude', $state['lng']);
+                            })
+                            ->hint('Map by Google')
+                            ->helperText('Move the pin to help get data')
+                            ->visible(fn (Closure $get,$livewire): bool => $livewire instanceof ViewRecord ? true : $get('show_map'))
+                            ->columnSpanFull(),
+                        Forms\Components\Toggle::make('show_geocomplete')->reactive()->default(false)->dehydrated(false)->hidden(),
+                        Forms\Components\Toggle::make('show_map')->reactive()->default(false)->dehydrated(false)->hidden(),
+                        Forms\Components\TextInput::make('latitude')
+                            ->reactive()
+                            ->afterStateUpdated(function ($state, callable $get, callable $set) {
+                                $set('map', [
+                                    'lat' => floatVal($state),
+                                    'lng' => floatVal($get('longitude')),
+                                ]);
+                                $set('location', [
+                                    'lat' => floatVal($state),
+                                    'lng' => floatVal($get('longitude')),
+                                ]);
+                            })
+                            ->hidden()
+                            ->lazy(), // important to use lazy, to avoid updates as you type
+                        Forms\Components\TextInput::make('longitude')
+                            ->reactive()
+                            ->afterStateUpdated(function ($state, callable $get, callable $set) {
+                                $set('map', [
+                                    'lat' => floatval($get('latitude')),
+                                    'lng' => floatVal($state),
+                                ]);
+                                $set('location', [
+                                    'lat' => floatval($get('latitude')),
+                                    'lng' => floatVal($state),
+                                ]);
+                            })
+                            ->hidden()
+                            ->lazy(),
+                        Forms\Components\TextInput::make('street')
+                            ->maxLength(100)
+                            ->columnSpan(9),
+                        DropInAction::make('buttons_show_hide')
+                            ->disableLabel()
+                            ->execute(function (Closure $get, Closure $set) {
+                                return [
+                                    Action::make('geolocate')
+                                        ->icon('tabler-input-search')
+                                        ->label('Geocode')
+                                        ->action(function () use ($get, $set) {
+                                            $set('show_geocomplete', !$get('show_geocomplete'));
+                                            $set('show_map', false);
+                                        }),
+                                    Action::make('map')
+                                        ->icon('tabler-map-search')
+                                        ->label('Map')
+                                        ->action(function () use ($get, $set) {
+                                            $set('show_geocomplete', false);
+                                            $set('show_map', !$get('show_map'));
+                                        }),
+                                ];
+                            })
+                            ->hiddenOn('view')
+                            ->columnSpan(1),
+                        Forms\Components\Select::make('country')
+                            ->options(config('pet-country'))
+                            ->columnSpan(5),
+                        Forms\Components\TextInput::make('state')
+                            ->maxLength(100)
+                            ->columnSpan(5),
+                        Forms\Components\TextInput::make('local')
+                            ->maxLength(100)
+                            ->columnSpan(5),
+                        Forms\Components\TextInput::make('zip')
+                            ->placeholder('0000-000')
+                            ->mask(fn (Forms\Components\TextInput\Mask $mask) => $mask->pattern('0000-000'))
+                            ->maxLength(20)
+                            ->columnSpan(5),
 
-
-                Forms\Components\TextInput::make('latitude')
-                    ->reactive()
-                    ->afterStateUpdated(function ($state, callable $get, callable $set) {
-                        $set('location', [
-                            'lat' => floatVal($state),
-                            'lng' => floatVal($get('longitude')),
-                        ]);
-                        $set('map', [
-                            'lat' => floatVal($state),
-                            'lng' => floatVal($get('longitude')),
-                        ]);
-                    })
-                    ->visible(false)
-                    ->lazy(), // important to use lazy, to avoid updates as you type
-                Forms\Components\TextInput::make('longitude')
-                    ->reactive()
-                    ->afterStateUpdated(function ($state, callable $get, callable $set) {
-                        $set('location', [
-                            'lat' => floatval($get('latitude')),
-                            'lng' => floatVal($state),
-                        ]);
-                        $set('map', [
-                            'lat' => floatval($get('latitude')),
-                            'lng' => floatVal($state),
-                        ]);
-                    })
-                    ->visible(false)
-                    ->lazy(),
-                Forms\Components\Select::make('country')
-                    ->options(config('pet-country')),
-                Forms\Components\TextInput::make('state')
-                    ->maxLength(100),
-                Forms\Components\TextInput::make('local')
-                    ->maxLength(100),
-                Forms\Components\TextInput::make('street')
-                    ->maxLength(100),
-                Forms\Components\TextInput::make('zip')
-                    ->maxLength(20),
-                Forms\Components\Toggle::make('status')
-                    ->inline(false)
-                    ->helperText('Active')
-                    ->default(1)
-                    ->required(),
-            ])->columns(2)
-                ]);
+                    ])->columns(10)
+            ]);
     }
 
     public static function table(Table $table): Table
@@ -146,7 +177,7 @@ class ShelterResource extends Resource
             ->columns([
                 Tables\Columns\TextColumn::make('name')->searchable(),
                 Tables\Columns\TextColumn::make('country')
-                ->toggleable(isToggledHiddenByDefault: true),
+                    ->toggleable(isToggledHiddenByDefault: true),
                 Tables\Columns\TextColumn::make('state')->searchable(),
                 Tables\Columns\TextColumn::make('local'),
                 Tables\Columns\TextColumn::make('street'),
@@ -159,12 +190,12 @@ class ShelterResource extends Resource
             ])
             ->actions([
                 Tables\Actions\Action::make('map')
-                ->label('View in map')
-                ->color('info')
-                ->url(fn  (Shelter $record) => "https://www.google.com/maps?q=$record->latitude,$record->longitude")
-                ->visible(fn (Shelter $record): bool => !empty($record->latitude) && !empty($record->longitude) ? true : false)
-                ->openUrlInNewTab()
-                ->icon('tabler-map-2'),
+                    ->label('View in map')
+                    ->color('info')
+                    ->url(fn (Shelter $record) => "https://www.google.com/maps?q=$record->latitude,$record->longitude")
+                    ->visible(fn (Shelter $record): bool => !empty($record->latitude) && !empty($record->longitude) ? true : false)
+                    ->openUrlInNewTab()
+                    ->icon('tabler-map-2'),
                 Tables\Actions\EditAction::make(),
                 Tables\Actions\ViewAction::make(),
             ])
