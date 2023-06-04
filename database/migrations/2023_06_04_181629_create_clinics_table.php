@@ -13,7 +13,7 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('shelters', function (Blueprint $table) {
+        Schema::create('clinics', function (Blueprint $table) {
             $table->id();
             $table->string('name',100);
             $table->string('country',100)->nullable(); //país
@@ -35,6 +35,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('shelters');
+        Schema::dropIfExists('clinics');
     }
 };

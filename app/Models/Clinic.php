@@ -7,64 +7,38 @@
 namespace App\Models;
 
 use Carbon\Carbon;
-use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\SoftDeletes;
 
 /**
- * Class Person
+ * Class Clinic
  * 
  * @property int $id
  * @property string $name
- * @property string $gender
- * @property string|null $email
- * @property string|null $phone
- * @property string|null $vat
- * @property string|null $cc
- * @property Carbon|null $birth_date
  * @property string|null $country
  * @property string|null $state
  * @property string|null $local
  * @property string|null $street
  * @property string|null $zip
- * @property float $latitude
- * @property float $longitude
- * @property string|null $observation
- * @property int|null $users_id
- * @property string|null $deleted_at
+ * @property float|null $latitude
+ * @property float|null $longitude
+ * @property bool $status
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
- * 
- * @property User|null $user
- * @property Collection|PersonFlag[] $person_flags
- * @property Collection|Pet[] $pets
- * @property Collection|PetsHasDeworming[] $pets_has_dewormings
- * @property Collection|PetsHasMeasure[] $pets_has_measures
- * @property Collection|PetsHasTest[] $pets_has_tests
- * @property Collection|PetsHasVaccine[] $pets_has_vaccines
  *
  * @package App\Models
  */
-class Person extends Model
+class Clinic extends Model
 {
-	use SoftDeletes;
-	protected $table = 'people';
+	protected $table = 'clinics';
 
 	protected $casts = [
-		'birth_date' => 'datetime',
 		'latitude' => 'float',
 		'longitude' => 'float',
-		'users_id' => 'int'
+		'status' => 'bool'
 	];
 
 	protected $fillable = [
 		'name',
-		'gender',
-		'email',
-		'phone',
-		'vat',
-		'cc',
-		'birth_date',
 		'country',
 		'state',
 		'local',
@@ -72,8 +46,7 @@ class Person extends Model
 		'zip',
 		'latitude',
 		'longitude',
-		'observation',
-		'users_id',
+		'status',
 		'location',
 		'map',
 	];
@@ -82,43 +55,6 @@ class Person extends Model
 		'location',
 		'map',
 	];
-
-	public function user()
-	{
-		return $this->belongsTo(User::class, 'users_id');
-	}
-
-	public function person_flags()
-	{
-		return $this->hasMany(PersonFlag::class);
-	}
-
-	public function pets()
-	{
-		return $this->belongsToMany(Pet::class, 'person_has_pets', 'people_id', 'pets_id')
-			->withPivot('id', 'start_date', 'end_date', 'type', 'observation', 'deleted_at')
-			->withTimestamps();
-	}
-
-	public function pets_has_dewormings()
-	{
-		return $this->hasMany(PetsHasDeworming::class, 'people_id');
-	}
-
-	public function pets_has_measures()
-	{
-		return $this->hasMany(PetsHasMeasure::class, 'people_id');
-	}
-
-	public function pets_has_tests()
-	{
-		return $this->hasMany(PetsHasTest::class, 'people_id');
-	}
-
-	public function pets_has_vaccines()
-	{
-		return $this->hasMany(PetsHasVaccine::class, 'people_id');
-	}
 
 	/**
 	 * Returns the 'latitude' and 'longitude' attributes as the computed 'location' attribute,
@@ -203,18 +139,5 @@ class Person extends Model
 	public static function getComputedMap(): string
 	{
 		return 'map';
-	}
-
-	public static function avaibleUsers(): array
-	{
-		$tableName = with(new Person)->getTable();
-		return User::selectRaw('id,CONCAT(name, " - ", email) as full')
-			->leftJoin('model_has_roles', 'id', '=', 'model_id')
-			->where('role_id', '!=', 1)
-			->whereNotIn('id', function ($query) use ($tableName) {
-				$query->select('users_id')
-					->from($tableName)
-					->whereRaw($tableName . '.users_id = users.id');
-			})->pluck('full', 'id')->toArray();
 	}
 }

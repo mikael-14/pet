@@ -27,8 +27,8 @@ return new class extends Migration
             $table->string('local',100)->nullable(); //local
             $table->string('street',100)->nullable(); //rua
             $table->string('zip',20)->nullable();
-            $table->decimal('latitude',11,8);
-            $table->decimal('longitude',11,8);
+            $table->decimal('latitude',11,8)->nullable();
+            $table->decimal('longitude',11,8)->nullable();
             $table->text('observation')->nullable();
             $table->unsignedBigInteger('users_id')->nullable(); 
             $table->foreign('users_id')->references('id')->on('users')->onDelete('set null');

@@ -95,7 +95,7 @@ class ShelterResource extends Resource
                             })
                             ->hint('Map by Google')
                             ->helperText('Move the pin to help get data')
-                            ->visible(fn (Closure $get,$livewire): bool => $livewire instanceof ViewRecord ? true : $get('show_map'))
+                            ->visible(fn (Closure $get, $livewire): bool => $livewire instanceof ViewRecord && $get('latitude') && $get('longitude') ? true : $get('show_map'))
                             ->columnSpanFull(),
                         Forms\Components\Toggle::make('show_geocomplete')->reactive()->default(false)->dehydrated(false)->hidden(),
                         Forms\Components\Toggle::make('show_map')->reactive()->default(false)->dehydrated(false)->hidden(),
@@ -134,14 +134,14 @@ class ShelterResource extends Resource
                             ->disableLabel()
                             ->execute(function (Closure $get, Closure $set) {
                                 return [
-                                    Action::make('geolocate')
+                                    Forms\Components\Actions\Action::make('geolocate')
                                         ->icon('tabler-input-search')
                                         ->label('Geocode')
                                         ->action(function () use ($get, $set) {
                                             $set('show_geocomplete', !$get('show_geocomplete'));
                                             $set('show_map', false);
                                         }),
-                                    Action::make('map')
+                                    Forms\Components\Actions\Action::make('map')
                                         ->icon('tabler-map-search')
                                         ->label('Map')
                                         ->action(function () use ($get, $set) {
