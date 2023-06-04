@@ -1,99 +1,53 @@
 <?php
 
-namespace App\Filament\Resources;
+namespace App\Filament\Resources\Definitions;
 
-use App\Filament\Resources\PersonResource\Pages;
-use App\Filament\Resources\PersonResource\RelationManagers;
-use App\Models\Person;
-use App\Models\PersonFlag;
-use App\Models\User;
-use Awcodes\DropInAction\Forms\Components\DropInAction;
-use BezhanSalleh\FilamentShield\Contracts\HasShieldPermissions;
-use Filament\Facades\Filament;
+use App\Filament\Resources\Definitions\ShelterResource\Pages;
+use App\Filament\Resources\Definitions\ShelterResource\RelationManagers;
+use App\Models\Shelter;
 use Filament\Forms;
-use Filament\Forms\Components\Card;
 use Filament\Resources\Form;
 use Filament\Resources\Resource;
 use Filament\Resources\Table;
 use Filament\Tables;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
-use Filament\Forms\Components\Tabs;
 use Cheesegrits\FilamentGoogleMaps\Fields\Map;
 use Cheesegrits\FilamentGoogleMaps\Fields\Geocomplete;
+use Filament\Forms\Components\Actions\Action;
+use Awcodes\DropInAction\Forms\Components\DropInAction;
 use Closure;
+use Filament\Facades\Filament;
 use Filament\Resources\Pages\ViewRecord;
 
-class PersonResource extends Resource implements HasShieldPermissions
+class ShelterResource extends Resource
 {
+    protected static ?string $model = Shelter::class;
 
-    protected static ?string $model = Person::class;
+    protected static ?string $navigationIcon = 'heroicon-o-collection';
 
-    protected static ?string $navigationIcon = 'tabler-user';
+    protected static ?string $slug = 'definitions/shelters';
 
     protected static ?string $recordTitleAttribute = 'name';
 
-
-    public static function getPermissionPrefixes(): array
-    {
-        return [
-            'view',
-            'view_any',
-            'create',
-            'update',
-            'delete',
-            'delete_any',
-            'view_owned',
-            'view_all',
-            'set_user',
-        ];
-    }
+    protected static ?string $navigationGroup = 'Definitions';
 
     public static function form(Form $form): Form
     {
         return $form
             ->schema([
-                Card::make()
+                Forms\Components\Card::make()
                     ->schema([
                         Forms\Components\TextInput::make('name')
                             ->required()
-                            ->maxLength(200),
-                        Forms\Components\Select::make('gender')
-                            ->options([
-                                'undefined' => 'Undefined',
-                                'male' => 'Male',
-                                'female' => 'Female',
-                            ])
-                            ->required(),
-                        Forms\Components\TextInput::make('email')
-                            ->email()
+                            ->maxLength(100)
+                            ->columnSpan(9),
+                        Forms\Components\Toggle::make('status')
+                            ->inline(false)
+                            ->default(1)
                             ->required()
-                            ->unique(table: Person::class, column: 'email', ignoreRecord: true)
-                            ->maxLength(255),
-                        Forms\Components\TextInput::make('phone')
-                            ->tel()
-                            ->required()
-                            ->maxLength(20),
-                        Forms\Components\TextInput::make('vat')
-                            ->maxLength(20)
-                            ->unique(table: Person::class, column: 'vat',  ignoreRecord: true),
-                        Forms\Components\TextInput::make('cc')
-                            ->maxLength(30),
-                        Forms\Components\DatePicker::make('birth_date')
-                            ->displayFormat(config('filament.date_format')),
-                        Forms\Components\Select::make('users_id')->options(
-                            Person::avaibleUsers()
-                        )->searchable()
-                        ->visible(Filament::auth()->user()->can('set_user_person'))
-                        ->placeholder('Select to set user'),
-                        Forms\Components\Grid::make(2)
-                            ->schema([
-                                Forms\Components\Textarea::make('observation')
-                                    ->maxLength(65535),
-                                Forms\Components\CheckboxList::make('flags')
-                                    ->options(PersonFlag::flags())
-                            ])
-                    ])->columns(2),
+                            ->columnSpan(1),
+                    ])->columns(10),
                 Forms\Components\Section::make('Address')
                     ->schema([
                         Geocomplete::make('location')
@@ -212,8 +166,8 @@ class PersonResource extends Resource implements HasShieldPermissions
                             ->mask(fn (Forms\Components\TextInput\Mask $mask) => $mask->pattern('0000-000'))
                             ->maxLength(20)
                             ->columnSpan(5),
-                    ])->columns(10),
 
+                    ])->columns(10)
             ]);
     }
 
@@ -222,61 +176,46 @@ class PersonResource extends Resource implements HasShieldPermissions
         return $table
             ->columns([
                 Tables\Columns\TextColumn::make('name')->searchable(),
-                Tables\Columns\TextColumn::make('email')->searchable(),
-                Tables\Columns\TextColumn::make('phone')->searchable(),
-                Tables\Columns\TextColumn::make('vat')->searchable(),
-                Tables\Columns\TextColumn::make('cc')->toggleable(isToggledHiddenByDefault: true),
-                Tables\Columns\TextColumn::make('birth_date')
-                    ->date(config('filament.date_format'))
+                Tables\Columns\TextColumn::make('country')
                     ->toggleable(isToggledHiddenByDefault: true),
-                Tables\Columns\TextColumn::make('created_at')
-                    ->dateTime(config('filament.date_time_format'))->toggleable(isToggledHiddenByDefault: true),
-                Tables\Columns\TextColumn::make('deleted_at')
-                    ->dateTime(config('filament.date_time_format'))->toggleable(isToggledHiddenByDefault: true),
+                Tables\Columns\TextColumn::make('state')->searchable(),
+                Tables\Columns\TextColumn::make('local'),
+                Tables\Columns\TextColumn::make('street'),
+                Tables\Columns\TextColumn::make('zip')->searchable(),
+                Tables\Columns\IconColumn::make('status')
+                    ->boolean(),
             ])
             ->filters([
-                Tables\Filters\TrashedFilter::make(),
+                //
             ])
             ->actions([
+                Tables\Actions\Action::make('map')
+                    ->label('View in map')
+                    ->color('info')
+                    ->url(fn (Shelter $record) => "https://www.google.com/maps?q=$record->latitude,$record->longitude")
+                    ->visible(fn (Shelter $record): bool => !empty($record->latitude) && !empty($record->longitude) ? true : false)
+                    ->openUrlInNewTab()
+                    ->icon('tabler-map-2'),
                 Tables\Actions\EditAction::make(),
                 Tables\Actions\ViewAction::make(),
-
             ])
-            ->bulkActions([
-                Tables\Actions\DeleteBulkAction::make(),
-                Tables\Actions\ForceDeleteBulkAction::make(),
-                Tables\Actions\RestoreBulkAction::make(),
-            ]);
+            ->bulkActions([]);
     }
 
     public static function getRelations(): array
     {
         return [
-            //
+            RelationManagers\ShelterLocationsRelationManager::class
         ];
     }
 
     public static function getPages(): array
     {
         return [
-            'index' => Pages\ListPeople::route('/'),
-            'create' => Pages\CreatePerson::route('/create'),
-            'edit' => Pages\EditPerson::route('/{record}/edit'),
-            'view' => Pages\ViewPerson::route('/{record}'),
+            'index' => Pages\ListShelters::route('/'),
+            'create' => Pages\CreateShelter::route('/create'),
+            'edit' => Pages\EditShelter::route('/{record}/edit'),
+            'view' => Pages\ViewShelter::route('/{record}'),
         ];
     }
-
-    public static function getEloquentQuery(): Builder
-    {
-        return parent::getEloquentQuery()
-            ->withoutGlobalScopes([
-                SoftDeletingScope::class,
-            ]);
-    }
-    public static function getGloballySearchableAttributes(): array
-    {
-        return ['name','email'];
-    }
-
- 
 }

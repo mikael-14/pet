@@ -71,7 +71,7 @@ class CreatePet extends CreateRecord
                                         ->searchable()
                                         ->preload()
                                         ->options(
-                                            PetResource::getOptionWithColor(ShelterLocation::all())
+                                            PetResource::getOptionWithColor(ShelterLocation::shelters())
                                         )->required(),
                                     Select::make('entry_statuses_id')
                                         ->allowHtml()

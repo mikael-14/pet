@@ -27,7 +27,10 @@ class PersonFlag extends Model
 	protected $casts = [
 		'person_id' => 'int'
 	];
-
+	protected $fillable = [
+		'person_id',
+		'name',
+	];
 	public function person()
 	{
 		return $this->belongsTo(Person::class);

@@ -13,15 +13,9 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('people', function (Blueprint $table) {
+        Schema::create('shelters', function (Blueprint $table) {
             $table->id();
-            $table->string('name',200);
-            $table->set('gender', ['male', 'female','undefined']);
-            $table->string('email')->unique()->nullable();
-            $table->string('phone',20)->nullable();
-            $table->string('vat',20)->unique()->nullable();
-            $table->string('cc',30)->unique()->nullable();
-            $table->date('birth_date')->nullable();
+            $table->string('name',100);
             $table->string('country',100)->nullable(); //país
             $table->string('state',100)->nullable(); //district/estado
             $table->string('local',100)->nullable(); //local
@@ -29,10 +23,7 @@ return new class extends Migration
             $table->string('zip',20)->nullable();
             $table->decimal('latitude',11,8)->nullable();
             $table->decimal('longitude',11,8)->nullable();
-            $table->text('observation')->nullable();
-            $table->unsignedBigInteger('users_id')->nullable(); 
-            $table->foreign('users_id')->references('id')->on('users')->onDelete('set null');
-            $table->softDeletes();
+            $table->boolean('status')->default(true);
             $table->timestamps();
         });
     }
@@ -44,6 +35,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('people');
+        Schema::dropIfExists('shelters');
     }
 };

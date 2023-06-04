@@ -15,7 +15,8 @@ return new class extends Migration
     {
         Schema::create('shelter_locations', function (Blueprint $table) {
             $table->id();
-            $table->string('name',20);
+            $table->foreignId('shelters_id')->constrained();
+            $table->string('name',50);
             $table->string('color','7')->default('#cccccc')->nullable();
             $table->timestamps();
         });
