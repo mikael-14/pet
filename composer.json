@@ -7,6 +7,7 @@
     "require": {
         "php": "^8.0.2",
         "awcodes/drop-in-action": "^0.2.2",
+        "awcodes/filament-badgeable-column": "^1.2",
         "bezhansalleh/filament-shield": "^2.3",
         "blade-ui-kit/blade-icons": "^1.5",
         "cheesegrits/filament-google-maps": "^1.0",

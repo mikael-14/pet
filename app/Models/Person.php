@@ -81,6 +81,7 @@ class Person extends Model
 	protected $appends = [
 		'location',
 		'map',
+		'flags',
 	];
 
 	public function user()
@@ -119,7 +120,10 @@ class Person extends Model
 	{
 		return $this->hasMany(PetsHasVaccine::class, 'people_id');
 	}
+	public function getFlagsAttribute(): array {
 
+		return $this->person_flags()->pluck('name')->toArray();
+	}
 	/**
 	 * Returns the 'latitude' and 'longitude' attributes as the computed 'location' attribute,
 	 * as a standard Google Maps style Point array with 'lat' and 'lng' attributes.

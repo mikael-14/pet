@@ -42,4 +42,8 @@ class PersonFlag extends Model
 			return [$key => $item['name']?? $key];
 		})->all();
 	}
+	public function getName() : string{
+		$data = config('pet-person-flags');
+		return $data[$this->name]['name'] ?? $this->name;
+	}
 }

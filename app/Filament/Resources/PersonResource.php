@@ -18,11 +18,11 @@ use Filament\Resources\Table;
 use Filament\Tables;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
-use Filament\Forms\Components\Tabs;
 use Cheesegrits\FilamentGoogleMaps\Fields\Map;
 use Cheesegrits\FilamentGoogleMaps\Fields\Geocomplete;
 use Closure;
 use Filament\Resources\Pages\ViewRecord;
+use Awcodes\FilamentBadgeableColumn\Components\BadgeableTagsColumn;
 
 class PersonResource extends Resource implements HasShieldPermissions
 {
@@ -84,8 +84,8 @@ class PersonResource extends Resource implements HasShieldPermissions
                         Forms\Components\Select::make('users_id')->options(
                             Person::avaibleUsers()
                         )->searchable()
-                        ->visible(Filament::auth()->user()->can('set_user_person'))
-                        ->placeholder('Select to set user'),
+                            ->visible(Filament::auth()->user()->can('set_user_person'))
+                            ->placeholder('Select to set user'),
                         Forms\Components\Grid::make(2)
                             ->schema([
                                 Forms\Components\Textarea::make('observation')
@@ -226,6 +226,21 @@ class PersonResource extends Resource implements HasShieldPermissions
                 Tables\Columns\TextColumn::make('phone')->searchable(),
                 Tables\Columns\TextColumn::make('vat')->searchable(),
                 Tables\Columns\TextColumn::make('cc')->toggleable(isToggledHiddenByDefault: true),
+                BadgeableTagsColumn::make('flags')
+                    ->colors([
+                        'danger' => 'Black list',
+                        '#fdecce' => 'Adopter',
+                        '#fceacc' => 'Temporary host family',
+                        '#f7e7cd' => 'Sponsor',
+                        '#f7e3c3' => 'Veterinary',
+                    ])
+                    ->getStateUsing(function ($record) {
+                        return $record->person_flags()->get()->map(function ($item){
+                            return $item->getName();
+                        })->toArray();
+                    })
+                    ->searchable()
+                    ->sortable(),
                 Tables\Columns\TextColumn::make('birth_date')
                     ->date(config('filament.date_format'))
                     ->toggleable(isToggledHiddenByDefault: true),
@@ -235,12 +250,27 @@ class PersonResource extends Resource implements HasShieldPermissions
                     ->dateTime(config('filament.date_time_format'))->toggleable(isToggledHiddenByDefault: true),
             ])
             ->filters([
+                // Tables\Filters\SelectFilter::make('flags')
+                //     ->multiple()
+                //     ->options([
+                //         'adopter' => 'adopter',
+                //         'black_list' => 'black_list',
+                //         'cleaning_volunteer' => 'cleaning_volunteer',
+                //         'driver_volunteer' => 'driver_volunteer',
+                //         'medication_volunteer' => 'medication_volunteer',
+                //         'temporary_family' => 'temporary_family',
+                //         'sponsor' => 'sponsor',
+                //         'veterinary' => 'veterinary',
+                //     ])
+                //     ->query(
+                //         fn (Builder $query, array $data): Builder =>
+                //         $query->join('person_flags', 'person_flags.person_id', '=', 'people.id')
+                //     ),
                 Tables\Filters\TrashedFilter::make(),
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),
                 Tables\Actions\ViewAction::make(),
-
             ])
             ->bulkActions([
                 Tables\Actions\DeleteBulkAction::make(),
@@ -275,8 +305,6 @@ class PersonResource extends Resource implements HasShieldPermissions
     }
     public static function getGloballySearchableAttributes(): array
     {
-        return ['name','email'];
+        return ['name', 'email'];
     }
-
- 
 }
