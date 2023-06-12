@@ -13,19 +13,19 @@
 */
 return [
     'cleaning_volunteer' => [
-        'name' => 'Cleaning Volunteer',
+        'name' => 'Cleaning volunteer',
         'status' => true
     ],
     'driver_volunteer' => [
-        'name' => 'Driver Volunteer',
+        'name' => 'Driver volunteer',
         'status' => true
     ],
     'medication_volunteer' => [
-        'name' => 'Medication Volunteer',
+        'name' => 'Medication volunteer',
         'status' => true
     ],
     'temporary_family' => [
-        'name' => 'Temporary Host Family',
+        'name' => 'Temporary host family',
         'status' => true
     ],
     'veterinary' => [
@@ -41,7 +41,7 @@ return [
         'status' => true
     ],
     'black_list' => [
-        'name' => 'Black List',
+        'name' => 'Black list',
         'status' => true
     ],
 ]

@@ -205,7 +205,7 @@ class ShelterResource extends Resource
     public static function getRelations(): array
     {
         return [
-            RelationManagers\ShelterLocationsRelationManager::class
+            RelationManagers\ShelterBlocksRelationManager::class,
         ];
     }
 

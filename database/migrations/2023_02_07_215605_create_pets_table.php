@@ -22,7 +22,7 @@ return new class extends Migration
             $table->boolean('adoptable');
             $table->string('chip',20)->nullable()->unique();
             $table->date('chip_date')->nullable();
-            $table->foreignId('shelter_locations_id')->constrained()->nullable(); 
+            $table->foreignId('shelter_blocks_id')->constrained()->nullable(); 
             $table->date('entry_date');
             $table->foreignId('entry_statuses_id')->constrained(); 
             $table->date('birth_date')->nullable();

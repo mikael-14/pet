@@ -20,11 +20,6 @@ class EditPerson extends EditRecord
             Actions\RestoreAction::make(),
         ];
     }
-    protected function mutateFormDataBeforeFill(array $data): array
-    {
-        $data['flags'] = Person::find($this->record->id)->person_flags()->pluck('name')->toArray();
-        return $data;
-    }
     protected function afterSave(): void
     {
         // Runs after the form fields are saved to the database.
