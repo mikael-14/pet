@@ -24,7 +24,7 @@ use Kenepa\ResourceLock\Models\Concerns\HasLocks;
  * @property bool $adoptable
  * @property string|null $chip
  * @property Carbon|null $chip_date
- * @property int $shelter_locations_id
+ * @property int $shelter_blocks_id
  * @property Carbon $entry_date
  * @property int $entry_statuses_id
  * @property Carbon|null $birth_date
@@ -40,7 +40,7 @@ use Kenepa\ResourceLock\Models\Concerns\HasLocks;
  * @property string|null $deleted_at
  * 
  * @property EntryStatus $entry_status
- * @property ShelterLocation $shelter_location
+ * @property ShelterBlock $shelter_block
  * @property Collection|Deworming[] $dewormings
  * @property Collection|Diet[] $diets
  * @property Collection|PetsHasMeasure[] $pets_has_measures
@@ -59,7 +59,7 @@ class Pet extends Model implements HasMedia
 	
 	protected $casts = [
 		'adoptable' => 'bool',
-		'shelter_locations_id' => 'int',
+		'shelter_blocks_id' => 'int',
 		'entry_statuses_id' => 'int',
 		'sterilized' => 'bool'
 	];
@@ -78,7 +78,7 @@ class Pet extends Model implements HasMedia
 		'adoptable',
 		'chip',
 		'chip_date',
-		'shelter_locations_id',
+		'shelter_blocks_id',
 		'entry_date',
 		'entry_statuses_id',
 		'birth_date',
@@ -92,10 +92,10 @@ class Pet extends Model implements HasMedia
 	];
 
 
-	public function shelter_location()
+	public function shelter_block()
 	{
-		return $this->belongsTo(ShelterLocation::class, 'shelter_locations_id');
-	}		
+		return $this->belongsTo(ShelterBlock::class, 'shelter_blocks_id');
+	}	
 
 	public function entry_status()
 	{

@@ -5,7 +5,7 @@ namespace App\Filament\Resources\PetResource\Pages;
 use App\Filament\Resources\PetResource;
 use App\Models\EntryStatus;
 use App\Models\Pet;
-use App\Models\ShelterLocation;
+use App\Models\ShelterBlock;
 use Carbon\Carbon;
 use Filament\Forms\Components\Card;
 use Filament\Forms\Components\DatePicker;
@@ -66,12 +66,12 @@ class CreatePet extends CreateRecord
                                 ])->columns(2),
                             Section::make('Status')
                                 ->schema([
-                                    Select::make('shelter_locations_id')
+                                    Select::make('shelter_blocks_id')
                                         ->allowHtml()
                                         ->searchable()
                                         ->preload()
                                         ->options(
-                                            PetResource::getOptionWithColor(ShelterLocation::shelters())
+                                            PetResource::getOptionWithColor(ShelterBlock::getOptions())
                                         )->required(),
                                     Select::make('entry_statuses_id')
                                         ->allowHtml()

@@ -4,12 +4,9 @@ namespace App\Filament\Resources;
 
 use App\Filament\Resources\PetResource\Pages;
 use App\Filament\Resources\PetResource\RelationManagers;
-use App\Models\EntryState;
 use App\Models\EntryStatus;
 use App\Models\Pet;
-use App\Models\PetStatus;
-use App\Models\PetLocation;
-use App\Models\ShelterLocation;
+use App\Models\ShelterBlock;
 use Filament\Forms;
 use Filament\Forms\Components\SpatieMediaLibraryFileUpload;
 use Filament\Resources\Form;
@@ -46,8 +43,8 @@ class PetResource extends Resource
                 })
                 ->toggleable(isToggledHiddenByDefault: true)
                     ->sortable(),
-                Tables\Columns\TextColumn::make('shelter_location.name')->extraAttributes(static function (Pet $record): array {
-                    return ['style' => 'background-color:' . $record->shelter_location->color, 'class' => 'table-text-column-badge'];
+                Tables\Columns\TextColumn::make('shelter_block.name')->extraAttributes(static function (Pet $record): array {
+                    return ['style' => 'background-color:' . $record->shelter_block->color, 'class' => 'table-text-column-badge'];
                 })
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
@@ -85,9 +82,9 @@ class PetResource extends Resource
                 Tables\Filters\SelectFilter::make('entry_statuses_id')
                     ->multiple()
                     ->options(EntryStatus::all()->pluck('name', 'id')),
-                Tables\Filters\SelectFilter::make('shelter_locations_id')
+                Tables\Filters\SelectFilter::make('shelter_blocks_id')
                     ->multiple()
-                    ->options(ShelterLocation::all()->pluck('name', 'id')),
+                    ->options(ShelterBlock::all()->pluck('name', 'id')),
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),

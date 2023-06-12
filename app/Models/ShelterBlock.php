@@ -11,7 +11,7 @@ use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 
 /**
- * Class ShelterLocation
+ * Class ShelterBlock
  * 
  * @property int $id
  * @property int $shelters_id
@@ -25,9 +25,9 @@ use Illuminate\Database\Eloquent\Model;
  *
  * @package App\Models
  */
-class ShelterLocation extends Model
+class ShelterBlock extends Model
 {
-	protected $table = 'shelter_locations';
+	protected $table = 'shelter_blocks';
 
 	protected $casts = [
 		'shelters_id' => 'int'
@@ -46,13 +46,13 @@ class ShelterLocation extends Model
 
 	public function pets()
 	{
-		return $this->hasMany(Pet::class, 'shelter_locations_id');
+		return $this->hasMany(Pet::class, 'shelter_blocks_id');
 	}
-	public static function shelters()
+	public static function getOptions()
 	{
 		$tableName = with(new Shelter)->getTable();
-		return ShelterLocation::join($tableName, "shelter_locations.shelters_id", '=', "$tableName.id")
-			->selectRaw("CONCAT($tableName.name, ' (', shelter_locations.name,')') AS name,shelter_locations.id,shelter_locations.color")
+		return ShelterBlock::join($tableName, "shelter_blocks.shelters_id", '=', "$tableName.id")
+			->selectRaw("CONCAT($tableName.name, ' (', shelter_blocks.name,')') AS name,shelter_blocks.id,shelter_blocks.color")
 			->where("$tableName.status", 1)
 			->get();
 	}

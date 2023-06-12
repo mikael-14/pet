@@ -10,18 +10,17 @@ use Filament\Tables;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 
-class ShelterLocationsRelationManager extends RelationManager
+class ShelterBlocksRelationManager extends RelationManager
 {
-    protected static string $relationship = 'shelter_locations';
+    protected static string $relationship = 'shelter_blocks';
 
     protected static ?string $recordTitleAttribute = 'name';
 
-    protected static ?string $title = 'Shelter Location';
+    protected static ?string $title = 'Shelter Block';
 
-    protected static ?string $modelLabel  = 'shelter location';
+    protected static ?string $modelLabel  = 'shelter block';
 
-    protected static ?string $pluralModelLabel = 'shelter locations';
-
+    protected static ?string $pluralModelLabel = 'shelter blocks';
 
     public static function form(Form $form): Form
     {
@@ -56,5 +55,5 @@ class ShelterLocationsRelationManager extends RelationManager
             ->bulkActions([
                 Tables\Actions\DeleteBulkAction::make(),
             ]);
-    }
+    } 
 }

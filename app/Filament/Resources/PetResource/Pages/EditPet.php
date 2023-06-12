@@ -5,9 +5,9 @@ namespace App\Filament\Resources\PetResource\Pages;
 use App\Filament\Resources\PetResource;
 use App\Models\EntryStatus;
 use App\Models\Pet;
+use App\Models\ShelterBlock;
 use Filament\Pages\Actions;
 use Filament\Resources\Pages\EditRecord;
-use App\Models\ShelterLocation;
 use Carbon\Carbon;
 use Closure;
 use Filament\Forms\Components\Card;
@@ -71,12 +71,12 @@ class EditPet extends EditRecord
                                 ])->columns(2),
                             Section::make('Status')
                                 ->schema([
-                                    Select::make('shelter_locations_id')
+                                    Select::make('shelter_blocks_id')
                                         ->allowHtml()
                                         ->searchable()
                                         ->preload()
                                         ->options(
-                                            PetResource::getOptionWithColor(ShelterLocation::all())
+                                            PetResource::getOptionWithColor(ShelterBlock::getOptions())
                                         )->required(),
                                     Select::make('entry_statuses_id')
                                         ->allowHtml()
