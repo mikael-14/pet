@@ -20,7 +20,8 @@ return new class extends Migration
             $table->date('date');
             $table->date('expires_at')->nullable();
             $table->string('local',50)->nullable();
-            $table->foreignId('people_id')->constrained(); 
+            $table->unsignedBigInteger('people_id')->nullable(); 
+            $table->foreign('people_id')->references('id')->on('people');
             $table->string('observation',300)->nullable();
             $table->timestamps();
             $table->softDeletes();

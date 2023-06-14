@@ -1,6 +1,6 @@
 <?php 
 /*
-* values for the pets belogns to person
+* values for the pets belongs to person
 *
 * TODO: maybe instead array of configs, set in table 
 *

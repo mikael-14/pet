@@ -120,7 +120,8 @@ class Person extends Model
 	{
 		return $this->hasMany(PetsHasVaccine::class, 'people_id');
 	}
-	public function getFlagsAttribute(): array {
+	public function getFlagsAttribute(): array
+	{
 
 		return $this->person_flags()->pluck('name')->toArray();
 	}
@@ -220,5 +221,11 @@ class Person extends Model
 					->from($tableName)
 					->whereRaw($tableName . '.users_id = users.id');
 			})->pluck('full', 'id')->toArray();
+	}
+	public static function getPersonByFlag(array $flag): array
+	{
+		return Person::join('person_flags', 'id', '=', 'person_id')
+			->whereIn('person_flags.name', $flag)
+			->pluck('people.name', 'people.id')->toArray();
 	}
 }

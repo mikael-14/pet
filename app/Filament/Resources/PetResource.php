@@ -104,11 +104,11 @@ class PetResource extends Resource
     public static function getRelations(): array
     {
         return [
+            RelationManagers\PetHasDewormingRelationManager::class,
             RelationManagers\PetHasDietRelationManager::class,
             RelationManagers\PetHasMeasureRelationManager::class,
-            RelationManagers\PetHasDewormingRelationManager::class,
-            RelationManagers\PetHasVaccineRelationManager::class,
             RelationManagers\PetHasTestRelationManager::class,
+            RelationManagers\PetHasVaccineRelationManager::class,
         ];
     }
     protected function shouldPersistTableColumnSearchInSession(): bool

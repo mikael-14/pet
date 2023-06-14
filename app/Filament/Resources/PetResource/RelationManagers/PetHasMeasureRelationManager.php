@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\PetResource\RelationManagers;
 
+use App\Models\Person;
 use App\Models\PetHasMeasure;
 use App\Models\PetsHasMeasure;
 use Filament\Forms;
@@ -78,7 +79,7 @@ class PetHasMeasureRelationManager extends RelationManager
                 ),
             Forms\Components\DatePicker::make('date')->displayFormat(config('filament.date_format'))->required(),
             Forms\Components\TextInput::make('local')->maxLength(50),
-            Forms\Components\TextInput::make('application')->maxLength(100),
+            Forms\Components\Select::make('people_id')->options(Person::getPersonByFlag(['driver_volunteer']))->searchable()->columnSpanFull(),
             Forms\Components\Textarea::make('observation')->maxLength(300)->columnSpanFull(),
         ]);
         return $form
