@@ -70,7 +70,7 @@ php artisan make:migration create_pets_table
 Example
 
 * drop the table(s)
-* php artisan migrate:refresh --path=database\migrations\2023_02_07_215605_create_pets_table.php 
+* php artisan migrate:refresh --path=database/migrations/2023_02_07_215605_create_pets_table.php 
 
 ### Create Model
 <a href="https://github.com/reliese/laravel">https://github.com/reliese/laravel</a>

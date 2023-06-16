@@ -41,8 +41,8 @@ class EditPet extends EditRecord
                                         ->maxLength(255),
                                     Select::make('species')
                                         ->options(
-                                            config('pet-species')
-                                        )->default(array_key_first(config('pet-species')))
+                                            __('pet/species')
+                                        )->default(array_key_first(__('pet/species')))
                                         ->disablePlaceholderSelection(),
                                     Select::make('gender')
                                         ->options([

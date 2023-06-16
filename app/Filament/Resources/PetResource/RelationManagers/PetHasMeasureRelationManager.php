@@ -33,7 +33,7 @@ class PetHasMeasureRelationManager extends RelationManager
 
     public static function form(Form $form): Form
     {
-        $configs = config('pet-measures', []);
+        $configs = __('pet/measures');
         $schema = [];
         foreach ($configs as $key => $config) {
             $schema = array_merge($schema, [

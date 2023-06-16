@@ -147,7 +147,7 @@ class Pet extends Model implements HasMedia
 	}
 	public function getConfigSpecie(): string
 	{
-		$configSpecies =config('pet-species', []);
+		$configSpecies =__('pet/species');
 		return $configSpecies[$this->species] ?? $this->species;
 	}
 	// determines whether the associated media files should be deleted when the Eloquent model is deleted. True for don't delete the media files

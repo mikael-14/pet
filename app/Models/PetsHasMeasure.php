@@ -66,17 +66,17 @@ class PetsHasMeasure extends Model
 	}
 	public function getConfigMeasureVariation(): float|null
 	{
-		$configMeasures = config('pet-measures', []);
+		$configMeasures = __('pet/measures')  ?? [];
 		return $configMeasures[$this->type]['variation'] ?? null;
 	}
 	public function getConfigMeasureUnit(): string
 	{
-		$configMeasures = config('pet-measures', []);
+		$configMeasures = __('pet/measures') ?? [];
 		return $configMeasures[$this->type]['unit'] ?? '';
 	}
 	public function getConfigMeasureName(): string
 	{
-		$configMeasures = config('pet-measures', []);
+		$configMeasures = __('pet/measures')  ?? [];
 		return $configMeasures[$this->type]['name'] ?? $this->type;
 	}
 }

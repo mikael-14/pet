@@ -24,6 +24,8 @@ use Illuminate\Database\Eloquent\Model;
  * @property bool $status
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
+ * 
+ * @property Collection|Person[] $people
  *
  * @package App\Models
  */
@@ -56,6 +58,10 @@ class Clinic extends Model
 		'map',
 	];
 
+	public function people()
+	{
+		return $this->belongsToMany(Person::class, 'person_has_clinics', 'clinics_id', 'people_id');
+	}
 	/**
 	 * Returns the 'latitude' and 'longitude' attributes as the computed 'location' attribute,
 	 * as a standard Google Maps style Point array with 'lat' and 'lng' attributes.

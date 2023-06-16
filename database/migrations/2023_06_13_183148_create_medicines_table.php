@@ -36,7 +36,7 @@ return new class extends Migration
         Schema::create('medicines', function (Blueprint $table) {
             $table->id();
             $table->string('name', 100);
-            $table->set('type', ['pills', 'capsule', 'liquid', 'injections', 'toppical', 'inhalers', 'suppositpries', 'drops', 'powder']);
+            $table->set('type', ['pill', 'capsule', 'liquid', 'injection', 'toppical', 'inhaler', 'suppository', 'drop', 'powder']);
             $table->string('dosage', 50)->nullable();
             $table->json('active_ingredient')->nullable();
             $table->string('aplication', 50)->nullable();
