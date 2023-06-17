@@ -28,15 +28,20 @@ class MedicineResource extends Resource
                     ->required()
                     ->maxLength(100),
                 Forms\Components\Select::make('type')
-                ->options(__('pet/medicine'))
+                    ->options(__('pet/medicine'))
                     ->required(),
                 Forms\Components\TextInput::make('dosage')
                     ->maxLength(50),
-                Forms\Components\TextInput::make('active_ingredient'),
                 Forms\Components\TextInput::make('aplication')
                     ->maxLength(50),
                 Forms\Components\Textarea::make('description')
-                    ->maxLength(500),
+                    ->maxLength(500)
+                    ->columnSpanFull(),
+                Forms\Components\Repeater::make('active_ingredient')
+                    ->schema([
+                        Forms\Components\TextInput::make('active_ingredient')->required(),
+                    ])
+                    ->columnSpanFull(),
             ])->columns(2);
     }
 
@@ -44,21 +49,24 @@ class MedicineResource extends Resource
     {
         return $table
             ->columns([
-                Tables\Columns\TextColumn::make('name'),
-                Tables\Columns\TextColumn::make('type'),
+                Tables\Columns\TextColumn::make('name')
+                ->searchable(),
+                Tables\Columns\TextColumn::make('type')
+                    ->enum(__('pet/medicine')),
                 Tables\Columns\TextColumn::make('dosage'),
-                Tables\Columns\TextColumn::make('active_ingredient'),
+                Tables\Columns\TagsColumn::make('active_ingredient_formatted')
+                ->searchable(),
                 Tables\Columns\TextColumn::make('aplication'),
-                Tables\Columns\TextColumn::make('description'),
                 Tables\Columns\TextColumn::make('created_at')
-                    ->dateTime(),
-                Tables\Columns\TextColumn::make('updated_at')
-                    ->dateTime(),
+                    ->dateTime(config('filament.date_time_format'))->toggleable(isToggledHiddenByDefault: true),
                 Tables\Columns\TextColumn::make('deleted_at')
-                    ->dateTime(),
+                    ->dateTime(config('filament.date_time_format'))->toggleable(isToggledHiddenByDefault: true),
             ])
             ->filters([
                 Tables\Filters\TrashedFilter::make(),
+                Tables\Filters\SelectFilter::make('active_ingredient_formatted')
+                ->multiple()
+                ->options(Medicine::getAllActiveIngredientFormatted())
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),
@@ -72,14 +80,14 @@ class MedicineResource extends Resource
                 Tables\Actions\RestoreBulkAction::make(),
             ]);
     }
-    
+
     public static function getPages(): array
     {
         return [
             'index' => Pages\ManageMedicines::route('/'),
         ];
-    }    
-    
+    }
+
     public static function getEloquentQuery(): Builder
     {
         return parent::getEloquentQuery()
