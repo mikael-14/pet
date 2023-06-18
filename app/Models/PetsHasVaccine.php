@@ -7,7 +7,6 @@
 namespace App\Models;
 
 use Carbon\Carbon;
-use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
@@ -20,12 +19,13 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @property Carbon $date
  * @property Carbon|null $expires_at
  * @property string|null $local
- * @property string|null $application
+ * @property int|null $people_id
  * @property string|null $observation
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
  * @property string|null $deleted_at
  * 
+ * @property Person|null $person
  * @property Pet $pet
  * @property Vaccine $vaccine
  *
@@ -38,12 +38,10 @@ class PetsHasVaccine extends Model
 
 	protected $casts = [
 		'pets_id' => 'int',
-		'vaccines_id' => 'int'
-	];
-
-	protected $dates = [
-		'date',
-		'expires_at'
+		'vaccines_id' => 'int',
+		'date' => 'date',
+		'expires_at' => 'date',
+		'people_id' => 'int'
 	];
 
 	protected $fillable = [
@@ -52,9 +50,14 @@ class PetsHasVaccine extends Model
 		'date',
 		'expires_at',
 		'local',
-		'application',
+		'people_id',
 		'observation'
 	];
+
+	public function person()
+	{
+		return $this->belongsTo(Person::class, 'people_id');
+	}
 
 	public function pet()
 	{

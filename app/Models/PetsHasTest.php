@@ -7,11 +7,8 @@
 namespace App\Models;
 
 use Carbon\Carbon;
-use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
-use Spatie\MediaLibrary\HasMedia;
-use Spatie\MediaLibrary\InteractsWithMedia;
 
 /**
  * Class PetsHasTest
@@ -22,31 +19,28 @@ use Spatie\MediaLibrary\InteractsWithMedia;
  * @property Carbon $date
  * @property string $result
  * @property string|null $local
- * @property string|null $application
+ * @property int|null $people_id
  * @property string|null $observation
  * @property string|null $deleted_at
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
  * 
+ * @property Person|null $person
  * @property Pet $pet
  * @property Test $test
  *
  * @package App\Models
  */
-class PetsHasTest extends Model implements HasMedia
+class PetsHasTest extends Model
 {
 	use SoftDeletes;
-	use InteractsWithMedia;
-	
 	protected $table = 'pets_has_tests';
 
 	protected $casts = [
 		'pets_id' => 'int',
-		'tests_id' => 'int'
-	];
-
-	protected $dates = [
-		'date'
+		'tests_id' => 'int',
+		'date' => 'date',
+		'people_id' => 'int'
 	];
 
 	protected $fillable = [
@@ -55,9 +49,14 @@ class PetsHasTest extends Model implements HasMedia
 		'date',
 		'result',
 		'local',
-		'application',
-		'observation',
+		'people_id',
+		'observation'
 	];
+
+	public function person()
+	{
+		return $this->belongsTo(Person::class, 'people_id');
+	}
 
 	public function pet()
 	{

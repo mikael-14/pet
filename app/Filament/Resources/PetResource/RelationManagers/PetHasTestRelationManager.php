@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\PetResource\RelationManagers;
 
+use App\Models\Person;
 use App\Models\PetsHasTest;
 use App\Models\Test;
 use Filament\Forms;
@@ -44,7 +45,7 @@ class PetHasTestRelationManager extends RelationManager
                     ->disablePlaceholderSelection()
                     ->required(),
                 Forms\Components\TextInput::make('local')->maxLength(50),
-                Forms\Components\TextInput::make('application')->maxLength(100),
+                Forms\Components\Select::make('people_id')->options(Person::getPersonByFlag(['driver_volunteer']))->searchable(),
                 Forms\Components\Textarea::make('observation')->maxLength(300)->columnSpanFull(),
                 SpatieMediaLibraryFileUpload::make('file')
                 ->disk('petsTests')
@@ -74,12 +75,15 @@ class PetHasTestRelationManager extends RelationManager
                 Tables\Columns\TextColumn::make('local')
                     ->sortable()
                     ->toggleable(),
-                Tables\Columns\TextColumn::make('application')
+                    Tables\Columns\TextColumn::make('person.name')
                     ->toggleable(),
                 Tables\Columns\TextColumn::make('observation')
                     ->toggleable(isToggledHiddenByDefault: true),
             ])
             ->filters([
+                Tables\Filters\SelectFilter::make('people_id')
+                ->relationship('person', 'name')
+                ->searchable(),
                 Tables\Filters\SelectFilter::make('result')
                 ->options([
                     'unknown' => 'Unkown',

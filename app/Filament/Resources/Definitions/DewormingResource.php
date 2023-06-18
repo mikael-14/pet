@@ -66,11 +66,11 @@ class DewormingResource extends Resource
                 Tables\Columns\TextColumn::make('expires'),
                 Tables\Columns\TextColumn::make('notification'),
                 Tables\Columns\TextColumn::make('created_at')
-                    ->dateTime(),
+                    ->dateTime(config('filament.date_time_format')),
                 Tables\Columns\TextColumn::make('updated_at')
-                    ->dateTime(),
+                    ->dateTime(config('filament.date_time_format')),
                 Tables\Columns\TextColumn::make('deleted_at')
-                    ->dateTime()
+                    ->dateTime(config('filament.date_time_format'))
                     ->toggledHiddenByDefault(),
             ])
             ->filters([

@@ -68,6 +68,6 @@ class Medicine extends Model
 		foreach ($array as $value){
 			$all_values = array_merge($all_values, $value['active_ingredient_formatted']);
 		}
-		return $all_values;
+		return array_unique($all_values,SORT_STRING);
 	}
 }

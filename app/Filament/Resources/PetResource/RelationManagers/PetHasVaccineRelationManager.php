@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\PetResource\RelationManagers;
 
+use App\Models\Person;
 use App\Models\Vaccine;
 use Carbon\Carbon;
 use Closure;
@@ -65,7 +66,7 @@ class PetHasVaccineRelationManager extends RelationManager
                     ->afterOrEqual('date')
                     ->displayFormat(config('filament.date_format')),
                 Forms\Components\TextInput::make('local')->maxLength(50),
-                Forms\Components\TextInput::make('application')->maxLength(100),
+                Forms\Components\Select::make('people_id')->options(Person::getPersonByFlag(['driver_volunteer']))->searchable(),
                 Forms\Components\Textarea::make('observation')->maxLength(300)->columnSpanFull(),
             ]);
     }
@@ -85,13 +86,15 @@ class PetHasVaccineRelationManager extends RelationManager
                 Tables\Columns\TextColumn::make('local')
                     ->sortable()
                     ->toggleable(),
-                Tables\Columns\TextColumn::make('application')
+                    Tables\Columns\TextColumn::make('person.name')
                     ->toggleable(),
                 Tables\Columns\TextColumn::make('observation')
                     ->toggleable(isToggledHiddenByDefault: true),
             ])
             ->filters([
-                //
+                Tables\Filters\SelectFilter::make('people_id')
+                ->relationship('person', 'name')
+                ->searchable()
             ])
             ->headerActions([
                 Tables\Actions\CreateAction::make()->modalHeading(__('filament-support::actions/create.single.modal.heading', ['label' => self::getTitle()])),

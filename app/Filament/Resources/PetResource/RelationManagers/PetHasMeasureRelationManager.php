@@ -3,8 +3,6 @@
 namespace App\Filament\Resources\PetResource\RelationManagers;
 
 use App\Models\Person;
-use App\Models\PetHasMeasure;
-use App\Models\PetsHasMeasure;
 use Filament\Forms;
 use Filament\Resources\Form;
 use Filament\Resources\RelationManagers\RelationManager;
@@ -96,19 +94,18 @@ class PetHasMeasureRelationManager extends RelationManager
                 Tables\Columns\TextColumn::make('date')
                     ->sortable()
                     ->date(config('filament.date_format')),
-                Tables\Columns\TextColumn::make('expires_at')
-                    ->sortable()
-                    ->date(config('filament.date_format')),
                 Tables\Columns\TextColumn::make('local')
                     ->sortable()
                     ->toggleable(),
-                Tables\Columns\TextColumn::make('application')
+                Tables\Columns\TextColumn::make('person.name')
                     ->toggleable(),
                 Tables\Columns\TextColumn::make('observation')
                     ->toggleable(isToggledHiddenByDefault: true),
             ])
             ->filters([
-                //
+                Tables\Filters\SelectFilter::make('people_id')
+                ->relationship('person', 'name')
+                ->searchable()
             ])
             ->headerActions([
                 Tables\Actions\CreateAction::make()->afterFormValidated(function (CreateAction $action, array $data) {

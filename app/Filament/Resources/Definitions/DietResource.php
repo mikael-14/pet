@@ -42,9 +42,9 @@ class DietResource extends Resource
             ->columns([
                 Tables\Columns\TextColumn::make('name'),
                 Tables\Columns\TextColumn::make('created_at')
-                    ->dateTime(),
+                    ->dateTime(config('filament.date_time_format')),
                 Tables\Columns\TextColumn::make('updated_at')
-                    ->dateTime(),
+                    ->dateTime(config('filament.date_time_format')),
             ])
             ->filters([
                 //

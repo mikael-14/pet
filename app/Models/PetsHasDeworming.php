@@ -16,14 +16,15 @@ use Illuminate\Database\Eloquent\Model;
  * @property int $pets_id
  * @property int $dewormings_id
  * @property Carbon $date
- * @property Carbon|null $expiration_date
+ * @property Carbon|null $expires_at
  * @property string|null $local
- * @property string|null $application
+ * @property int|null $people_id
  * @property string|null $observation
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
  * 
  * @property Deworming $deworming
+ * @property Person|null $person
  * @property Pet $pet
  *
  * @package App\Models
@@ -34,12 +35,10 @@ class PetsHasDeworming extends Model
 
 	protected $casts = [
 		'pets_id' => 'int',
-		'dewormings_id' => 'int'
-	];
-
-	protected $dates = [
-		'date',
-		'expiration_date'
+		'dewormings_id' => 'int',
+		'date' => 'date',
+		'expires_at' => 'date',
+		'people_id' => 'int'
 	];
 
 	protected $fillable = [
@@ -48,13 +47,18 @@ class PetsHasDeworming extends Model
 		'date',
 		'expires_at',
 		'local',
-		'application',
+		'people_id',
 		'observation'
 	];
 
 	public function deworming()
 	{
 		return $this->belongsTo(Deworming::class, 'dewormings_id');
+	}
+
+	public function person()
+	{
+		return $this->belongsTo(Person::class, 'people_id');
 	}
 
 	public function pet()

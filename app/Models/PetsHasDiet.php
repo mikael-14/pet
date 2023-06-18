@@ -32,11 +32,8 @@ class PetsHasDiet extends Model
 
 	protected $casts = [
 		'pets_id' => 'int',
-		'diets_id' => 'int'
-	];
-
-	protected $dates = [
-		'date'
+		'diets_id' => 'int',
+		'date' => 'date'
 	];
 
 	protected $fillable = [
