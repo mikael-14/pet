@@ -1,8 +1,8 @@
 <?php
 
-namespace App\Filament\Resources\Definitions\ClinicResource\Pages;
+namespace App\Filament\Resources\ClinicResource\Pages;
 
-use App\Filament\Resources\Definitions\ClinicResource;
+use App\Filament\Resources\ClinicResource;
 use Filament\Pages\Actions;
 use Filament\Resources\Pages\ViewRecord;
 

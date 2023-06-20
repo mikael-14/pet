@@ -1,9 +1,9 @@
 <?php
 
-namespace App\Filament\Resources\Definitions;
+namespace App\Filament\Resources;
 
-use App\Filament\Resources\Definitions\ClinicResource\Pages;
-use App\Filament\Resources\Definitions\ClinicResource\RelationManagers;
+use App\Filament\Resources\ClinicResource\Pages;
+use App\Filament\Resources\ClinicResource\RelationManagers;
 use App\Models\Clinic;
 use Awcodes\DropInAction\Forms\Components\DropInAction;
 use Cheesegrits\FilamentGoogleMaps\Fields\Geocomplete;
@@ -24,11 +24,7 @@ class ClinicResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-collection';
 
-    protected static ?string $slug = 'definitions/clinics';
-
     protected static ?string $recordTitleAttribute = 'name';
-
-    protected static ?string $navigationGroup = 'Definitions';
 
     public static function form(Form $form): Form
     {
@@ -203,7 +199,7 @@ class ClinicResource extends Resource
     public static function getRelations(): array
     {
         return [
-            //
+             RelationManagers\PeopleRelationManager::class,
         ];
     }
 

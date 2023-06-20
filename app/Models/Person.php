@@ -27,8 +27,8 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @property string|null $local
  * @property string|null $street
  * @property string|null $zip
- * @property float $latitude
- * @property float $longitude
+ * @property float|null $latitude
+ * @property float|null $longitude
  * @property string|null $observation
  * @property int|null $users_id
  * @property string|null $deleted_at
@@ -37,6 +37,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * 
  * @property User|null $user
  * @property Collection|PersonFlag[] $person_flags
+ * @property Collection|Clinic[] $clinics
  * @property Collection|Pet[] $pets
  * @property Collection|PetsHasDeworming[] $pets_has_dewormings
  * @property Collection|PetsHasMeasure[] $pets_has_measures
@@ -79,8 +80,6 @@ class Person extends Model
 	];
 
 	protected $appends = [
-		'location',
-		'map',
 		'flags',
 	];
 
@@ -101,6 +100,11 @@ class Person extends Model
 			->withTimestamps();
 	}
 
+	public function clinics()
+	{
+		return $this->belongsToMany(Clinic::class, 'person_has_clinics', 'people_id', 'clinics_id');
+	}
+	
 	public function pets_has_dewormings()
 	{
 		return $this->hasMany(PetsHasDeworming::class, 'people_id');
