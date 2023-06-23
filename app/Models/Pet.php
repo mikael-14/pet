@@ -7,7 +7,6 @@
 namespace App\Models;
 
 use Carbon\Carbon;
-use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -62,20 +61,13 @@ class Pet extends Model implements HasMedia
 
 	protected $casts = [
 		'adoptable' => 'bool',
-		'chip_date' => 'date',
+		'chip_date' => 'datetime',
 		'shelter_blocks_id' => 'int',
-		'entry_date' => 'date',
+		'entry_date' => 'datetime',
 		'entry_statuses_id' => 'int',
-		'birth_date' => 'date',
+		'birth_date' => 'datetime',
 		'sterilized' => 'bool',
-		'sterilized_date' => 'date'
-	];
-
-	protected $dates = [
-		'chip_date',
-		'entry_date',
-		'birth_date',
-		'sterilized_date'
+		'sterilized_date' => 'datetime'
 	];
 
 	protected $fillable = [
@@ -111,21 +103,22 @@ class Pet extends Model implements HasMedia
 	public function people()
 	{
 		return $this->belongsToMany(Person::class, 'person_has_pets', 'pets_id', 'people_id')
-			->withPivot('id', 'start_date', 'end_date', 'type', 'observation', 'deleted_at')
-			->withTimestamps();
+					->withPivot('id', 'start_date', 'end_date', 'type', 'observation', 'deleted_at')
+					->withTimestamps();
 	}
 
 	public function dewormings()
 	{
 		return $this->belongsToMany(Deworming::class, 'pets_has_dewormings', 'pets_id', 'dewormings_id')
-			->withPivot('id', 'date', 'expiration_date', 'local', 'application', 'observation')
-			->withTimestamps();
+					->withPivot('id', 'date', 'expires_at', 'local', 'people_id', 'observation')
+					->withTimestamps();
 	}
+
 	public function diets()
 	{
 		return $this->belongsToMany(Diet::class, 'pets_has_diets', 'pets_id', 'diets_id')
-			->withPivot('id', 'date', 'portion', 'observation')
-			->withTimestamps();
+					->withPivot('id', 'date', 'portion', 'observation')
+					->withTimestamps();
 	}
 
 	public function pets_has_measures()
@@ -136,21 +129,22 @@ class Pet extends Model implements HasMedia
 	public function tests()
 	{
 		return $this->belongsToMany(Test::class, 'pets_has_tests', 'pets_id', 'tests_id')
-			->withPivot('id', 'date', 'result', 'local', 'application', 'observation', 'deleted_at')
-			->withTimestamps();
+					->withPivot('id', 'date', 'result', 'local', 'people_id', 'observation', 'deleted_at')
+					->withTimestamps();
 	}
+
 	public function vaccines()
 	{
 		return $this->belongsToMany(Vaccine::class, 'pets_has_vaccines', 'pets_id', 'vaccines_id')
-			->withPivot('id', 'date', 'expires_at', 'local', 'application', 'observation', 'deleted_at')
-			->withTimestamps();
+					->withPivot('id', 'date', 'expires_at', 'local', 'people_id', 'observation', 'deleted_at')
+					->withTimestamps();
 	}
 
 	public function prescriptions()
 	{
 		return $this->hasMany(Prescription::class, 'pets_id');
 	}
-
+	
 	public function getConfigSpecie(): string
 	{
 		$configSpecies = __('pet/species');
@@ -182,8 +176,4 @@ class Pet extends Model implements HasMedia
 		return $this->hasMany(PetsHasDeworming::class, 'pets_id');
 	}
 
-	// determines whether the associated media files should be deleted when the Eloquent model is deleted. True for don't delete the media files
-	// public function shouldDeletePreservingMedia() :bool{
-	// 	return true;
-	// }
 }

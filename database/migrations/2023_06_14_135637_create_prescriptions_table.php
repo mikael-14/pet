@@ -15,15 +15,11 @@ return new class extends Migration
     {
         Schema::create('prescriptions', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('medicines_id')->constrained();
             $table->foreignId('pets_id')->constrained();  
-            $table->string('dosage', 50);
-            $table->set('status', ['active', 'completed','on_hold','canceled']);
-            $table->unsignedSmallInteger('frequency')->comment('time in hours beteween takes');//in hours
-            $table->boolean('emergency')->default(false);
-            $table->date('start_date')->useCurrent();
-            $table->date('end_date')->nullable();
-            $table->string('observation', 100);
+            $table->foreignId('clinics_id')->constrained();  
+            $table->foreignId('people_id')->constrained();  
+            $table->date('date')->default(date('Y-m-d'));
+            $table->string('observation', 500)->nullable();
             $table->timestamps();
             $table->softDeletes();
         });
