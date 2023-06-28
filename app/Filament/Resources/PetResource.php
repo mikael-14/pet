@@ -79,10 +79,10 @@ class PetResource extends Resource
                         1 => 'Yes',
                         0 => 'No',
                     ]),
-                Tables\Filters\SelectFilter::make('entry_statuses_id')
+                Tables\Filters\SelectFilter::make('entry_status_id')
                     ->multiple()
                     ->options(EntryStatus::all()->pluck('name', 'id')),
-                Tables\Filters\SelectFilter::make('shelter_blocks_id')
+                Tables\Filters\SelectFilter::make('shelter_block_id')
                     ->multiple()
                     ->options(ShelterBlock::all()->pluck('name', 'id')),
             ])

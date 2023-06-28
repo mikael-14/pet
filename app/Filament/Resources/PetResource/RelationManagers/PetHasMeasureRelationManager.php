@@ -77,7 +77,7 @@ class PetHasMeasureRelationManager extends RelationManager
                 ),
             Forms\Components\DatePicker::make('date')->displayFormat(config('filament.date_format'))->required(),
             Forms\Components\TextInput::make('local')->maxLength(50),
-            Forms\Components\Select::make('people_id')->options(Person::getPersonByFlag(['veterinary','medication_volunteer']))->searchable()->columnSpanFull(),
+            Forms\Components\Select::make('person_id')->options(Person::getPersonByFlag(['veterinary','medication_volunteer']))->searchable()->columnSpanFull(),
             Forms\Components\Textarea::make('observation')->maxLength(300)->columnSpanFull(),
         ]);
         return $form
@@ -96,14 +96,14 @@ class PetHasMeasureRelationManager extends RelationManager
                     ->date(config('filament.date_format')),
                 Tables\Columns\TextColumn::make('local')
                     ->sortable()
-                    ->toggleable(),
+                    ->toggleable(isToggledHiddenByDefault: true),
                 Tables\Columns\TextColumn::make('person.name')
                     ->toggleable(),
                 Tables\Columns\TextColumn::make('observation')
                     ->toggleable(isToggledHiddenByDefault: true),
             ])
             ->filters([
-                Tables\Filters\SelectFilter::make('people_id')
+                Tables\Filters\SelectFilter::make('person_id')
                 ->relationship('person', 'name')
                 ->searchable()
             ])

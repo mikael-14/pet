@@ -10,15 +10,15 @@ use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
 
 /**
- * Class PetsHasDeworming
+ * Class PetHasDeworming
  * 
  * @property int $id
- * @property int $pets_id
- * @property int $dewormings_id
+ * @property int $pet_id
+ * @property int $deworming_id
  * @property Carbon $date
- * @property Carbon|null $expires_at
+ * @property Carbon|null $expire_at
  * @property string|null $local
- * @property int|null $people_id
+ * @property int|null $person_id
  * @property string|null $observation
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
@@ -29,40 +29,40 @@ use Illuminate\Database\Eloquent\Model;
  *
  * @package App\Models
  */
-class PetsHasDeworming extends Model
+class PetHasDeworming extends Model
 {
-	protected $table = 'pets_has_dewormings';
+	protected $table = 'pet_has_dewormings';
 
 	protected $casts = [
-		'pets_id' => 'int',
-		'dewormings_id' => 'int',
-		'date' => 'date',
-		'expires_at' => 'date',
-		'people_id' => 'int'
+		'pet_id' => 'int',
+		'deworming_id' => 'int',
+		'date' => 'datetime',
+		'expire_at' => 'datetime',
+		'person_id' => 'int'
 	];
 
 	protected $fillable = [
-		'pets_id',
-		'dewormings_id',
+		'pet_id',
+		'deworming_id',
 		'date',
-		'expires_at',
+		'expire_at',
 		'local',
-		'people_id',
+		'person_id',
 		'observation'
 	];
 
 	public function deworming()
 	{
-		return $this->belongsTo(Deworming::class, 'dewormings_id');
+		return $this->belongsTo(Deworming::class);
 	}
 
 	public function person()
 	{
-		return $this->belongsTo(Person::class, 'people_id');
+		return $this->belongsTo(Person::class);
 	}
 
 	public function pet()
 	{
-		return $this->belongsTo(Pet::class, 'pets_id');
+		return $this->belongsTo(Pet::class);
 	}
 }

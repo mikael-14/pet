@@ -14,7 +14,7 @@ use Illuminate\Database\Eloquent\Model;
  * Class ShelterBlock
  * 
  * @property int $id
- * @property int $shelters_id
+ * @property int $shelter_id
  * @property string $name
  * @property string|null $color
  * @property Carbon|null $created_at
@@ -30,28 +30,28 @@ class ShelterBlock extends Model
 	protected $table = 'shelter_blocks';
 
 	protected $casts = [
-		'shelters_id' => 'int'
+		'shelter_id' => 'int'
 	];
 
 	protected $fillable = [
-		'shelters_id',
+		'shelter_id',
 		'name',
 		'color'
 	];
 
 	public function shelter()
 	{
-		return $this->belongsTo(Shelter::class, 'shelters_id');
+		return $this->belongsTo(Shelter::class);
 	}
 
 	public function pets()
 	{
-		return $this->hasMany(Pet::class, 'shelter_blocks_id');
+		return $this->hasMany(Pet::class);
 	}
 	public static function getOptions()
 	{
 		$tableName = with(new Shelter)->getTable();
-		return ShelterBlock::join($tableName, "shelter_blocks.shelters_id", '=', "$tableName.id")
+		return ShelterBlock::join($tableName, "shelter_blocks.shelter_id", '=', "$tableName.id")
 			->selectRaw("CONCAT($tableName.name, ' (', shelter_blocks.name,')') AS name,shelter_blocks.id,shelter_blocks.color")
 			->where("$tableName.status", 1)
 			->get();

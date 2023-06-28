@@ -11,60 +11,61 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 /**
- * Class PetsHasTest
+ * Class PetHasVaccine
  * 
  * @property int $id
- * @property int $pets_id
- * @property int $tests_id
+ * @property int $pet_id
+ * @property int $vaccine_id
  * @property Carbon $date
- * @property string $result
+ * @property Carbon|null $expire_at
  * @property string|null $local
- * @property int|null $people_id
+ * @property int|null $person_id
  * @property string|null $observation
- * @property string|null $deleted_at
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
+ * @property string|null $deleted_at
  * 
  * @property Person|null $person
  * @property Pet $pet
- * @property Test $test
+ * @property Vaccine $vaccine
  *
  * @package App\Models
  */
-class PetsHasTest extends Model
+class PetHasVaccine extends Model
 {
 	use SoftDeletes;
-	protected $table = 'pets_has_tests';
+	protected $table = 'pet_has_vaccines';
 
 	protected $casts = [
-		'pets_id' => 'int',
-		'tests_id' => 'int',
-		'date' => 'date',
-		'people_id' => 'int'
+		'pet_id' => 'int',
+		'vaccine_id' => 'int',
+		'date' => 'datetime',
+		'expire_at' => 'datetime',
+		'person_id' => 'int'
 	];
 
 	protected $fillable = [
-		'pets_id',
-		'tests_id',
+		'pet_id',
+		'vaccine_id',
 		'date',
-		'result',
+		'expire_at',
 		'local',
-		'people_id',
+		'person_id',
 		'observation'
 	];
 
 	public function person()
 	{
-		return $this->belongsTo(Person::class, 'people_id');
+		return $this->belongsTo(Person::class);
 	}
 
 	public function pet()
 	{
-		return $this->belongsTo(Pet::class, 'pets_id');
+		return $this->belongsTo(Pet::class);
 	}
 
-	public function test()
+	public function vaccine()
 	{
-		return $this->belongsTo(Test::class, 'tests_id');
+		return $this->belongsTo(Vaccine::class);
 	}
 }

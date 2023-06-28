@@ -15,8 +15,8 @@ return new class extends Migration
     {
         Schema::create('prescription_has_medicines', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('prescriptions_id')->constrained();
-            $table->foreignId('medicines_id')->constrained();
+            $table->foreignId('prescription_id')->constrained();
+            $table->foreignId('medicine_id')->constrained();
             $table->string('dosage', 50);
             $table->set('status', ['active', 'completed','on_hold','canceled']);
             $table->unsignedSmallInteger('frequency')->comment('time in hours beteween takes');//in hours

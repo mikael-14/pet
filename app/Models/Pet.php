@@ -24,9 +24,9 @@ use Kenepa\ResourceLock\Models\Concerns\HasLocks;
  * @property bool $adoptable
  * @property string|null $chip
  * @property Carbon|null $chip_date
- * @property int $shelter_blocks_id
+ * @property int $shelter_block_id
  * @property Carbon $entry_date
- * @property int $entry_statuses_id
+ * @property int $entry_status_id
  * @property Carbon|null $birth_date
  * @property bool $sterilized
  * @property Carbon|null $sterilized_date
@@ -44,7 +44,7 @@ use Kenepa\ResourceLock\Models\Concerns\HasLocks;
  * @property Collection|Person[] $people
  * @property Collection|Deworming[] $dewormings
  * @property Collection|Diet[] $diets
- * @property Collection|PetsHasMeasure[] $pets_has_measures
+ * @property Collection|PetHasMeasure[] $pets_has_measures
  * @property Collection|Test[] $tests
  * @property Collection|Vaccine[] $vaccines
  * @property Collection|Prescription[] $prescriptions
@@ -62,9 +62,9 @@ class Pet extends Model implements HasMedia
 	protected $casts = [
 		'adoptable' => 'bool',
 		'chip_date' => 'datetime',
-		'shelter_blocks_id' => 'int',
+		'shelter_block_id' => 'int',
 		'entry_date' => 'datetime',
-		'entry_statuses_id' => 'int',
+		'entry_status_id' => 'int',
 		'birth_date' => 'datetime',
 		'sterilized' => 'bool',
 		'sterilized_date' => 'datetime'
@@ -77,9 +77,9 @@ class Pet extends Model implements HasMedia
 		'adoptable',
 		'chip',
 		'chip_date',
-		'shelter_blocks_id',
+		'shelter_block_id',
 		'entry_date',
-		'entry_statuses_id',
+		'entry_status_id',
 		'birth_date',
 		'sterilized',
 		'sterilized_date',
@@ -92,59 +92,59 @@ class Pet extends Model implements HasMedia
 
 	public function entry_status()
 	{
-		return $this->belongsTo(EntryStatus::class, 'entry_statuses_id');
+		return $this->belongsTo(EntryStatus::class);
 	}
 
 	public function shelter_block()
 	{
-		return $this->belongsTo(ShelterBlock::class, 'shelter_blocks_id');
+		return $this->belongsTo(ShelterBlock::class);
 	}
 
 	public function people()
 	{
-		return $this->belongsToMany(Person::class, 'person_has_pets', 'pets_id', 'people_id')
-					->withPivot('id', 'start_date', 'end_date', 'type', 'observation', 'deleted_at')
-					->withTimestamps();
+		return $this->belongsToMany(Person::class, 'person_has_pets', 'pet_id', 'people_id')
+			->withPivot('id', 'start_date', 'end_date', 'type', 'observation', 'deleted_at')
+			->withTimestamps();
 	}
 
 	public function dewormings()
 	{
-		return $this->belongsToMany(Deworming::class, 'pets_has_dewormings', 'pets_id', 'dewormings_id')
-					->withPivot('id', 'date', 'expires_at', 'local', 'people_id', 'observation')
-					->withTimestamps();
+		return $this->belongsToMany(Deworming::class, 'pet_has_dewormings', 'pet_id', 'deworming_id')
+			->withPivot('id', 'date', 'expire_at', 'local', 'people_id', 'observation')
+			->withTimestamps();
 	}
 
 	public function diets()
 	{
-		return $this->belongsToMany(Diet::class, 'pets_has_diets', 'pets_id', 'diets_id')
-					->withPivot('id', 'date', 'portion', 'observation')
-					->withTimestamps();
+		return $this->belongsToMany(Diet::class, 'pet_has_diets', 'pet_id', 'diet_id')
+			->withPivot('id', 'date', 'portion', 'observation')
+			->withTimestamps();
 	}
 
-	public function pets_has_measures()
+	public function pet_has_measures()
 	{
-		return $this->hasMany(PetsHasMeasure::class, 'pets_id');
+		return $this->hasMany(PetHasMeasure::class);
 	}
 
 	public function tests()
 	{
-		return $this->belongsToMany(Test::class, 'pets_has_tests', 'pets_id', 'tests_id')
-					->withPivot('id', 'date', 'result', 'local', 'people_id', 'observation', 'deleted_at')
-					->withTimestamps();
+		return $this->belongsToMany(Test::class, 'pet_has_tests', 'pet_id', 'test_id')
+			->withPivot('id', 'date', 'result', 'local', 'people_id', 'observation', 'deleted_at')
+			->withTimestamps();
 	}
 
 	public function vaccines()
 	{
-		return $this->belongsToMany(Vaccine::class, 'pets_has_vaccines', 'pets_id', 'vaccines_id')
-					->withPivot('id', 'date', 'expires_at', 'local', 'people_id', 'observation', 'deleted_at')
-					->withTimestamps();
+		return $this->belongsToMany(Vaccine::class, 'pet_has_vaccines', 'pet_id', 'vaccine_id')
+			->withPivot('id', 'date', 'expire_at', 'local', 'people_id', 'observation', 'deleted_at')
+			->withTimestamps();
 	}
 
 	public function prescriptions()
 	{
-		return $this->hasMany(Prescription::class, 'pets_id');
+		return $this->hasMany(Prescription::class);
 	}
-	
+
 	public function getConfigSpecie(): string
 	{
 		$configSpecies = __('pet/species');
@@ -153,27 +153,26 @@ class Pet extends Model implements HasMedia
 
 	public function pet_has_vaccine()
 	{
-		return $this->hasMany(PetsHasVaccine::class, 'pets_id');
+		return $this->hasMany(PetHasVaccine::class);
 	}
 
 	public function pet_has_test()
 	{
-		return $this->hasMany(PetsHasTest::class, 'pets_id');
+		return $this->hasMany(PetHasTest::class);
 	}
 
 	public function pet_has_measure()
 	{
-		return $this->hasMany(PetsHasMeasure::class, 'pets_id');
+		return $this->hasMany(PetHasMeasure::class);
 	}
 
 	public function pet_has_diet()
 	{
-		return $this->hasMany(PetsHasDiet::class, 'pets_id');
+		return $this->hasMany(PetHasDiet::class);
 	}
 
 	public function pet_has_deworming()
 	{
-		return $this->hasMany(PetsHasDeworming::class, 'pets_id');
+		return $this->hasMany(PetHasDeworming::class);
 	}
-
 }

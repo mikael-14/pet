@@ -28,10 +28,10 @@ class PrescriptionResource extends Resource
             ->schema([
                 Forms\Components\Card::make()
                 ->schema([
-                Forms\Components\Select::make('pets_id')
+                Forms\Components\Select::make('pet_id')
                     ->options(Pet::all()->pluck('name', 'id'))
                     ->required(),
-                    Forms\Components\Select::make('clinics_id')
+                    Forms\Components\Select::make('clinic_id')
                     ->options(Clinic::all()->pluck('name', 'id'))
                     ->required(),
                     Forms\Components\Select::make('people_id')

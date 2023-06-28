@@ -35,7 +35,7 @@ class Test extends Model
 
 	public function pets()
 	{
-		return $this->belongsToMany(Pet::class, 'pets_has_tests', 'tests_id', 'pets_id')
+		return $this->belongsToMany(Pet::class, 'pet_has_tests', 'test_id', 'pet_id')
 					->withPivot('id', 'date', 'result', 'local', 'application', 'observation', 'deleted_at')
 					->withTimestamps();
 	}

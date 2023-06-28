@@ -25,7 +25,7 @@ class PetHasDietRelationManager extends RelationManager
     {
         return $form
             ->schema([
-                Forms\Components\Select::make('diets_id')
+                Forms\Components\Select::make('diet_id')
                     ->options(Diet::all()->pluck('name', 'id'))
                     ->columnSpanFull()
                     ->required(),

@@ -10,11 +10,11 @@ use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
 
 /**
- * Class PetsHasDiet
+ * Class PetHasDiet
  * 
  * @property int $id
- * @property int $pets_id
- * @property int $diets_id
+ * @property int $pet_id
+ * @property int $diet_id
  * @property Carbon $date
  * @property string|null $portion
  * @property string|null $observation
@@ -26,19 +26,19 @@ use Illuminate\Database\Eloquent\Model;
  *
  * @package App\Models
  */
-class PetsHasDiet extends Model
+class PetHasDiet extends Model
 {
-	protected $table = 'pets_has_diets';
+	protected $table = 'pet_has_diets';
 
 	protected $casts = [
-		'pets_id' => 'int',
-		'diets_id' => 'int',
+		'pet_id' => 'int',
+		'diet_id' => 'int',
 		'date' => 'date'
 	];
 
 	protected $fillable = [
-		'pets_id',
-		'diets_id',
+		'pet_id',
+		'diet_id',
 		'date',
 		'portion',
 		'observation'
@@ -46,11 +46,11 @@ class PetsHasDiet extends Model
 
 	public function diet()
 	{
-		return $this->belongsTo(Diet::class, 'diets_id');
+		return $this->belongsTo(Diet::class);
 	}
 
 	public function pet()
 	{
-		return $this->belongsTo(Pet::class, 'pets_id');
+		return $this->belongsTo(Pet::class);
 	}
 }

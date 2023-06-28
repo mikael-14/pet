@@ -16,7 +16,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * 
  * @property int $id
  * @property string $name
- * @property int $expires
+ * @property int $expire
  * @property int $notification
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
@@ -32,19 +32,19 @@ class Vaccine extends Model
 	protected $table = 'vaccines';
 
 	protected $casts = [
-		'expires' => 'int',
+		'expire' => 'int',
 		'notification' => 'int'
 	];
 
 	protected $fillable = [
 		'name',
-		'expires',
+		'expire',
 		'notification'
 	];
 
 	public function pets()
 	{
-		return $this->belongsToMany(Pet::class, 'pets_has_vaccines', 'vaccines_id', 'pets_id')
+		return $this->belongsToMany(Pet::class, 'pet_has_vaccines', 'vaccine_id', 'pet_id')
 					->withPivot('id', 'vaccine_date', 'local', 'aplication', 'observation', 'deleted_at')
 					->withTimestamps();
 	}

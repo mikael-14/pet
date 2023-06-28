@@ -11,15 +11,15 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Blade;
 
 /**
- * Class PetsHasMeasure
+ * Class PetHasMeasure
  * 
  * @property int $id
- * @property int $pets_id
+ * @property int $pet_id
  * @property float $value
  * @property string $type
  * @property Carbon $date
  * @property string|null $local
- * @property int|null $people_id
+ * @property int|null $person_id
  * @property string|null $observation
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
@@ -29,41 +29,41 @@ use Illuminate\Support\Facades\Blade;
  *
  * @package App\Models
  */
-class PetsHasMeasure extends Model
+class PetHasMeasure extends Model
 {
-	protected $table = 'pets_has_measures';
+	protected $table = 'pet_has_measures';
 
 	protected $casts = [
-		'pets_id' => 'int',
+		'pet_id' => 'int',
 		'value' => 'float',
 		'date' => 'date',
-		'people_id' => 'int'
+		'person_id' => 'int'
 	];
 
 	protected $fillable = [
-		'pets_id',
+		'pet_id',
 		'value',
 		'type',
 		'date',
 		'local',
-		'people_id',
+		'person_id',
 		'observation'
 	];
 
 	public function person()
 	{
-		return $this->belongsTo(Person::class, 'people_id');
+		return $this->belongsTo(Person::class);
 	}
 
 	public function pet()
 	{
-		return $this->belongsTo(Pet::class, 'pets_id');
+		return $this->belongsTo(Pet::class);
 	}
 	
 	public function calculateVariation(): float
 	{
 		$variation = 0;
-		$getPreviousRecord = PetsHasMeasure::where('id', '!=', $this->id)->where('date', '<', $this->date)->where('type', $this->type)->orderBy('date', 'DESC')->first();
+		$getPreviousRecord = PetHasMeasure::where('id', '!=', $this->id)->where('date', '<', $this->date)->where('type', $this->type)->orderBy('date', 'DESC')->first();
 		if ($getPreviousRecord) {
 			$variation = $this->value - $getPreviousRecord->value;
 		}

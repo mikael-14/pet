@@ -13,17 +13,13 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('pets_has_tests', function (Blueprint $table) {
+        Schema::create('pet_has_diets', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('pets_id')->constrained(); 
-            $table->foreignId('tests_id')->constrained(); 
+            $table->foreignId('pet_id')->constrained(); 
+            $table->foreignId('diet_id')->constrained(); 
             $table->date('date');
-            $table->set('result',['unknown','positive','negative']);
-            $table->string('local',50)->nullable();
-            $table->unsignedBigInteger('people_id')->nullable(); 
-            $table->foreign('people_id')->references('id')->on('people');
+            $table->string('portion',50)->nullable();
             $table->string('observation',300)->nullable();
-            $table->softDeletes();
             $table->timestamps();
         });
     }
@@ -35,6 +31,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('pets_has_tests');
+        Schema::dropIfExists('pets_has_diets');
     }
 };

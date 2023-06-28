@@ -58,7 +58,7 @@ class Medicine extends Model
 
 	public function prescriptions()
 	{
-		return $this->hasMany(Prescription::class, 'medicines_id');
+		return $this->hasMany(Prescription::class);
 	}
 
 	public static function getAllActiveIngredientFormatted(): array

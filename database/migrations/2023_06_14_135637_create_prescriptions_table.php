@@ -15,9 +15,9 @@ return new class extends Migration
     {
         Schema::create('prescriptions', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('pets_id')->constrained();  
-            $table->foreignId('clinics_id')->constrained();  
-            $table->foreignId('people_id')->constrained();  
+            $table->foreignId('pet_id')->constrained();  
+            $table->foreignId('clinic_id')->constrained();  
+            $table->foreignId('person_id')->constrained();  
             $table->date('date')->default(date('Y-m-d'));
             $table->string('observation', 500)->nullable();
             $table->timestamps();

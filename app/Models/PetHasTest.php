@@ -9,63 +9,67 @@ namespace App\Models;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Spatie\MediaLibrary\HasMedia;
+use Spatie\MediaLibrary\InteractsWithMedia;
 
 /**
- * Class PetsHasVaccine
+ * Class PetHasTest
  * 
  * @property int $id
- * @property int $pets_id
- * @property int $vaccines_id
+ * @property int $pet_id
+ * @property int $test_id
  * @property Carbon $date
- * @property Carbon|null $expires_at
+ * @property string $result
  * @property string|null $local
  * @property int|null $people_id
  * @property string|null $observation
+ * @property string|null $deleted_at
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
- * @property string|null $deleted_at
  * 
  * @property Person|null $person
  * @property Pet $pet
- * @property Vaccine $vaccine
+ * @property Test $test
  *
  * @package App\Models
  */
-class PetsHasVaccine extends Model
+class PetHasTest extends Model implements HasMedia
 {
 	use SoftDeletes;
-	protected $table = 'pets_has_vaccines';
+	use InteractsWithMedia;
+	
+	protected $table = 'pet_has_tests';
 
 	protected $casts = [
-		'pets_id' => 'int',
-		'vaccines_id' => 'int',
-		'date' => 'date',
-		'expires_at' => 'date',
-		'people_id' => 'int'
+		'pet_id' => 'int',
+		'test_id' => 'int',
+		'date' => 'datetime',
+		'person_id' => 'int'
 	];
 
 	protected $fillable = [
-		'pets_id',
-		'vaccines_id',
+		'pet_id',
+		'test_id',
 		'date',
-		'expires_at',
+		'result',
 		'local',
-		'people_id',
+		'person_id',
 		'observation'
 	];
 
 	public function person()
 	{
-		return $this->belongsTo(Person::class, 'people_id');
+		return $this->belongsTo(Person::class);
 	}
 
 	public function pet()
 	{
-		return $this->belongsTo(Pet::class, 'pets_id');
+		return $this->belongsTo(Pet::class);
 	}
 
-	public function vaccine()
+	public function test()
 	{
-		return $this->belongsTo(Vaccine::class, 'vaccines_id');
+		return $this->belongsTo(Test::class);
 	}
+	
 }

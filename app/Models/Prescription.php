@@ -15,8 +15,8 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * Class Prescription
  * 
  * @property int $id
- * @property int $pets_id
- * @property int $clinics_id
+ * @property int $pet_id
+ * @property int $clinic_id
  * @property int $people_id
  * @property Carbon $date
  * @property string $observation
@@ -37,15 +37,15 @@ class Prescription extends Model
 	protected $table = 'prescriptions';
 
 	protected $casts = [
-		'pets_id' => 'int',
-		'clinics_id' => 'int',
+		'pet_id' => 'int',
+		'clinic_id' => 'int',
 		'people_id' => 'int',
 		'date' => 'date'
 	];
 
 	protected $fillable = [
-		'pets_id',
-		'clinics_id',
+		'pet_id',
+		'clinic_id',
 		'people_id',
 		'date',
 		'observation'
@@ -53,7 +53,7 @@ class Prescription extends Model
 
 	public function clinic()
 	{
-		return $this->belongsTo(Clinic::class, 'clinics_id');
+		return $this->belongsTo(Clinic::class);
 	}
 
 	public function person()
@@ -63,18 +63,18 @@ class Prescription extends Model
 
 	public function pet()
 	{
-		return $this->belongsTo(Pet::class, 'pets_id');
+		return $this->belongsTo(Pet::class);
 	}
 
 	public function medicines()
 	{
-		return $this->belongsToMany(Medicine::class, 'prescription_has_medicines', 'prescriptions_id', 'medicines_id')
+		return $this->belongsToMany(Medicine::class, 'prescription_has_medicines', 'prescription_id', 'medicine_id')
 					->withPivot('id', 'dosage', 'status', 'frequency', 'emergency', 'start_date', 'end_date', 'observation', 'deleted_at')
 					->withTimestamps();
 	}
 	public function prescription_has_medicines()
 	{
-		return $this->hasMany(PrescriptionHasMedicine::class, 'prescriptions_id');
+		return $this->hasMany(PrescriptionHasMedicine::class);
 	}
 
 }

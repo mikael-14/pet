@@ -11,8 +11,8 @@ use Illuminate\Database\Eloquent\Model;
 /**
  * Class PersonHasClinic
  * 
- * @property int $people_id
- * @property int $clinics_id
+ * @property int $person_id
+ * @property int $clinic_id
  * 
  * @property Clinic $clinic
  * @property Person $person
@@ -26,22 +26,22 @@ class PersonHasClinic extends Model
 	public $timestamps = false;
 
 	protected $casts = [
-		'people_id' => 'int',
-		'clinics_id' => 'int'
+		'person_id' => 'int',
+		'clinic_id' => 'int'
 	];
 
 	protected $fillable = [
-		'people_id',
-		'clinics_id'
+		'person_id',
+		'clinic_id'
 	];
 
 	public function clinic()
 	{
-		return $this->belongsTo(Clinic::class, 'clinics_id');
+		return $this->belongsTo(Clinic::class);
 	}
 
 	public function person()
 	{
-		return $this->belongsTo(Person::class, 'people_id');
+		return $this->belongsTo(Person::class);
 	}
 }

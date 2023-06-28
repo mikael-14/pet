@@ -14,8 +14,8 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * Class PrescriptionHasMedicine
  * 
  * @property int $id
- * @property int $prescriptions_id
- * @property int $medicines_id
+ * @property int $prescription_id
+ * @property int $medicine_id
  * @property string $dosage
  * @property string $status
  * @property int $frequency
@@ -38,8 +38,8 @@ class PrescriptionHasMedicine extends Model
 	protected $table = 'prescription_has_medicines';
 
 	protected $casts = [
-		'prescriptions_id' => 'int',
-		'medicines_id' => 'int',
+		'prescription_id' => 'int',
+		'medicine_id' => 'int',
 		'frequency' => 'int',
 		'emergency' => 'bool',
 		'start_date' => 'date',
@@ -47,8 +47,8 @@ class PrescriptionHasMedicine extends Model
 	];
 
 	protected $fillable = [
-		'prescriptions_id',
-		'medicines_id',
+		'prescription_id',
+		'medicine_id',
 		'dosage',
 		'status',
 		'frequency',
@@ -60,11 +60,11 @@ class PrescriptionHasMedicine extends Model
 
 	public function medicine()
 	{
-		return $this->belongsTo(Medicine::class, 'medicines_id');
+		return $this->belongsTo(Medicine::class, 'medicine_id');
 	}
 
 	public function prescription()
 	{
-		return $this->belongsTo(Prescription::class, 'prescriptions_id');
+		return $this->belongsTo(Prescription::class, 'prescription_id');
 	}
 }

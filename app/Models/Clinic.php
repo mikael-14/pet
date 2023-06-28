@@ -60,7 +60,12 @@ class Clinic extends Model
 
 	public function people()
 	{
-		return $this->belongsToMany(Person::class, 'person_has_clinics', 'clinics_id', 'people_id');
+		return $this->belongsToMany(Person::class, 'person_has_clinics');
+	}
+
+	public function prescriptions()
+	{
+		return $this->hasMany(Prescription::class);
 	}
 	/**
 	 * Returns the 'latitude' and 'longitude' attributes as the computed 'location' attribute,

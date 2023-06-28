@@ -66,14 +66,14 @@ class CreatePet extends CreateRecord
                                 ])->columns(2),
                             Section::make('Status')
                                 ->schema([
-                                    Select::make('shelter_blocks_id')
+                                    Select::make('shelter_block_id')
                                         ->allowHtml()
                                         ->searchable()
                                         ->preload()
                                         ->options(
                                             PetResource::getOptionWithColor(ShelterBlock::getOptions())
                                         )->required(),
-                                    Select::make('entry_statuses_id')
+                                    Select::make('entry_status_id')
                                         ->allowHtml()
                                         ->searchable()
                                         ->preload()

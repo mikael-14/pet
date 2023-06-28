@@ -30,7 +30,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @property float|null $latitude
  * @property float|null $longitude
  * @property string|null $observation
- * @property int|null $users_id
+ * @property int|null $user_id
  * @property string|null $deleted_at
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
@@ -39,10 +39,10 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @property Collection|PersonFlag[] $person_flags
  * @property Collection|Clinic[] $clinics
  * @property Collection|Pet[] $pets
- * @property Collection|PetsHasDeworming[] $pets_has_dewormings
- * @property Collection|PetsHasMeasure[] $pets_has_measures
- * @property Collection|PetsHasTest[] $pets_has_tests
- * @property Collection|PetsHasVaccine[] $pets_has_vaccines
+ * @property Collection|PetHasDeworming[] $pet_has_dewormings
+ * @property Collection|PetHasMeasure[] $pets_has_measures
+ * @property Collection|PetHasTest[] $pets_has_tests
+ * @property Collection|PetHasVaccine[] $pet_has_vaccines
  *
  * @package App\Models
  */
@@ -55,7 +55,7 @@ class Person extends Model
 		'birth_date' => 'datetime',
 		'latitude' => 'float',
 		'longitude' => 'float',
-		'users_id' => 'int'
+		'user_id' => 'int'
 	];
 
 	protected $fillable = [
@@ -74,7 +74,7 @@ class Person extends Model
 		'latitude',
 		'longitude',
 		'observation',
-		'users_id',
+		'user_id',
 		'location',
 		'map',
 	];
@@ -85,7 +85,7 @@ class Person extends Model
 
 	public function user()
 	{
-		return $this->belongsTo(User::class, 'users_id');
+		return $this->belongsTo(User::class);
 	}
 
 	public function person_flags()
@@ -95,35 +95,16 @@ class Person extends Model
 
 	public function pets()
 	{
-		return $this->belongsToMany(Pet::class, 'person_has_pets', 'people_id', 'pets_id')
+		return $this->belongsToMany(Pet::class, 'person_has_pets', 'people_id', 'pet_id')
 			->withPivot('id', 'start_date', 'end_date', 'type', 'observation', 'deleted_at')
 			->withTimestamps();
 	}
 
 	public function clinics()
 	{
-		return $this->belongsToMany(Clinic::class, 'person_has_clinics', 'people_id', 'clinics_id');
+		return $this->belongsToMany(Clinic::class, 'person_has_clinics', 'people_id', 'clinic_id');
 	}
 	
-	public function pets_has_dewormings()
-	{
-		return $this->hasMany(PetsHasDeworming::class, 'people_id');
-	}
-
-	public function pets_has_measures()
-	{
-		return $this->hasMany(PetsHasMeasure::class, 'people_id');
-	}
-
-	public function pets_has_tests()
-	{
-		return $this->hasMany(PetsHasTest::class, 'people_id');
-	}
-
-	public function pets_has_vaccines()
-	{
-		return $this->hasMany(PetsHasVaccine::class, 'people_id');
-	}
 	public function getFlagsAttribute(): array
 	{
 
@@ -221,9 +202,9 @@ class Person extends Model
 			->leftJoin('model_has_roles', 'id', '=', 'model_id')
 			->where('role_id', '!=', 1)
 			->whereNotIn('id', function ($query) use ($tableName) {
-				$query->select('users_id')
+				$query->select('user_id')
 					->from($tableName)
-					->whereRaw($tableName . '.users_id = users.id');
+					->whereRaw($tableName . '.user_id = users.id');
 			})->pluck('full', 'id')->toArray();
 	}
 	public static function getPersonByFlag(array $flag): array

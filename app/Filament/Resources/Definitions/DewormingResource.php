@@ -39,7 +39,7 @@ class DewormingResource extends Resource
                         'internal and external' => 'Internal and external',
                     ])
                     ->required(),
-                Forms\Components\TextInput::make('expires')
+                Forms\Components\TextInput::make('expire')
                     ->numeric()
                     ->minValue(0)
                     ->default(0)
@@ -63,7 +63,7 @@ class DewormingResource extends Resource
                     'external' => 'External',
                     'internal and external' => 'Internal and external',
                 ]),
-                Tables\Columns\TextColumn::make('expires'),
+                Tables\Columns\TextColumn::make('expire'),
                 Tables\Columns\TextColumn::make('notification'),
                 Tables\Columns\TextColumn::make('created_at')
                     ->dateTime(config('filament.date_time_format')),

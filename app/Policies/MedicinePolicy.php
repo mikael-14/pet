@@ -3,10 +3,10 @@
 namespace App\Policies;
 
 use App\Models\User;
-use App\Models\Clinic;
+use App\Models\Medicine;
 use Illuminate\Auth\Access\HandlesAuthorization;
 
-class ClinicPolicy
+class MedicinePolicy
 {
     use HandlesAuthorization;
 
@@ -18,19 +18,19 @@ class ClinicPolicy
      */
     public function viewAny(User $user)
     {
-        return $user->can('view_any_clinic');
+        return $user->can('view_any_medicine');
     }
 
     /**
      * Determine whether the user can view the model.
      *
      * @param  \App\Models\User  $user
-     * @param  \App\Models\Clinic  $clinic
+     * @param  \App\Models\Medicine  $medicine
      * @return \Illuminate\Auth\Access\Response|bool
      */
-    public function view(User $user, Clinic $clinic)
+    public function view(User $user, Medicine $medicine)
     {
-        return $user->can('view_clinic');
+        return $user->can('view_medicine');
     }
 
     /**
@@ -41,31 +41,31 @@ class ClinicPolicy
      */
     public function create(User $user)
     {
-        return $user->can('create_clinic');
+        return $user->can('create_medicine');
     }
 
     /**
      * Determine whether the user can update the model.
      *
      * @param  \App\Models\User  $user
-     * @param  \App\Models\Clinic  $clinic
+     * @param  \App\Models\Medicine  $medicine
      * @return \Illuminate\Auth\Access\Response|bool
      */
-    public function update(User $user, Clinic $clinic)
+    public function update(User $user, Medicine $medicine)
     {
-        return $user->can('update_clinic');
+        return $user->can('update_medicine');
     }
 
     /**
      * Determine whether the user can delete the model.
      *
      * @param  \App\Models\User  $user
-     * @param  \App\Models\Clinic  $clinic
+     * @param  \App\Models\Medicine  $medicine
      * @return \Illuminate\Auth\Access\Response|bool
      */
-    public function delete(User $user, Clinic $clinic)
+    public function delete(User $user, Medicine $medicine)
     {
-        return $user->can('delete_clinic');
+        return $user->can('delete_medicine');
     }
 
     /**
@@ -76,19 +76,19 @@ class ClinicPolicy
      */
     public function deleteAny(User $user)
     {
-        return $user->can('delete_any_clinic');
+        return $user->can('delete_any_medicine');
     }
 
     /**
      * Determine whether the user can permanently delete.
      *
      * @param  \App\Models\User  $user
-     * @param  \App\Models\Clinic  $clinic
+     * @param  \App\Models\Medicine  $medicine
      * @return \Illuminate\Auth\Access\Response|bool
      */
-    public function forceDelete(User $user, Clinic $clinic)
+    public function forceDelete(User $user, Medicine $medicine)
     {
-        return $user->can('force_delete_clinic');
+        return $user->can('force_delete_medicine');
     }
 
     /**
@@ -99,19 +99,19 @@ class ClinicPolicy
      */
     public function forceDeleteAny(User $user)
     {
-        return $user->can('force_delete_any_clinic');
+        return $user->can('force_delete_any_medicine');
     }
 
     /**
      * Determine whether the user can restore.
      *
      * @param  \App\Models\User  $user
-     * @param  \App\Models\Clinic  $clinic
+     * @param  \App\Models\Medicine  $medicine
      * @return \Illuminate\Auth\Access\Response|bool
      */
-    public function restore(User $user, Clinic $clinic)
+    public function restore(User $user, Medicine $medicine)
     {
-        return $user->can('restore_clinic');
+        return $user->can('restore_medicine');
     }
 
     /**
@@ -122,19 +122,19 @@ class ClinicPolicy
      */
     public function restoreAny(User $user)
     {
-        return $user->can('restore_any_clinic');
+        return $user->can('restore_any_medicine');
     }
 
     /**
      * Determine whether the user can replicate.
      *
      * @param  \App\Models\User  $user
-     * @param  \App\Models\Clinic  $clinic
+     * @param  \App\Models\Medicine  $medicine
      * @return \Illuminate\Auth\Access\Response|bool
      */
-    public function replicate(User $user, Clinic $clinic)
+    public function replicate(User $user, Medicine $medicine)
     {
-        return $user->can('replicate_clinic');
+        return $user->can('replicate_medicine');
     }
 
     /**
@@ -145,7 +145,7 @@ class ClinicPolicy
      */
     public function reorder(User $user)
     {
-        return $user->can('reorder_clinic');
+        return $user->can('reorder_medicine');
     }
 
 }
