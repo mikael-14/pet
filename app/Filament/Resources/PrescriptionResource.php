@@ -9,6 +9,7 @@ use App\Models\Person;
 use App\Models\Pet;
 use App\Models\Prescription;
 use Filament\Forms;
+use Filament\Forms\Components\SpatieMediaLibraryFileUpload;
 use Filament\Resources\Form;
 use Filament\Resources\Resource;
 use Filament\Resources\Table;
@@ -30,17 +31,24 @@ class PrescriptionResource extends Resource
                 ->schema([
                 Forms\Components\Select::make('pet_id')
                     ->options(Pet::all()->pluck('name', 'id'))
+                    ->searchable()
                     ->required(),
                     Forms\Components\Select::make('clinic_id')
                     ->options(Clinic::all()->pluck('name', 'id'))
                     ->required(),
-                    Forms\Components\Select::make('people_id')
+                    Forms\Components\Select::make('person_id')
                     ->options(Person::getPersonByFlag(['veterinary']))
                     ->required(),
                     Forms\Components\DatePicker::make('date')
                     ->displayFormat(config('filament.date_format'))
                     ->default(now())
                     ->required(),
+                 SpatieMediaLibraryFileUpload::make('file')
+                    ->disk('petsPrescriptions')
+                    ->collection('pets-prescriptions')
+                    ->enableOpen()
+                    ->enableDownload()
+                    ->columnSpan('full'),
                 Forms\Components\Textarea::make('observation')
                     ->maxLength(500)
                     ->columnSpanFull(),
@@ -66,7 +74,15 @@ class PrescriptionResource extends Resource
                 Tables\Filters\TrashedFilter::make(),
             ])
             ->actions([
+                Tables\Actions\Action::make('file')
+                ->label('View file')
+                ->color('info')
+                ->url(fn  (Prescription $record) => $record->getMedia('pets-prescriptions')[0]?->getFullUrl())
+                ->visible(fn (Prescription $record): bool => isset($record->getMedia('pets-prescriptions')[0]) ? true : false)
+                ->openUrlInNewTab()
+                ->icon('tabler-file-download'),
                 Tables\Actions\EditAction::make(),
+                Tables\Actions\ViewAction::make(),
             ])
             ->bulkActions([
                 Tables\Actions\DeleteBulkAction::make(),

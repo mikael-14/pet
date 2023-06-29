@@ -95,14 +95,14 @@ class Person extends Model
 
 	public function pets()
 	{
-		return $this->belongsToMany(Pet::class, 'person_has_pets', 'people_id', 'pet_id')
+		return $this->belongsToMany(Pet::class, 'person_has_pets', 'person_id', 'pet_id')
 			->withPivot('id', 'start_date', 'end_date', 'type', 'observation', 'deleted_at')
 			->withTimestamps();
 	}
 
 	public function clinics()
 	{
-		return $this->belongsToMany(Clinic::class, 'person_has_clinics', 'people_id', 'clinic_id');
+		return $this->belongsToMany(Clinic::class, 'person_has_clinics', 'person_id', 'clinic_id');
 	}
 	
 	public function getFlagsAttribute(): array

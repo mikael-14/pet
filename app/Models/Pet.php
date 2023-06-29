@@ -102,7 +102,7 @@ class Pet extends Model implements HasMedia
 
 	public function people()
 	{
-		return $this->belongsToMany(Person::class, 'person_has_pets', 'pet_id', 'people_id')
+		return $this->belongsToMany(Person::class, 'person_has_pets', 'pet_id', 'person_id')
 			->withPivot('id', 'start_date', 'end_date', 'type', 'observation', 'deleted_at')
 			->withTimestamps();
 	}
@@ -110,7 +110,7 @@ class Pet extends Model implements HasMedia
 	public function dewormings()
 	{
 		return $this->belongsToMany(Deworming::class, 'pet_has_dewormings', 'pet_id', 'deworming_id')
-			->withPivot('id', 'date', 'expire_at', 'local', 'people_id', 'observation')
+			->withPivot('id', 'date', 'expire_at', 'local', 'person_id', 'observation')
 			->withTimestamps();
 	}
 
@@ -129,14 +129,14 @@ class Pet extends Model implements HasMedia
 	public function tests()
 	{
 		return $this->belongsToMany(Test::class, 'pet_has_tests', 'pet_id', 'test_id')
-			->withPivot('id', 'date', 'result', 'local', 'people_id', 'observation', 'deleted_at')
+			->withPivot('id', 'date', 'result', 'local', 'person_id', 'observation', 'deleted_at')
 			->withTimestamps();
 	}
 
 	public function vaccines()
 	{
 		return $this->belongsToMany(Vaccine::class, 'pet_has_vaccines', 'pet_id', 'vaccine_id')
-			->withPivot('id', 'date', 'expire_at', 'local', 'people_id', 'observation', 'deleted_at')
+			->withPivot('id', 'date', 'expire_at', 'local', 'person_id', 'observation', 'deleted_at')
 			->withTimestamps();
 	}
 

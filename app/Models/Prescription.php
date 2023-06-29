@@ -10,6 +10,8 @@ use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Spatie\MediaLibrary\HasMedia;
+use Spatie\MediaLibrary\InteractsWithMedia;
 
 /**
  * Class Prescription
@@ -17,7 +19,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @property int $id
  * @property int $pet_id
  * @property int $clinic_id
- * @property int $people_id
+ * @property int $person_id
  * @property Carbon $date
  * @property string $observation
  * @property Carbon|null $created_at
@@ -31,22 +33,24 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  *
  * @package App\Models
  */
-class Prescription extends Model
+class Prescription extends Model implements HasMedia
 {
 	use SoftDeletes;
+	use InteractsWithMedia;
+	
 	protected $table = 'prescriptions';
 
 	protected $casts = [
 		'pet_id' => 'int',
 		'clinic_id' => 'int',
-		'people_id' => 'int',
+		'person_id' => 'int',
 		'date' => 'date'
 	];
 
 	protected $fillable = [
 		'pet_id',
 		'clinic_id',
-		'people_id',
+		'person_id',
 		'date',
 		'observation'
 	];
@@ -58,7 +62,7 @@ class Prescription extends Model
 
 	public function person()
 	{
-		return $this->belongsTo(Person::class, 'people_id');
+		return $this->belongsTo(Person::class);
 	}
 
 	public function pet()

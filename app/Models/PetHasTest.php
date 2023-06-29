@@ -21,7 +21,7 @@ use Spatie\MediaLibrary\InteractsWithMedia;
  * @property Carbon $date
  * @property string $result
  * @property string|null $local
- * @property int|null $people_id
+ * @property int|null $person_id
  * @property string|null $observation
  * @property string|null $deleted_at
  * @property Carbon|null $created_at

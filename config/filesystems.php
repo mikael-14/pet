@@ -70,6 +70,13 @@ return [
             'visibility' => 'public',
             'throw' => false,
         ],
+        'petsPrescriptions' => [
+            'driver' => 'local',
+            'root'   => storage_path('app/public/pets/prescriptions'),
+            'url'        => env('APP_URL').'/storage'.'/pets/prescriptions',
+            'visibility' => 'public',
+            'throw' => false,
+        ],
     ],
 
     /*
