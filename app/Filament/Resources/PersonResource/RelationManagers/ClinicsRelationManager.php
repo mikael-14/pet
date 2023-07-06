@@ -3,7 +3,9 @@
 namespace App\Filament\Resources\PersonResource\RelationManagers;
 
 use App\Filament\Resources\ClinicResource;
+use App\Filament\Resources\PersonResource\Pages\ViewPerson;
 use App\Models\Clinic;
+use Filament\Facades\Filament;
 use Filament\Forms;
 use Filament\Resources\Form;
 use Filament\Resources\RelationManagers\RelationManager;
@@ -36,8 +38,10 @@ class ClinicsRelationManager extends RelationManager
                 //
             ])
             ->headerActions([
-                Tables\Actions\CreateAction::make()->color('secondary'),
-                Tables\Actions\AttachAction::make()->color('primary'),
+                Tables\Actions\CreateAction::make()->color('secondary')
+                ->visible(fn ($livewire) => $livewire->pageClass !== ViewPerson::class),
+                Tables\Actions\AttachAction::make()->color('primary')
+                ->visible(fn ($livewire) => $livewire->pageClass !== ViewPerson::class),
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),

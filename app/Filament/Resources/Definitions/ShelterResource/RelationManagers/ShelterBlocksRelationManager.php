@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\Definitions\ShelterResource\RelationManagers;
 
+use App\Filament\Resources\Definitions\ShelterResource\Pages\ViewShelter;
 use Filament\Forms;
 use Filament\Resources\Form;
 use Filament\Resources\RelationManagers\RelationManager;
@@ -46,7 +47,9 @@ class ShelterBlocksRelationManager extends RelationManager
                 //
             ])
             ->headerActions([
-                Tables\Actions\CreateAction::make()->modalHeading(__('filament-support::actions/create.single.modal.heading', ['label' => self::getTitle()])),
+                Tables\Actions\CreateAction::make()
+                ->modalHeading(__('filament-support::actions/create.single.modal.heading', ['label' => self::getTitle()]))
+                ->visible(fn ($livewire) => $livewire->pageClass !== ViewShelter::class),
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),

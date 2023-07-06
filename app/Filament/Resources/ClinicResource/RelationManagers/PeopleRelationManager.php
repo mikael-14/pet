@@ -50,8 +50,10 @@ class PeopleRelationManager extends RelationManager
                 //
             ])
             ->headerActions([
-                Tables\Actions\CreateAction::make()->color('secondary'),
-                Tables\Actions\AttachAction::make()->color('primary'),
+                Tables\Actions\CreateAction::make()->color('secondary')
+                ->visible(fn ($livewire) => $livewire->pageClass !== ViewClinic::class),
+                Tables\Actions\AttachAction::make()->color('primary')
+                ->visible(fn ($livewire) => $livewire->pageClass !== ViewClinic::class),
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),

@@ -66,8 +66,10 @@ class PrescriptionHasMedicinesRelationManager extends RelationManager
                     ->required()
                     ->suffix('time in hours')
                     ->reactive(),
-                Forms\Components\DatePicker::make('start_date')
-                    ->displayFormat(config('filament.date_format'))
+                Forms\Components\DateTimePicker::make('start_date')
+                    ->displayFormat(config('filament.date_time_format'))
+                    ->withoutSeconds()
+                    ->minutesStep(15)
                     // ->reactive()
                     // ->afterStateUpdated(function (Closure $set, Closure $get, $state) {
                     //     if ($get('id') === null) {
@@ -79,9 +81,11 @@ class PrescriptionHasMedicinesRelationManager extends RelationManager
                     //     }
                     // })
                     ->required(),
-                Forms\Components\DatePicker::make('end_date')
+                Forms\Components\DateTimePicker::make('end_date')
                     ->afterOrEqual('start_date')
-                    ->displayFormat(config('filament.date_format')),
+                    ->displayFormat(config('filament.date_time_format'))
+                    ->withoutSeconds()
+                    ->minutesStep(15),
                 Placeholder::make('shout')
                     ->label(false)
                     ->content(function (Closure $get) {
@@ -150,7 +154,7 @@ class PrescriptionHasMedicinesRelationManager extends RelationManager
             ])
             ->headerActions([
                 Tables\Actions\CreateAction::make()
-                    ->hidden(fn ($livewire) => $livewire->pageClass === ViewPrescription::class)
+                    ->visible(fn ($livewire) => $livewire->pageClass !== ViewPrescription::class)
             ])
             ->actions([
                 Tables\Actions\ViewAction::make(),
