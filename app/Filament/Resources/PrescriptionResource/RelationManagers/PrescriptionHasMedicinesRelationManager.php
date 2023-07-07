@@ -91,17 +91,34 @@ class PrescriptionHasMedicinesRelationManager extends RelationManager
                     ->content(function (Closure $get) {
                         $frequency = (int)$get('frequency');
                         if ($frequency > 0) {
+                            $sos = $get('emergency');
                             $dosage = $get('dosage');
+                            $type = $get('status');
                             $medicine = Medicine::where('id', (int)$get('medicine_id'))->first();
                             if ($frequency < 24) {
                                 $totalTimes = intdiv(24, $frequency);
-                                $content = __('pet/prescriptionmedicines.shout.times_day', ['dosage' => $dosage, 'medicine' => $medicine->name, 'total_times' => $totalTimes]);
                             } else {
                                 $totalTimes = intdiv($frequency, 24);
-                                $content = __('pet/prescriptionmedicines.shout.every_days', ['dosage' => $dosage, 'medicine' => $medicine->name, 'total_times' => $totalTimes]);
                             }
-                            $type = $get('status');
-                            $sos = $get('emergency');
+                            switch ($type) {
+                                case 'canceled':
+                                    $content = __('pet/prescriptionmedicines.shout.canceled', ['medicine' => $medicine->name ?? '']);
+                                    break;
+                                case 'on_hold':
+                                    $content = __('pet/prescriptionmedicines.shout.on_hold', ['medicine' => $medicine->name ?? '']);
+                                    break;
+                                case 'completed':
+                                    $content = __('pet/prescriptionmedicines.shout.completed', ['medicine' => $medicine->name ?? '']);
+                                    break;
+                                default:
+                                    if ($frequency < 24) {
+                                        $content = __('pet/prescriptionmedicines.shout.times_day', ['dosage' => $dosage, 'medicine' => $medicine->name ?? '', 'total_times' => $totalTimes]);
+                                    } else {
+                                        $content = __('pet/prescriptionmedicines.shout.every_days', ['dosage' => $dosage, 'medicine' => $medicine->name ?? '', 'total_times' => $totalTimes]);
+                                    }
+                                    break;
+                            }
+
                             return view('filament.components.placeholder-alert')
                                 ->with('content', $content)
                                 ->with('type', $sos ? 'danger' : match ($type) {
@@ -113,11 +130,11 @@ class PrescriptionHasMedicinesRelationManager extends RelationManager
                         }
                         return '';
                     })
-                    
+
                     ->hidden(fn (Closure $get): bool => empty($get('frequency')) || empty($get('medicine_id')))
                     ->columnSpan('full'),
                 Forms\Components\Textarea::make('observation')
-                    ->maxLength(100)
+                    ->maxLength(200)
                     ->columnSpanFull(),
 
             ]);
@@ -128,29 +145,48 @@ class PrescriptionHasMedicinesRelationManager extends RelationManager
         return $table
             ->columns([
                 Tables\Columns\TextColumn::make('medicine.name')
-                ->description(fn (PrescriptionHasMedicine $record): string => $record->observation),
+                    ->color(fn (PrescriptionHasMedicine $record): string => $record->emergency ? 'danger' : '')
+                    ->icon(fn (PrescriptionHasMedicine $record): string => $record->emergency ? 'uni-medical-square-o' : '')
+                    ->iconPosition('after')
+                    ->description(fn (PrescriptionHasMedicine $record): string => $record->emergency ? '(SOS) ' : '' . $record->observation ?? ''),
+                Tables\Columns\BadgeColumn::make('status')
+                    ->enum(__('pet/prescriptionmedicines.status'))
+                    ->colors([
+                        'primary' => 'active',
+                        'warning' => 'on_hold',
+                        'success' => 'completed',
+                        'danger' => 'canceled',
+                    ]),
                 Tables\Columns\TextColumn::make('dosage'),
                 Tables\Columns\TextColumn::make('frequency')
-                ->formatStateUsing(function (string $state): string {
-                    if ($state < 24) {
-                       return __('pet/prescriptionmedicines.shout.repeat_hour', ['frequency' => $state]);
-                    } else {
-                        $frequency = intdiv($state, 24);
-                       return __('pet/prescriptionmedicines.shout.repeat_day', ['frequency' => $frequency]);
-                    }
-                }),
+                    ->formatStateUsing(function (string $state): string {
+                        if ($state < 24) {
+                            return __('pet/prescriptionmedicines.shout.repeat_hour', ['frequency' => $state]);
+                        } else {
+                            $frequency = intdiv($state, 24);
+                            return __('pet/prescriptionmedicines.shout.repeat_day', ['frequency' => $frequency]);
+                        }
+                    }),
                 Tables\Columns\TextColumn::make('start_date')
-                ->sortable()
-                ->date(config('filament.date_format')),
+                    ->sortable()
+                    ->date(config('filament.date_format')),
                 Tables\Columns\TextColumn::make('end_date')
-                ->placeholder('-')
-                ->sortable()
-                ->date(config('filament.date_format')),
+                    ->placeholder('-')
+                    ->sortable()
+                    ->date(config('filament.date_format')),
             ])
             ->filters([
+                Tables\Filters\SelectFilter::make('status')
+                    ->options(__('pet/prescriptionmedicines.status'))
+                    ->multiple(),
+                Tables\Filters\SelectFilter::make('emergency')
+                    ->options([
+                        0 => 'No',
+                        1 => 'Yes',
+                    ]),
                 Tables\Filters\SelectFilter::make('medicine_id')
-                ->relationship('medicine', 'name')
-                ->searchable()
+                    ->relationship('medicine', 'name')
+                    ->searchable()
             ])
             ->headerActions([
                 Tables\Actions\CreateAction::make()

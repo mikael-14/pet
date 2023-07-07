@@ -48,7 +48,8 @@ class PrescriptionResource extends Resource
                     ->collection('pets-prescriptions')
                     ->enableOpen()
                     ->enableDownload()
-                    ->columnSpan('full'),
+                    ->columnSpan('full')
+                    ->hiddenOn('view'),
                 Forms\Components\Textarea::make('observation')
                     ->maxLength(500)
                     ->columnSpanFull(),

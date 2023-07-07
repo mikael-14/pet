@@ -47,15 +47,6 @@ class Medicine extends Model
 		'description'
 	];
 
-	protected $appends = [
-		'active_ingredient_formatted'
-	];
-
-	public function getActiveIngredientFormattedAttribute(): array
-	{
-		return count($this->active_ingredient) ? array_column($this->active_ingredient, 'active_ingredient') : [];
-	}
-
 	public function prescriptions()
 	{
 		return $this->hasMany(Prescription::class);
@@ -63,11 +54,8 @@ class Medicine extends Model
 
 	public static function getAllActiveIngredientFormatted(): array
 	{
-		$array = Medicine::all(['active_ingredient'])->toArray();
-		$all_values = [];
-		foreach ($array as $value){
-			$all_values = array_merge($all_values, $value['active_ingredient_formatted']);
-		}
-		return array_unique($all_values,SORT_STRING);
+		$array = Medicine::pluck('active_ingredient')->flatten()->toArray();
+		$all_values = array_unique($array, SORT_STRING);
+		return array_combine($all_values, $all_values);
 	}
 }

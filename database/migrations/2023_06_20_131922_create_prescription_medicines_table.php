@@ -23,7 +23,7 @@ return new class extends Migration
             $table->boolean('emergency')->default(false);
             $table->dateTime('start_date');
             $table->dateTime('end_date')->nullable();
-            $table->string('observation', 100);
+            $table->string('observation', 200)->nullable();
             $table->timestamps();
             $table->softDeletes();
         });

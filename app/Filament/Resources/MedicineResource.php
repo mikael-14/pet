@@ -37,10 +37,12 @@ class MedicineResource extends Resource
                 Forms\Components\Textarea::make('description')
                     ->maxLength(500)
                     ->columnSpanFull(),
-                Forms\Components\Repeater::make('active_ingredient')
-                    ->schema([
-                        Forms\Components\TextInput::make('active_ingredient')->required(),
-                    ])
+                Forms\Components\TagsInput::make('active_ingredient')
+                // ->keyLabel('Property name')
+                // ->valueLabel('Property value')
+                    // ->schema([
+                    //     Forms\Components\TextInput::make('active_ingredient')->required(),
+                    // ])
                     ->columnSpanFull(),
             ])->columns(2);
     }
@@ -54,7 +56,7 @@ class MedicineResource extends Resource
                 Tables\Columns\TextColumn::make('type')
                     ->enum(__('pet/medicine')),
                 Tables\Columns\TextColumn::make('dosage'),
-                Tables\Columns\TagsColumn::make('active_ingredient_formatted')
+                Tables\Columns\TagsColumn::make('active_ingredient')
                 ->searchable(),
                 Tables\Columns\TextColumn::make('aplication'),
                 Tables\Columns\TextColumn::make('created_at')
@@ -64,9 +66,12 @@ class MedicineResource extends Resource
             ])
             ->filters([
                 Tables\Filters\TrashedFilter::make(),
-                Tables\Filters\SelectFilter::make('active_ingredient_formatted')
+                Tables\Filters\SelectFilter::make('active_ingredient')
                 ->multiple()
                 ->options(Medicine::getAllActiveIngredientFormatted())
+                ->query(function (Builder $query, array $data): Builder {
+                    return $query->whereJsonContains('active_ingredient',$data['values']);
+                }),
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),
