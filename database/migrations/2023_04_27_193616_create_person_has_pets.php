@@ -16,9 +16,9 @@ return new class extends Migration
     {
         Schema::create('person_has_pets', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('pets_id')->constrained(); 
-            $table->foreignId('people_id')->constrained();
-            $table->date('start_date')->useCurrent();
+            $table->foreignId('pet_id')->constrained(); 
+            $table->foreignId('person_id')->constrained();
+            $table->date('start_date')->default(date('Y-m-d'));
             $table->date('end_date')->nullable();
             $table->string('type',50);
             $table->string('observation',300)->nullable();

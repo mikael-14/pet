@@ -79,10 +79,10 @@ class PetResource extends Resource
                         1 => 'Yes',
                         0 => 'No',
                     ]),
-                Tables\Filters\SelectFilter::make('entry_statuses_id')
+                Tables\Filters\SelectFilter::make('entry_status_id')
                     ->multiple()
                     ->options(EntryStatus::all()->pluck('name', 'id')),
-                Tables\Filters\SelectFilter::make('shelter_blocks_id')
+                Tables\Filters\SelectFilter::make('shelter_block_id')
                     ->multiple()
                     ->options(ShelterBlock::all()->pluck('name', 'id')),
             ])
@@ -104,11 +104,11 @@ class PetResource extends Resource
     public static function getRelations(): array
     {
         return [
+            RelationManagers\PetHasDewormingRelationManager::class,
             RelationManagers\PetHasDietRelationManager::class,
             RelationManagers\PetHasMeasureRelationManager::class,
-            RelationManagers\PetHasDewormingRelationManager::class,
-            RelationManagers\PetHasVaccineRelationManager::class,
             RelationManagers\PetHasTestRelationManager::class,
+            RelationManagers\PetHasVaccineRelationManager::class,
         ];
     }
     protected function shouldPersistTableColumnSearchInSession(): bool

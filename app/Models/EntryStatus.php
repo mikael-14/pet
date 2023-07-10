@@ -34,6 +34,6 @@ class EntryStatus extends Model
 
 	public function pets()
 	{
-		return $this->hasMany(Pet::class, 'entry_statuses_id');
+		return $this->hasMany(Pet::class);
 	}
 }

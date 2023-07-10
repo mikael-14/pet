@@ -30,8 +30,8 @@ return new class extends Migration
             $table->decimal('latitude',11,8)->nullable();
             $table->decimal('longitude',11,8)->nullable();
             $table->text('observation')->nullable();
-            $table->unsignedBigInteger('users_id')->nullable(); 
-            $table->foreign('users_id')->references('id')->on('users')->onDelete('set null');
+            $table->unsignedBigInteger('user_id')->nullable(); 
+            $table->foreign('user_id')->references('id')->on('users')->onDelete('set null');
             $table->softDeletes();
             $table->timestamps();
         });

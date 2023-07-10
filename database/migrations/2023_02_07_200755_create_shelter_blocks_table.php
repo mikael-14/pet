@@ -15,7 +15,7 @@ return new class extends Migration
     {
         Schema::create('shelter_blocks', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('shelters_id')->constrained();
+            $table->foreignId('shelter_id')->constrained();
             $table->string('name',50);
             $table->string('color','7')->default('#cccccc')->nullable();
             $table->timestamps();

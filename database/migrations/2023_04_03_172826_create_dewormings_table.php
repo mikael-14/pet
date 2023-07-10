@@ -17,7 +17,7 @@ return new class extends Migration
             $table->id();
             $table->string('name',100);
             $table->set('type', ['internal', 'external', 'internal and external']);
-            $table->integer('expires')->default(0)->comment('days of validation;0 not expiring');
+            $table->integer('expire')->default(0)->comment('days of validation;0 not expiring');
             $table->integer('notification')->nullable()->comment('notification before/after expiration date');
             $table->timestamps();
             $table->softDeletes();

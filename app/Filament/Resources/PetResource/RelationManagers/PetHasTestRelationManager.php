@@ -2,7 +2,8 @@
 
 namespace App\Filament\Resources\PetResource\RelationManagers;
 
-use App\Models\PetsHasTest;
+use App\Models\Person;
+use App\Models\PetHasTest;
 use App\Models\Test;
 use Filament\Forms;
 use Filament\Forms\Components\SpatieMediaLibraryFileUpload;
@@ -27,7 +28,7 @@ class PetHasTestRelationManager extends RelationManager
     {
         return $form
             ->schema([
-                  Forms\Components\Select::make('tests_id')
+                  Forms\Components\Select::make('test_id')
                     ->options(Test::all()->pluck('name', 'id'))
                     ->columnSpanFull()
                     ->required(),
@@ -44,7 +45,7 @@ class PetHasTestRelationManager extends RelationManager
                     ->disablePlaceholderSelection()
                     ->required(),
                 Forms\Components\TextInput::make('local')->maxLength(50),
-                Forms\Components\TextInput::make('application')->maxLength(100),
+                Forms\Components\Select::make('person_id')->options(Person::getPersonByFlag(['veterinary','medication_volunteer']))->searchable(),
                 Forms\Components\Textarea::make('observation')->maxLength(300)->columnSpanFull(),
                 SpatieMediaLibraryFileUpload::make('file')
                 ->disk('petsTests')
@@ -73,13 +74,16 @@ class PetHasTestRelationManager extends RelationManager
                     ->sortable(),
                 Tables\Columns\TextColumn::make('local')
                     ->sortable()
-                    ->toggleable(),
-                Tables\Columns\TextColumn::make('application')
+                    ->toggleable(isToggledHiddenByDefault: true),
+                    Tables\Columns\TextColumn::make('person.name')
                     ->toggleable(),
                 Tables\Columns\TextColumn::make('observation')
                     ->toggleable(isToggledHiddenByDefault: true),
             ])
             ->filters([
+                Tables\Filters\SelectFilter::make('person_id')
+                ->relationship('person', 'name')
+                ->searchable(),
                 Tables\Filters\SelectFilter::make('result')
                 ->options([
                     'unknown' => 'Unkown',
@@ -95,8 +99,8 @@ class PetHasTestRelationManager extends RelationManager
                 Tables\Actions\Action::make('file')
                 ->label('View file')
                 ->color('info')
-                ->url(fn  (PetsHasTest $record) => $record->getMedia('pets-tests')[0]?->getFullUrl())
-                ->visible(fn (PetsHasTest $record): bool => isset($record->getMedia('pets-tests')[0]) ? true : false)
+                ->url(fn  (PetHasTest $record) => $record->getMedia('pets-tests')[0]?->getFullUrl())
+                ->visible(fn (PetHasTest $record): bool => isset($record->getMedia('pets-tests')[0]) ? true : false)
                 ->openUrlInNewTab()
                 ->icon('tabler-file-download'),
                 Tables\Actions\ViewAction::make()->modalHeading(fn ($record) => __('filament-support::actions/view.single.modal.heading', ['label' => $record->test()?->first()->name ?? self::getTitle()])),

@@ -3,6 +3,7 @@
 namespace App\Filament\Resources\PetResource\RelationManagers;
 
 use App\Models\Deworming;
+use App\Models\Person;
 use Carbon\Carbon;
 use Closure;
 use Filament\Forms;
@@ -27,7 +28,7 @@ class PetHasDewormingRelationManager extends RelationManager
     {
         return $form
             ->schema([
-                Forms\Components\Select::make('dewormings_id')
+                Forms\Components\Select::make('deworming_id')
                 ->allowHtml()
                 ->searchable()
                 ->preload()
@@ -35,10 +36,10 @@ class PetHasDewormingRelationManager extends RelationManager
                     ->reactive()
                     ->afterStateUpdated(function (Closure $set, Closure $get, $state) {
                         if ($get('id') === null) {
-                            $expires = Deworming::find($state)?->expires ?? 0;
-                            if ($expires > 0 && !empty($get('date'))) {
-                                $new_date_expires = Carbon::parse($get('date'))->addDays($expires);
-                                $set('expires_at', $new_date_expires);
+                            $expire = Deworming::find($state)?->expire ?? 0;
+                            if ($expire > 0 && !empty($get('date'))) {
+                                $new_date_expire = Carbon::parse($get('date'))->addDays($expire);
+                                $set('expire_at', $new_date_expire);
                             }
                         }
                     })
@@ -50,26 +51,26 @@ class PetHasDewormingRelationManager extends RelationManager
                     ->reactive()
                     ->afterStateUpdated(function (Closure $set, Closure $get, $state) {
                         if ($get('id') === null) {
-                            $expires = Deworming::find($get('dewormings_id'))?->expires ?? 0;
-                            if ($expires > 0 && !empty($state)) {
-                                $new_date_expires = Carbon::parse($state)->addDays($expires);
-                                $set('expires_at', $new_date_expires);
+                            $expire = Deworming::find($get('deworming_id'))?->expire ?? 0;
+                            if ($expire > 0 && !empty($state)) {
+                                $new_date_expire = Carbon::parse($state)->addDays($expire);
+                                $set('expire_at', $new_date_expire);
                             }
                         }
                     })
                     ->required(),
-                Forms\Components\DatePicker::make('expires_at')
+                Forms\Components\DatePicker::make('expire_at')
                     ->helperText(function (Closure $get) {
-                        $expires = Deworming::find($get('dewormings_id'))?->expires ?? 0;
-                        if ($expires > 0) {
-                            return "Default expiration in {$expires} days" . $get('id') . '';
+                        $expire = Deworming::find($get('deworming_id'))?->expire ?? 0;
+                        if ($expire > 0) {
+                            return "Default expiration in {$expire} days" . $get('id') . '';
                         }
                         return 'No expiration defined';
                     })
                     ->afterOrEqual('date')
                     ->displayFormat(config('filament.date_format')),
                 Forms\Components\TextInput::make('local')->maxLength(50),
-                Forms\Components\TextInput::make('application')->maxLength(100),
+                Forms\Components\Select::make('person_id')->options(Person::getPersonByFlag(['veterinary','medication_volunteer']))->searchable(),
                 Forms\Components\Textarea::make('observation')->maxLength(300)->columnSpanFull(),
             ]);
     }
@@ -84,20 +85,23 @@ class PetHasDewormingRelationManager extends RelationManager
                     ->searchable(),
                 Tables\Columns\TextColumn::make('date')
                     ->sortable()
-                    ->date(config('filament.date_format')),
-                Tables\Columns\TextColumn::make('expires_at')
+                    ->date(config('filament.date_format'))
+                    ->searchable(),
+                Tables\Columns\TextColumn::make('expire_at')
                     ->sortable()
                     ->date(config('filament.date_format')),
                 Tables\Columns\TextColumn::make('local')
                     ->sortable()
-                    ->toggleable(),
-                Tables\Columns\TextColumn::make('application')
+                    ->toggleable(isToggledHiddenByDefault: true),
+                Tables\Columns\TextColumn::make('person.name')
                     ->toggleable(),
                 Tables\Columns\TextColumn::make('observation')
                     ->toggleable(isToggledHiddenByDefault: true),
             ])
             ->filters([
-                //
+                Tables\Filters\SelectFilter::make('person_id')
+                ->relationship('person', 'name')
+                ->searchable()
             ])
             ->headerActions([
                 Tables\Actions\CreateAction::make()->modalHeading(__('filament-support::actions/create.single.modal.heading', ['label' => self::getTitle()])),

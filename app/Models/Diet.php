@@ -32,7 +32,7 @@ class Diet extends Model
 
 	public function pets()
 	{
-		return $this->belongsToMany(Pet::class, 'pets_has_diets', 'diets_id', 'pets_id')
+		return $this->belongsToMany(Pet::class, 'pet_has_diets', 'diet_id', 'pet_id')
 					->withPivot('id', 'date', 'portion', 'observation')
 					->withTimestamps();
 	}

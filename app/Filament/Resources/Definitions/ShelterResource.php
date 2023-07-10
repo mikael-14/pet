@@ -153,7 +153,7 @@ class ShelterResource extends Resource
                             ->hiddenOn('view')
                             ->columnSpan(1),
                         Forms\Components\Select::make('country')
-                            ->options(config('pet-country'))
+                            ->options(__('pet/country'))
                             ->columnSpan(5),
                         Forms\Components\TextInput::make('state')
                             ->maxLength(100)

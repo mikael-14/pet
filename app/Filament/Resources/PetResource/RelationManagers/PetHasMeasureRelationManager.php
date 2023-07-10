@@ -2,8 +2,7 @@
 
 namespace App\Filament\Resources\PetResource\RelationManagers;
 
-use App\Models\PetHasMeasure;
-use App\Models\PetsHasMeasure;
+use App\Models\Person;
 use Filament\Forms;
 use Filament\Resources\Form;
 use Filament\Resources\RelationManagers\RelationManager;
@@ -32,7 +31,7 @@ class PetHasMeasureRelationManager extends RelationManager
 
     public static function form(Form $form): Form
     {
-        $configs = config('pet-measures', []);
+        $configs = __('pet/measures');
         $schema = [];
         foreach ($configs as $key => $config) {
             $schema = array_merge($schema, [
@@ -78,7 +77,7 @@ class PetHasMeasureRelationManager extends RelationManager
                 ),
             Forms\Components\DatePicker::make('date')->displayFormat(config('filament.date_format'))->required(),
             Forms\Components\TextInput::make('local')->maxLength(50),
-            Forms\Components\TextInput::make('application')->maxLength(100),
+            Forms\Components\Select::make('person_id')->options(Person::getPersonByFlag(['veterinary','medication_volunteer']))->searchable()->columnSpanFull(),
             Forms\Components\Textarea::make('observation')->maxLength(300)->columnSpanFull(),
         ]);
         return $form
@@ -95,19 +94,18 @@ class PetHasMeasureRelationManager extends RelationManager
                 Tables\Columns\TextColumn::make('date')
                     ->sortable()
                     ->date(config('filament.date_format')),
-                Tables\Columns\TextColumn::make('expires_at')
-                    ->sortable()
-                    ->date(config('filament.date_format')),
                 Tables\Columns\TextColumn::make('local')
                     ->sortable()
-                    ->toggleable(),
-                Tables\Columns\TextColumn::make('application')
+                    ->toggleable(isToggledHiddenByDefault: true),
+                Tables\Columns\TextColumn::make('person.name')
                     ->toggleable(),
                 Tables\Columns\TextColumn::make('observation')
                     ->toggleable(isToggledHiddenByDefault: true),
             ])
             ->filters([
-                //
+                Tables\Filters\SelectFilter::make('person_id')
+                ->relationship('person', 'name')
+                ->searchable()
             ])
             ->headerActions([
                 Tables\Actions\CreateAction::make()->afterFormValidated(function (CreateAction $action, array $data) {

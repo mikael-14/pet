@@ -37,8 +37,8 @@ class CreatePet extends CreateRecord
                                         ->maxLength(255),
                                     Select::make('species')
                                         ->options(
-                                            config('pet-species')
-                                        )->default(array_key_first(config('pet-species')))
+                                            __('pet/species')
+                                        )->default(array_key_first(__('pet/species')))
                                         ->disablePlaceholderSelection(),
                                     Select::make('gender')
                                         ->options([
@@ -66,14 +66,14 @@ class CreatePet extends CreateRecord
                                 ])->columns(2),
                             Section::make('Status')
                                 ->schema([
-                                    Select::make('shelter_blocks_id')
+                                    Select::make('shelter_block_id')
                                         ->allowHtml()
                                         ->searchable()
                                         ->preload()
                                         ->options(
                                             PetResource::getOptionWithColor(ShelterBlock::getOptions())
                                         )->required(),
-                                    Select::make('entry_statuses_id')
+                                    Select::make('entry_status_id')
                                         ->allowHtml()
                                         ->searchable()
                                         ->preload()

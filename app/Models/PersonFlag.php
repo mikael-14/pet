@@ -37,13 +37,13 @@ class PersonFlag extends Model
 	}
 	public static function flags()
 	{
-		return collect(config('pet-person-flags'))->mapWithKeys(function (array $item, string $key) {
+		return collect(__('pet/personflags'))->mapWithKeys(function (array $item, string $key) {
 			if(!isset($key['status']) || $key['status'] !== false)
 			return [$key => $item['name']?? $key];
 		})->all();
 	}
 	public function getName() : string{
-		$data = config('pet-person-flags');
+		$data =__('pet/personflags');
 		return $data[$this->name]['name'] ?? $this->name;
 	}
 }

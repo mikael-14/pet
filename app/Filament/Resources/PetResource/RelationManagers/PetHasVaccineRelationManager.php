@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\PetResource\RelationManagers;
 
+use App\Models\Person;
 use App\Models\Vaccine;
 use Carbon\Carbon;
 use Closure;
@@ -27,15 +28,15 @@ class PetHasVaccineRelationManager extends RelationManager
     {
         return $form
             ->schema([
-                Forms\Components\Select::make('vaccines_id')
+                Forms\Components\Select::make('vaccine_id')
                     ->options(Vaccine::all()->pluck('name', 'id'))
                     ->reactive()
                     ->afterStateUpdated(function (Closure $set, Closure $get, $state) {
                         if ($get('id') === null) {
-                            $expires = Vaccine::find($state)?->expires ?? 0;
-                            if ($expires > 0 && !empty($get('date'))) {
-                                $new_date_expires = Carbon::parse($get('date'))->addDays($expires);
-                                $set('expires_at', $new_date_expires);
+                            $expire = Vaccine::find($state)?->expire ?? 0;
+                            if ($expire > 0 && !empty($get('date'))) {
+                                $new_date_expire = Carbon::parse($get('date'))->addDays($expire);
+                                $set('expire_at', $new_date_expire);
                             }
                         }
                     })
@@ -46,26 +47,26 @@ class PetHasVaccineRelationManager extends RelationManager
                     ->reactive()
                     ->afterStateUpdated(function (Closure $set, Closure $get, $state) {
                         if ($get('id') === null) {
-                            $expires = Vaccine::find($get('vaccines_id'))?->expires ?? 0;
-                            if ($expires > 0 && !empty($state)) {
-                                $new_date_expires = Carbon::parse($state)->addDays($expires);
-                                $set('expires_at', $new_date_expires);
+                            $expire = Vaccine::find($get('vaccine_id'))?->expire ?? 0;
+                            if ($expire > 0 && !empty($state)) {
+                                $new_date_expire = Carbon::parse($state)->addDays($expire);
+                                $set('expire_at', $new_date_expire);
                             }
                         }
                     })
                     ->required(),
-                Forms\Components\DatePicker::make('expires_at')
+                Forms\Components\DatePicker::make('expire_at')
                     ->helperText(function (Closure $get) {
-                        $expires = Vaccine::find($get('vaccines_id'))?->expires ?? 0;
-                        if ($expires > 0) {
-                            return "Default expiration in {$expires} days" . $get('id') . '';
+                        $expire = Vaccine::find($get('vaccine_id'))?->expire ?? 0;
+                        if ($expire > 0) {
+                            return "Default expiration in {$expire} days" . $get('id') . '';
                         }
                         return 'No expiration defined';
                     })
                     ->afterOrEqual('date')
                     ->displayFormat(config('filament.date_format')),
                 Forms\Components\TextInput::make('local')->maxLength(50),
-                Forms\Components\TextInput::make('application')->maxLength(100),
+                Forms\Components\Select::make('person_id')->options(Person::getPersonByFlag(['veterinary','medication_volunteer']))->searchable(),
                 Forms\Components\Textarea::make('observation')->maxLength(300)->columnSpanFull(),
             ]);
     }
@@ -79,19 +80,21 @@ class PetHasVaccineRelationManager extends RelationManager
                 Tables\Columns\TextColumn::make('date')
                     ->sortable()
                     ->date(config('filament.date_format')),
-                Tables\Columns\TextColumn::make('expires_at')
+                Tables\Columns\TextColumn::make('expire_at')
                     ->sortable()
                     ->date(config('filament.date_format')),
                 Tables\Columns\TextColumn::make('local')
                     ->sortable()
-                    ->toggleable(),
-                Tables\Columns\TextColumn::make('application')
+                    ->toggleable(isToggledHiddenByDefault: true),
+                    Tables\Columns\TextColumn::make('person.name')
                     ->toggleable(),
                 Tables\Columns\TextColumn::make('observation')
                     ->toggleable(isToggledHiddenByDefault: true),
             ])
             ->filters([
-                //
+                Tables\Filters\SelectFilter::make('person_id')
+                ->relationship('person', 'name')
+                ->searchable()
             ])
             ->headerActions([
                 Tables\Actions\CreateAction::make()->modalHeading(__('filament-support::actions/create.single.modal.heading', ['label' => self::getTitle()])),

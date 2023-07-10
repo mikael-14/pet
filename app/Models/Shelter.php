@@ -54,6 +54,6 @@ class Shelter extends Model
 
     public function shelter_blocks()
 	{
-		return $this->hasMany(ShelterBlock::class, 'shelters_id');
+		return $this->hasMany(ShelterBlock::class);
 	}
 }

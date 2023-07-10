@@ -19,7 +19,7 @@ class VaccineResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-collection';
 
-    protected static ?string $slug = 'definitions/pet-vaccine';
+    protected static ?string $slug = 'definitions/vaccine';
 
     protected static ?string $recordTitleAttribute = 'name';
 
@@ -33,7 +33,7 @@ class VaccineResource extends Resource
                     ->required()
                     ->maxLength(100)
                     ->columnSpanFull(),
-                Forms\Components\TextInput::make('expires')
+                Forms\Components\TextInput::make('expire')
                     ->numeric()
                     ->minValue(0)
                     ->default(0)
@@ -52,7 +52,7 @@ class VaccineResource extends Resource
         return $table
             ->columns([
                 Tables\Columns\TextColumn::make('name'),
-                Tables\Columns\TextColumn::make('expires'),
+                Tables\Columns\TextColumn::make('expire'),
                 Tables\Columns\TextColumn::make('notification'),
                 Tables\Columns\TextColumn::make('created_at')
                     ->dateTime(config('filament.date_time_format'))

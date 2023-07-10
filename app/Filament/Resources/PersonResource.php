@@ -81,7 +81,7 @@ class PersonResource extends Resource implements HasShieldPermissions
                             ->maxLength(30),
                         Forms\Components\DatePicker::make('birth_date')
                             ->displayFormat(config('filament.date_format')),
-                        Forms\Components\Select::make('users_id')->options(
+                        Forms\Components\Select::make('user_id')->options(
                             Person::avaibleUsers()
                         )->searchable()
                             ->visible(Filament::auth()->user()->can('set_user_person'))
@@ -199,7 +199,7 @@ class PersonResource extends Resource implements HasShieldPermissions
                             ->hiddenOn('view')
                             ->columnSpan(1),
                         Forms\Components\Select::make('country')
-                            ->options(config('pet-country'))
+                            ->options(__('pet/country'))
                             ->columnSpan(5),
                         Forms\Components\TextInput::make('state')
                             ->maxLength(100)
@@ -282,7 +282,7 @@ class PersonResource extends Resource implements HasShieldPermissions
     public static function getRelations(): array
     {
         return [
-            //
+            RelationManagers\ClinicsRelationManager::class,
         ];
     }
 
