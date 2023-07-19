@@ -37,7 +37,9 @@ class PrescriptionHasMedicinesRelationManager extends RelationManager
                     ->schema([
                         Forms\Components\Select::make('medicine_id')
                             ->required()
-                            ->options(Medicine::all()->pluck('name', 'id'))
+                            ->options(Medicine::all()->mapWithKeys(function ($medicine) {
+                                return [$medicine->id => $medicine->name . ' - ' . __("pet/medicine.$medicine->type")];
+                                }))
                             ->columnSpan(4)
                             ->reactive()
                             ->searchable(),
@@ -56,6 +58,7 @@ class PrescriptionHasMedicinesRelationManager extends RelationManager
                     ]),
                 Forms\Components\TextInput::make('dosage')
                     ->required()
+                    ->suffix(function(Closure $get){ $find = Medicine::find($get('medicine_id'))?->type; return $find ? __("pet/medicine.$find") : ''; })
                     ->reactive()
                     ->maxLength(50),
                 Forms\Components\TextInput::make('frequency')

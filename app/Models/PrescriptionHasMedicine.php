@@ -7,6 +7,7 @@
 namespace App\Models;
 
 use Carbon\Carbon;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
@@ -22,13 +23,14 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @property bool $emergency
  * @property Carbon $start_date
  * @property Carbon|null $end_date
- * @property string $observation
+ * @property string|null $observation
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
  * @property string|null $deleted_at
  * 
  * @property Medicine $medicine
  * @property Prescription $prescription
+ * @property Collection|PetHasMedicine[] $pet_has_medicines
  *
  * @package App\Models
  */
@@ -42,8 +44,8 @@ class PrescriptionHasMedicine extends Model
 		'medicine_id' => 'int',
 		'frequency' => 'int',
 		'emergency' => 'bool',
-		'start_date' => 'date',
-		'end_date' => 'date'
+		'start_date' => 'datetime',
+		'end_date' => 'datetime'
 	];
 
 	protected $fillable = [
@@ -60,11 +62,16 @@ class PrescriptionHasMedicine extends Model
 
 	public function medicine()
 	{
-		return $this->belongsTo(Medicine::class, 'medicine_id');
+		return $this->belongsTo(Medicine::class);
 	}
 
 	public function prescription()
 	{
-		return $this->belongsTo(Prescription::class, 'prescription_id');
+		return $this->belongsTo(Prescription::class);
+	}
+
+	public function pet_has_medicines()
+	{
+		return $this->hasMany(PetHasMedicine::class);
 	}
 }

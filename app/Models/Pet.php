@@ -145,6 +145,13 @@ class Pet extends Model implements HasMedia
 		return $this->hasMany(Prescription::class);
 	}
 
+	public function medicines()
+	{
+		return $this->belongsToMany(Medicine::class, 'pet_has_medicines')
+					->withPivot('id', 'dosage', 'status', 'administered', 'date', 'observation', 'person_id', 'prescription_has_medicine_id', 'deleted_at')
+					->withTimestamps();
+	}
+	
 	public function getConfigSpecie(): string
 	{
 		$configSpecies = __('pet/species');
@@ -174,5 +181,10 @@ class Pet extends Model implements HasMedia
 	public function pet_has_deworming()
 	{
 		return $this->hasMany(PetHasDeworming::class);
+	}
+
+	public function pet_has_medicine()
+	{
+		return $this->hasMany(PetHasMedicine::class);
 	}
 }

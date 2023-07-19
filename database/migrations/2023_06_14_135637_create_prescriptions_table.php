@@ -16,7 +16,8 @@ return new class extends Migration
         Schema::create('prescriptions', function (Blueprint $table) {
             $table->id();
             $table->foreignId('pet_id')->constrained();  
-            $table->foreignId('clinic_id')->constrained();  
+            $table->unsignedBigInteger('clinic_id')->nullable(); 
+            $table->foreign('clinic_id')->references('id')->on('clinics');
             $table->foreignId('person_id')->constrained();  
             $table->date('date')->default(date('Y-m-d'));
             $table->string('observation', 500)->nullable();

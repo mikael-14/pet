@@ -93,18 +93,48 @@ class Person extends Model
 		return $this->hasMany(PersonFlag::class);
 	}
 
+	public function clinics()
+	{
+		return $this->belongsToMany(Clinic::class, 'person_has_clinics');
+	}
+
 	public function pets()
 	{
-		return $this->belongsToMany(Pet::class, 'person_has_pets', 'person_id', 'pet_id')
+		return $this->belongsToMany(Pet::class, 'person_has_pets')
 			->withPivot('id', 'start_date', 'end_date', 'type', 'observation', 'deleted_at')
 			->withTimestamps();
 	}
 
-	public function clinics()
+	public function pet_has_dewormings()
 	{
-		return $this->belongsToMany(Clinic::class, 'person_has_clinics', 'person_id', 'clinic_id');
+		return $this->hasMany(PetHasDeworming::class);
 	}
-	
+
+	public function pet_has_measures()
+	{
+		return $this->hasMany(PetHasMeasure::class);
+	}
+
+	public function pet_has_tests()
+	{
+		return $this->hasMany(PetHasTest::class);
+	}
+
+	public function pet_has_vaccines()
+	{
+		return $this->hasMany(PetHasVaccine::class);
+	}
+
+	public function pet_has_medicines()
+	{
+		return $this->hasMany(PetHasMedicine::class);
+	}
+
+	public function prescriptions()
+	{
+		return $this->hasMany(Prescription::class);
+	}
+
 	public function getFlagsAttribute(): array
 	{
 
@@ -211,6 +241,21 @@ class Person extends Model
 	{
 		return Person::join('person_flags', 'id', '=', 'person_id')
 			->whereIn('person_flags.name', $flag)
-			->pluck('people.name', 'people.id')->toArray();
+			->pluck('people.name', 'people.id');
+	}
+	public static function searchPerson(array $flag, string | bool $search = false)
+	{
+		if (empty($search)) {
+			return Person::join('person_flags', 'id', '=', 'person_id')
+				->whereIn('person_flags.name', $flag)
+				->select('people.id', 'people.name', 'person_flags.name as flag_name')
+				->orderBy('created_at', 'desc')
+				->limit(10)->get();
+		}
+		return Person::join('person_flags', 'id', '=', 'person_id')
+			->whereIn('person_flags.name', $flag)
+			->where('people.name', 'like', "%{$search}%")
+			->select('people.id', 'people.name', 'person_flags.name as flag_name')
+			->limit(10)->get();
 	}
 }

@@ -25,6 +25,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @property Carbon|null $updated_at
  * @property string|null $deleted_at
  * 
+ * @property Collection|Pet[] $pets
  * @property Collection|Prescription[] $prescriptions
  *
  * @package App\Models
@@ -47,11 +48,20 @@ class Medicine extends Model
 		'description'
 	];
 
-	public function prescriptions()
+	public function pets()
 	{
-		return $this->hasMany(Prescription::class);
+		return $this->belongsToMany(Pet::class, 'pet_has_medicines')
+					->withPivot('id', 'dosage', 'status', 'administered', 'date', 'observation', 'person_id', 'prescription_has_medicine_id', 'deleted_at')
+					->withTimestamps();
 	}
 
+	public function prescriptions()
+	{
+		return $this->belongsToMany(Prescription::class, 'prescription_has_medicines')
+					->withPivot('id', 'dosage', 'status', 'frequency', 'emergency', 'start_date', 'end_date', 'observation', 'deleted_at')
+					->withTimestamps();
+	}
+	
 	public static function getAllActiveIngredientFormatted(): array
 	{
 		$array = Medicine::pluck('active_ingredient')->flatten()->toArray();
