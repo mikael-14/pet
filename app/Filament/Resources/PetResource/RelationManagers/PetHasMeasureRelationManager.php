@@ -77,7 +77,7 @@ class PetHasMeasureRelationManager extends RelationManager
                 ),
             Forms\Components\DatePicker::make('date')->displayFormat(config('filament.date_format'))->required(),
             Forms\Components\TextInput::make('local')->maxLength(50),
-            Forms\Components\Select::make('person_id')->options(Person::getPersonByFlag(['veterinary','medication_volunteer']))->searchable()->columnSpanFull(),
+            Forms\Components\Select::make('person_id')->options(Person::getPersonByFlag(['veterinary','medication_volunteer'])->toArray())->searchable()->columnSpanFull(),
             Forms\Components\Textarea::make('observation')->maxLength(300)->columnSpanFull(),
         ]);
         return $form

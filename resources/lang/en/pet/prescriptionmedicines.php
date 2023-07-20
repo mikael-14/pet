@@ -8,6 +8,7 @@ return [
         'canceled' => 'Canceled',
     ],
     'shout' => [
+        'one_take' => 'The medicine :medicine is one take',
         'completed' => 'The medicine :medicine is completed',
         'on_hold' => 'The medicine :medicine is on hold',
         'canceled' => 'The medicine :medicine is canceled',

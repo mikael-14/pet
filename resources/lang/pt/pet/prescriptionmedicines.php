@@ -8,6 +8,7 @@ return [
         'canceled' => 'Cancelado',
     ],
     'shout' => [
+        'one_take' => 'O medicamento :medicine é toma única',
         'completed' => 'O medicamento :medicine já concluiu a prescrição',
         'on_hold' => 'O medicamento :medicine está em pausa até ser novamente retomado',
         'canceled' => 'O medicamento :medicine foi cancelado',

@@ -23,6 +23,7 @@ use Livewire\TemporaryUploadedFile;
 class CreatePet extends CreateRecord
 {
     protected static string $resource = PetResource::class;
+    
     public function getFormSchema(): array
     {
         return [

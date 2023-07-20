@@ -19,6 +19,7 @@ return new class extends Migration
             $table->foreignId('medicine_id')->constrained();
             $table->string('dosage', 50);
             $table->set('status', ['active', 'completed','on_hold','canceled'])->nullable();
+            $table->boolean('emergency')->default(false);
             $table->boolean('administered')->nullable();
             $table->dateTime('date');
             $table->string('observation', 200)->nullable();

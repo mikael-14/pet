@@ -7,7 +7,6 @@
 namespace App\Models;
 
 use Carbon\Carbon;
-use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
@@ -237,7 +236,7 @@ class Person extends Model
 					->whereRaw($tableName . '.user_id = users.id');
 			})->pluck('full', 'id')->toArray();
 	}
-	public static function getPersonByFlag(array $flag): array
+	public static function getPersonByFlag(array $flag): \Illuminate\Support\Collection
 	{
 		return Person::join('person_flags', 'id', '=', 'person_id')
 			->whereIn('person_flags.name', $flag)

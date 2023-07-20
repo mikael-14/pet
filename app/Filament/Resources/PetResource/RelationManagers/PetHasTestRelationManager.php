@@ -45,7 +45,7 @@ class PetHasTestRelationManager extends RelationManager
                     ->disablePlaceholderSelection()
                     ->required(),
                 Forms\Components\TextInput::make('local')->maxLength(50),
-                Forms\Components\Select::make('person_id')->options(Person::getPersonByFlag(['veterinary','medication_volunteer']))->searchable(),
+                Forms\Components\Select::make('person_id')->options(Person::getPersonByFlag(['veterinary','medication_volunteer'])->toArray())->searchable(),
                 Forms\Components\Textarea::make('observation')->maxLength(300)->columnSpanFull(),
                 SpatieMediaLibraryFileUpload::make('file')
                 ->disk('petsTests')

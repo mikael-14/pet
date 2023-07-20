@@ -19,7 +19,7 @@ return new class extends Migration
             $table->foreignId('medicine_id')->constrained();
             $table->string('dosage', 50);
             $table->set('status', ['active', 'completed','on_hold','canceled']);
-            $table->unsignedSmallInteger('frequency')->comment('time in hours beteween takes');//in hours
+            $table->unsignedSmallInteger('frequency')->nullable()->comment('time in hours beteween takes; null, no frequency');//in hours
             $table->boolean('emergency')->default(false);
             $table->dateTime('start_date');
             $table->dateTime('end_date')->nullable();

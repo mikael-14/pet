@@ -52,7 +52,7 @@ class ShelterBlock extends Model
 	{
 		$tableName = with(new Shelter)->getTable();
 		return ShelterBlock::join($tableName, "shelter_blocks.shelter_id", '=', "$tableName.id")
-			->selectRaw("CONCAT($tableName.name, ' (', shelter_blocks.name,')') AS name,shelter_blocks.id,shelter_blocks.color")
+			->selectRaw("CONCAT(shelter_blocks.name, ' - ', $tableName.name) AS name,shelter_blocks.id,shelter_blocks.color")
 			->where("$tableName.status", 1)
 			->get();
 	}
