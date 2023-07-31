@@ -3,6 +3,7 @@
 namespace App\Filament\Resources;
 
 use App\Filament\Resources\ClinicResource\Pages;
+use App\Filament\Resources\ClinicResource\Pages\ViewClinic;
 use App\Filament\Resources\ClinicResource\RelationManagers;
 use App\Models\Clinic;
 use Awcodes\DropInAction\Forms\Components\DropInAction;
@@ -15,8 +16,7 @@ use Filament\Resources\Pages\ViewRecord;
 use Filament\Resources\Resource;
 use Filament\Resources\Table;
 use Filament\Tables;
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\SoftDeletingScope;
+use Filament\Resources\Pages\Page;
 
 class ClinicResource extends Resource
 {
@@ -126,25 +126,28 @@ class ClinicResource extends Resource
                             ->columnSpan(9),
                         DropInAction::make('buttons_show_hide')
                             ->disableLabel()
-                            ->execute(function (Closure $get, Closure $set) {
-                                return [
-                                    Forms\Components\Actions\Action::make('geolocate')
-                                        ->icon('tabler-input-search')
-                                        ->label('Geocode')
-                                        ->action(function () use ($get, $set) {
-                                            $set('show_geocomplete', !$get('show_geocomplete'));
-                                            $set('show_map', false);
-                                        }),
-                                    Forms\Components\Actions\Action::make('map')
-                                        ->icon('tabler-map-search')
-                                        ->label('Map')
-                                        ->action(function () use ($get, $set) {
-                                            $set('show_geocomplete', false);
-                                            $set('show_map', !$get('show_map'));
-                                        }),
-                                ];
+                            ->execute(function (Closure $get, Closure $set, Page $livewire) {
+                                $form[] = Forms\Components\Actions\Action::make('map')
+                                    ->icon('tabler-map-search')
+                                    ->label('Map')
+                                    ->action(function () use ($get, $set) {
+                                        $set('show_geocomplete', false);
+                                        $set('show_map', !$get('show_map'));
+                                    });
+                                if ($livewire instanceof ViewClinic !== true) {
+                                    array_unshift(
+                                        $form,
+                                        Forms\Components\Actions\Action::make('geolocate')
+                                            ->icon('tabler-input-search')
+                                            ->label('Geocode')
+                                            ->action(function () use ($get, $set) {
+                                                $set('show_geocomplete', !$get('show_geocomplete'));
+                                                $set('show_map', false);
+                                            })
+                                    );
+                                }
+                                return $form;
                             })
-                            ->hiddenOn('view')
                             ->columnSpan(1),
                         Forms\Components\Select::make('country')
                             ->options(__('pet/country'))
@@ -199,7 +202,7 @@ class ClinicResource extends Resource
     public static function getRelations(): array
     {
         return [
-             RelationManagers\PeopleRelationManager::class,
+            RelationManagers\PeopleRelationManager::class,
         ];
     }
 

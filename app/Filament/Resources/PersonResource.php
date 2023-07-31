@@ -3,6 +3,7 @@
 namespace App\Filament\Resources;
 
 use App\Filament\Resources\PersonResource\Pages;
+use App\Filament\Resources\PersonResource\Pages\ViewPerson;
 use App\Filament\Resources\PersonResource\RelationManagers;
 use App\Models\Person;
 use App\Models\PersonFlag;
@@ -23,6 +24,7 @@ use Cheesegrits\FilamentGoogleMaps\Fields\Geocomplete;
 use Closure;
 use Filament\Resources\Pages\ViewRecord;
 use Awcodes\FilamentBadgeableColumn\Components\BadgeableTagsColumn;
+use Filament\Resources\Pages\Page;
 
 class PersonResource extends Resource implements HasShieldPermissions
 {
@@ -178,25 +180,28 @@ class PersonResource extends Resource implements HasShieldPermissions
                             ->columnSpan(9),
                         DropInAction::make('buttons_show_hide')
                             ->disableLabel()
-                            ->execute(function (Closure $get, Closure $set) {
-                                return [
-                                    Forms\Components\Actions\Action::make('geolocate')
-                                        ->icon('tabler-input-search')
-                                        ->label('Geocode')
-                                        ->action(function () use ($get, $set) {
-                                            $set('show_geocomplete', !$get('show_geocomplete'));
-                                            $set('show_map', false);
-                                        }),
-                                    Forms\Components\Actions\Action::make('map')
-                                        ->icon('tabler-map-search')
-                                        ->label('Map')
-                                        ->action(function () use ($get, $set) {
-                                            $set('show_geocomplete', false);
-                                            $set('show_map', !$get('show_map'));
-                                        }),
-                                ];
+                            ->execute(function (Closure $get, Closure $set,Page $livewire) {
+                                $form[] = Forms\Components\Actions\Action::make('map')
+                                    ->icon('tabler-map-search')
+                                    ->label('Map')
+                                    ->action(function () use ($get, $set) {
+                                        $set('show_geocomplete', false);
+                                        $set('show_map', !$get('show_map'));
+                                    });
+                                if ($livewire instanceof ViewPerson !== true) {
+                                    array_unshift(
+                                        $form,
+                                        Forms\Components\Actions\Action::make('geolocate')
+                                            ->icon('tabler-input-search')
+                                            ->label('Geocode')
+                                            ->action(function () use ($get, $set) {
+                                                $set('show_geocomplete', !$get('show_geocomplete'));
+                                                $set('show_map', false);
+                                            })
+                                    );
+                                }
+                                return $form;
                             })
-                            ->hiddenOn('view')
                             ->columnSpan(1),
                         Forms\Components\Select::make('country')
                             ->options(__('pet/country'))

@@ -7,6 +7,10 @@ return [
         'completed' => 'Completed',
         'canceled' => 'Canceled',
     ],
+    'additional_status' =>  [
+        'unstarted' => 'Unstarted',
+        'ended' => 'Ended',
+    ],
     'shout' => [
         'one_take' => 'The medicine :medicine is one take',
         'completed' => 'The medicine :medicine is completed',

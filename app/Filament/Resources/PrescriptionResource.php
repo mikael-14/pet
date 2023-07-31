@@ -16,6 +16,10 @@ use Filament\Resources\Table;
 use Filament\Tables;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
+use Awcodes\FilamentBadgeableColumn\Components\Badge;
+use Awcodes\FilamentBadgeableColumn\Components\BadgeField;
+use Awcodes\FilamentBadgeableColumn\Components\BadgeableColumn;
+
 
 class PrescriptionResource extends Resource
 {
@@ -60,7 +64,7 @@ class PrescriptionResource extends Resource
                             ->searchable()
                             ->preload()
                             ->getSearchResultsUsing(function (string $search) {
-                                $persons = Person::searchPerson(['veterinary', 'medication_volunteer'],$search);
+                                $persons = Person::searchPerson(['veterinary', 'medication_volunteer'], $search);
                                 return $persons->mapWithKeys(function ($person) {
                                     return [$person->getKey() => static::getOptionPerson($person)];
                                 })->toArray();
@@ -101,17 +105,78 @@ class PrescriptionResource extends Resource
     {
         return $table
             ->columns([
-                Tables\Columns\TextColumn::make('pet.name'),
-                Tables\Columns\TextColumn::make('clinic.name'),
-                Tables\Columns\TextColumn::make('person.name'),
+                Tables\Columns\TextColumn::make('pet.name')
+                    ->searchable(),
+                Tables\Columns\TextColumn::make('clinic.name')
+                    ->toggleable(isToggledHiddenByDefault: true)
+                    ->placeholder('-')
+                    ->searchable(),
+                Tables\Columns\TextColumn::make('person.name')
+                    ->toggleable()
+                    ->searchable(),
                 Tables\Columns\TextColumn::make('date')
-                    ->date(config('filament.date_format')),
+                    ->date(config('filament.date_format'))
+                    ->toggleable(isToggledHiddenByDefault: true),
+                Tables\Columns\TextColumn::make('medicine_start_date')
+                    ->dateTime(config('filament.date_time_format'))
+                    ->placeholder('-'),
+                Tables\Columns\TextColumn::make('medicine_end_date')
+                    ->dateTime(config('filament.date_time_format'))
+                    ->toggleable(isToggledHiddenByDefault: true)
+                    ->placeholder('-'),
+                BadgeableColumn::make('count_medicines')
+                    ->badges(function (?Prescription $record) {
+                        $states = $record->global_state;
+                        $badges = [];
+                        foreach ($states as $name => $value) {
+                            switch ($name) {
+                                case 'active':
+                                    $badges[] = Badge::make($name)
+                                        ->label(__('pet/prescriptionmedicines.status.active') . ($value > 1 ? "($value)" : ''))
+                                        ->color('#dbeafe');
+                                    break;
+                                case 'on_hold':
+                                    $badges[] = Badge::make($name)
+                                        ->label(__('pet/prescriptionmedicines.status.on_hold') . ($value > 1 ? "($value)" : ''))
+                                        ->color('#fef3c7');
+                                    break;
+                                case 'canceled':
+                                    $badges[] = Badge::make($name)
+                                        ->label(__('pet/prescriptionmedicines.status.canceled') . ($value > 1 ? "($value)" : ''))
+                                        ->color('#ffe4e6');
+                                    break;
+                                case 'completed':
+                                    $badges[] = Badge::make($name)
+                                        ->label(__('pet/prescriptionmedicines.status.completed') . ($value > 1 ? "($value)" : ''))
+                                        ->color('#bbf7d0');
+                                    break;
+                                case 'unstarted':
+                                    $badges[] = Badge::make($name)
+                                        ->label(__('pet/prescriptionmedicines.additional_status.unstarted') . ($value > 1 ? "($value)" : ''))
+                                        ->color('#f7f8f8');
+                                    break;
+                                case 'ended':
+                                    $badges[] = Badge::make($name)
+                                        ->label(__('pet/prescriptionmedicines.additional_status.ended') . ($value > 1 ? "($value)" : ''))
+                                        ->color('#f7f8f9');
+                                    break;
+                                default:
+                                    # code...
+                                    break;
+                            }
+                        }
+                        return $badges;
+                    }),
                 Tables\Columns\TextColumn::make('created_at')
                     ->dateTime(config('filament.date_time_format'))->toggleable(isToggledHiddenByDefault: true),
                 Tables\Columns\TextColumn::make('deleted_at')
                     ->dateTime(config('filament.date_time_format'))->toggleable(isToggledHiddenByDefault: true),
             ])
             ->filters([
+                // Tables\Filters\SelectFilter::make('global_state')
+                //     ->multiple()
+                //     ->options(fn() =>
+                //          array_merge(__('pet/prescriptionmedicines.additional_status'), __('pet/prescriptionmedicines.status'))),
                 Tables\Filters\TrashedFilter::make(),
             ])
             ->actions([

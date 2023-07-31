@@ -7,6 +7,10 @@ return [
         'completed' => 'Concluido',
         'canceled' => 'Cancelado',
     ],
+    'additional_status' =>  [
+        'unstarted' => 'Não iniciado',
+        'ended' => 'Finalizado',
+    ],
     'shout' => [
         'one_take' => 'O medicamento :medicine é toma única',
         'completed' => 'O medicamento :medicine já concluiu a prescrição',

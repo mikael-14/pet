@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\ClinicResource\RelationManagers;
 
+use App\Filament\Resources\ClinicResource\Pages\ViewClinic;
 use App\Filament\Resources\PersonResource;
 use App\Models\Person;
 use Awcodes\FilamentBadgeableColumn\Components\BadgeableTagsColumn;
@@ -56,8 +57,11 @@ class PeopleRelationManager extends RelationManager
                 ->visible(fn ($livewire) => $livewire->pageClass !== ViewClinic::class),
             ])
             ->actions([
-                Tables\Actions\EditAction::make(),
-                Tables\Actions\DetachAction::make(),
+                Tables\Actions\ViewAction::make(),
+                Tables\Actions\EditAction::make()
+                ->visible(fn ($livewire) => $livewire->pageClass !== ViewClinic::class),
+                Tables\Actions\DetachAction::make()
+                ->visible(fn ($livewire) => $livewire->pageClass !== ViewClinic::class),
             ])
             ->bulkActions([
                 Tables\Actions\DetachBulkAction::make(),

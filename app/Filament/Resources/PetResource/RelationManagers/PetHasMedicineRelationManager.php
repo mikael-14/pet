@@ -40,7 +40,6 @@ class PetHasMedicineRelationManager extends RelationManager
                             ->reactive()
                             ->searchable(),
                         Forms\Components\Select::make('status')
-                            ->required()
                             ->options(__('pet/prescriptionmedicines.status'))
                             ->columnSpan(3)
                             ->default('active'),
