@@ -4,8 +4,8 @@ return [
     'status' => [
         'active' => 'Ativo',
         'on_hold' => 'Em pausa',
-        'completed' => 'Concluido',
         'canceled' => 'Cancelado',
+        'completed' => 'Terminado',
     ],
     'additional_status' =>  [
         'unstarted' => 'Não iniciado',

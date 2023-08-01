@@ -91,16 +91,12 @@ class Prescription extends Model implements HasMedia
 			return null;
 		}
 		return $this->prescription_has_medicines()?->orderBy('end_date', 'desc')->first()->end_date ?? null;
-		// if($end_date) {
-		// 	$start_date = $this->getMedicineStartDateAttribute();
-		// 	if($start_date->greaterThan($end_date)) {
-		// 		return null;
-		// 	}
-		// }
 	}
+
 	public function getCountMedicinesAttribute() {
 		return count($this->medicines()->get());
 	}
+	
 	public function getGlobalStateAttribute(): array
 	{
 		$status = array_merge(__('pet/prescriptionmedicines.additional_status'), __('pet/prescriptionmedicines.status'));
@@ -113,10 +109,10 @@ class Prescription extends Model implements HasMedia
 				$counter['unstarted']++;
 				continue;
 			}
-			if (isset($medicine->pivot->end_date) && $currentDate->greaterThan($medicine->pivot->end_date)) {
-				$counter['ended']++;
-				continue;
-			}
+			// if (isset($medicine->pivot->end_date) && $currentDate->greaterThan($medicine->pivot->end_date)) {
+			// 	$counter['completed']++;
+			// 	continue;
+			// }
 			$counter[$medicine->pivot->status]++;
 		}
 		$counter = array_filter($counter, fn ($value) =>  $value !== 0);

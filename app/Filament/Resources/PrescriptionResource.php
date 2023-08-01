@@ -155,11 +155,6 @@ class PrescriptionResource extends Resource
                                         ->label(__('pet/prescriptionmedicines.additional_status.unstarted') . ($value > 1 ? "($value)" : ''))
                                         ->color('#f7f8f8');
                                     break;
-                                case 'ended':
-                                    $badges[] = Badge::make($name)
-                                        ->label(__('pet/prescriptionmedicines.additional_status.ended') . ($value > 1 ? "($value)" : ''))
-                                        ->color('#f7f8f9');
-                                    break;
                                 default:
                                     # code...
                                     break;
