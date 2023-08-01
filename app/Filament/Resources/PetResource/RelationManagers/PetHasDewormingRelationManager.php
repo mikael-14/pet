@@ -70,7 +70,7 @@ class PetHasDewormingRelationManager extends RelationManager
                     ->afterOrEqual('date')
                     ->displayFormat(config('filament.date_format')),
                 Forms\Components\TextInput::make('local')->maxLength(50),
-                Forms\Components\Select::make('person_id')->options(Person::getPersonByFlag(['veterinary','medication_volunteer']))->searchable(),
+                Forms\Components\Select::make('person_id')->options(Person::getPersonByFlag(['veterinary','medication_volunteer'])->toArray())->searchable(),
                 Forms\Components\Textarea::make('observation')->maxLength(300)->columnSpanFull(),
             ]);
     }

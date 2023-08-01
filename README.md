@@ -106,7 +106,7 @@ php artisan make:filament-relation-manager CategoryResource posts title
 
 
 ### Template
-Icons https://blade-ui-kit.com/blade-icons (installed herocions; tabler)
+Icons https://blade-ui-kit.com/blade-icons (installed herocions; tabler; unicons)
 
 ## Security Vulnerabilities
 

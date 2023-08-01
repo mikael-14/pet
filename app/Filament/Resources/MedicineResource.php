@@ -38,8 +38,9 @@ class MedicineResource extends Resource
                     ->maxLength(500)
                     ->columnSpanFull(),
                 Forms\Components\TagsInput::make('active_ingredient')
-                // ->keyLabel('Property name')
-                // ->valueLabel('Property value')
+                    ->placeholder('New active')
+                    // ->keyLabel('Property name')
+                    // ->valueLabel('Property value')
                     // ->schema([
                     //     Forms\Components\TextInput::make('active_ingredient')->required(),
                     // ])
@@ -52,12 +53,12 @@ class MedicineResource extends Resource
         return $table
             ->columns([
                 Tables\Columns\TextColumn::make('name')
-                ->searchable(),
+                    ->searchable(),
                 Tables\Columns\TextColumn::make('type')
                     ->enum(__('pet/medicine')),
                 Tables\Columns\TextColumn::make('dosage'),
                 Tables\Columns\TagsColumn::make('active_ingredient')
-                ->searchable(),
+                    ->searchable(),
                 Tables\Columns\TextColumn::make('aplication'),
                 Tables\Columns\TextColumn::make('created_at')
                     ->dateTime(config('filament.date_time_format'))->toggleable(isToggledHiddenByDefault: true),
@@ -67,11 +68,11 @@ class MedicineResource extends Resource
             ->filters([
                 Tables\Filters\TrashedFilter::make(),
                 Tables\Filters\SelectFilter::make('active_ingredient')
-                ->multiple()
-                ->options(Medicine::getAllActiveIngredientFormatted())
-                ->query(function (Builder $query, array $data): Builder {
-                    return $query->whereJsonContains('active_ingredient',$data['values']);
-                }),
+                    ->multiple()
+                    ->options(Medicine::getAllActiveIngredientFormatted())
+                    ->query(function (Builder $query, array $data): Builder {
+                        return $query->whereJsonContains('active_ingredient', $data['values']);
+                    }),
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),

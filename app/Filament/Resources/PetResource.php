@@ -104,6 +104,7 @@ class PetResource extends Resource
     public static function getRelations(): array
     {
         return [
+            RelationManagers\PetHasMedicineRelationManager::class,
             RelationManagers\PetHasDewormingRelationManager::class,
             RelationManagers\PetHasDietRelationManager::class,
             RelationManagers\PetHasMeasureRelationManager::class,

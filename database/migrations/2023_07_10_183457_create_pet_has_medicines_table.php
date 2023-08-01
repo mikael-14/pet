@@ -13,17 +13,20 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('prescription_has_medicines', function (Blueprint $table) {
+        Schema::create('pet_has_medicines', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('prescription_id')->constrained();
+            $table->foreignId('pet_id')->constrained();
             $table->foreignId('medicine_id')->constrained();
             $table->string('dosage', 50);
-            $table->set('status', ['active', 'completed','on_hold','canceled']);
-            $table->unsignedSmallInteger('frequency')->nullable()->comment('time in hours beteween takes; null, no frequency');//in hours
+            $table->set('status', ['active', 'completed','on_hold','canceled'])->nullable();
             $table->boolean('emergency')->default(false);
-            $table->dateTime('start_date');
-            $table->dateTime('end_date')->nullable();
+            $table->boolean('administered')->nullable();
+            $table->dateTime('date');
             $table->string('observation', 200)->nullable();
+            $table->unsignedBigInteger('person_id')->nullable(); 
+            $table->foreign('person_id')->references('id')->on('people');
+            $table->unsignedBigInteger('prescription_has_medicine_id')->nullable(); 
+            $table->foreign('prescription_has_medicine_id')->references('id')->on('prescription_has_medicines');
             $table->timestamps();
             $table->softDeletes();
         });
@@ -36,6 +39,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('prescription_medicines');
+        Schema::dropIfExists('pet_has_medicines');
     }
 };

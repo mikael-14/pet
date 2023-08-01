@@ -4,10 +4,14 @@ return [
     'status' => [
         'active' => 'Active',
         'on_hold' => 'On Hold',
-        'completed' => 'Completed',
         'canceled' => 'Canceled',
+        'completed' => 'Completed',
+    ],
+    'additional_status' =>  [
+        'unstarted' => 'Unstarted',
     ],
     'shout' => [
+        'one_take' => 'The medicine :medicine is one take',
         'completed' => 'The medicine :medicine is completed',
         'on_hold' => 'The medicine :medicine is on hold',
         'canceled' => 'The medicine :medicine is canceled',

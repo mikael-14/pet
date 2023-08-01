@@ -3,6 +3,7 @@
 namespace App\Filament\Resources\Definitions;
 
 use App\Filament\Resources\Definitions\ShelterResource\Pages;
+use App\Filament\Resources\Definitions\ShelterResource\Pages\ViewShelter;
 use App\Filament\Resources\Definitions\ShelterResource\RelationManagers;
 use App\Models\Shelter;
 use Filament\Forms;
@@ -18,6 +19,7 @@ use Filament\Forms\Components\Actions\Action;
 use Awcodes\DropInAction\Forms\Components\DropInAction;
 use Closure;
 use Filament\Facades\Filament;
+use Filament\Resources\Pages\Page;
 use Filament\Resources\Pages\ViewRecord;
 
 class ShelterResource extends Resource
@@ -132,23 +134,27 @@ class ShelterResource extends Resource
                             ->columnSpan(9),
                         DropInAction::make('buttons_show_hide')
                             ->disableLabel()
-                            ->execute(function (Closure $get, Closure $set) {
-                                return [
-                                    Forms\Components\Actions\Action::make('geolocate')
-                                        ->icon('tabler-input-search')
-                                        ->label('Geocode')
-                                        ->action(function () use ($get, $set) {
-                                            $set('show_geocomplete', !$get('show_geocomplete'));
-                                            $set('show_map', false);
-                                        }),
-                                    Forms\Components\Actions\Action::make('map')
-                                        ->icon('tabler-map-search')
-                                        ->label('Map')
-                                        ->action(function () use ($get, $set) {
-                                            $set('show_geocomplete', false);
-                                            $set('show_map', !$get('show_map'));
-                                        }),
-                                ];
+                            ->execute(function (Closure $get, Closure $set,Page $livewire) {
+                                $form[] = Forms\Components\Actions\Action::make('map')
+                                    ->icon('tabler-map-search')
+                                    ->label('Map')
+                                    ->action(function () use ($get, $set) {
+                                        $set('show_geocomplete', false);
+                                        $set('show_map', !$get('show_map'));
+                                    });
+                                if ($livewire instanceof ViewShelter !== true) {
+                                    array_unshift(
+                                        $form,
+                                        Forms\Components\Actions\Action::make('geolocate')
+                                            ->icon('tabler-input-search')
+                                            ->label('Geocode')
+                                            ->action(function () use ($get, $set) {
+                                                $set('show_geocomplete', !$get('show_geocomplete'));
+                                                $set('show_map', false);
+                                            })
+                                    );
+                                }
+                                return $form;
                             })
                             ->hiddenOn('view')
                             ->columnSpan(1),

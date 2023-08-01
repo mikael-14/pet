@@ -17,7 +17,8 @@ use Filament\Tables;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 use Filament\Forms\Components\Placeholder;
-use Illuminate\Support\HtmlString;
+use Filament\Notifications\Notification;
+use Illuminate\Database\Eloquent\Collection;
 
 class PrescriptionHasMedicinesRelationManager extends RelationManager
 {
@@ -33,53 +34,50 @@ class PrescriptionHasMedicinesRelationManager extends RelationManager
     {
         return $form
             ->schema([
-                Grid::make(8)
-                    ->schema([
-                        Forms\Components\Select::make('medicine_id')
-                            ->required()
-                            ->options(Medicine::all()->pluck('name', 'id'))
-                            ->columnSpan(4)
-                            ->reactive()
-                            ->searchable(),
-                        Forms\Components\Select::make('status')
-                            ->required()
-                            ->options(__('pet/prescriptionmedicines.status'))
-                            ->columnSpan(3)
-                            ->reactive()
-                            ->default('active'),
-                        Forms\Components\Toggle::make('emergency')
-                            ->default(false)
-                            ->inline(false)
-                            ->reactive()
-                            ->columnSpan(1)
-                            ->required(),
-                    ]),
+
+                Forms\Components\Select::make('medicine_id')
+                    ->required()
+                    ->options(Medicine::all()->mapWithKeys(function ($medicine) {
+                        return [$medicine->id => $medicine->name . ' - ' . __("pet/medicine.$medicine->type")];
+                    }))
+
+                    ->reactive()
+                    ->searchable(),
                 Forms\Components\TextInput::make('dosage')
                     ->required()
-                    ->reactive()
+                    ->suffix(function (Closure $get) {
+                        $find = Medicine::find($get('medicine_id'))?->type;
+                        return $find ? __("pet/medicine.$find") : '';
+                    })
+                    ->lazy()
                     ->maxLength(50),
-                Forms\Components\TextInput::make('frequency')
-                    ->numeric()
-                    ->mask(fn (Mask $mask) => $mask->pattern('00000'))
-                    ->integer() // Disallow decimal numbers.
-                    ->minValue(1)
-                    ->required()
-                    ->suffix('time in hours')
-                    ->reactive(),
+                Grid::make(8)->schema([
+                    Forms\Components\TextInput::make('frequency')
+                        ->numeric()
+                        ->mask(fn (Mask $mask) => $mask->pattern('00000'))
+                        ->integer() // Disallow decimal numbers.
+                        ->minValue(1)
+                        ->suffix('time in hours')
+                        ->lazy()
+                        ->columnSpan(4),
+                    Forms\Components\Select::make('status')
+                        ->disablePlaceholderSelection()
+                        ->required()
+                        ->options(__('pet/prescriptionmedicines.status'))
+                        ->reactive()
+                        ->default('active')
+                        ->columnSpan(3),
+                    Forms\Components\Toggle::make('emergency')
+                        ->default(false)
+                        ->inline(false)
+                        ->reactive()
+                        ->required()
+                        ->columnSpan(1),
+                ]),
                 Forms\Components\DateTimePicker::make('start_date')
                     ->displayFormat(config('filament.date_time_format'))
                     ->withoutSeconds()
                     ->minutesStep(15)
-                    // ->reactive()
-                    // ->afterStateUpdated(function (Closure $set, Closure $get, $state) {
-                    //     if ($get('id') === null) {
-                    //         $expire = Deworming::find($get('deworming_id'))?->expire ?? 0;
-                    //         if ($expire > 0 && !empty($state)) {
-                    //             $new_date_expire = Carbon::parse($state)->addDays($expire);
-                    //             $set('expire_at', $new_date_expire);
-                    //         }
-                    //     }
-                    // })
                     ->required(),
                 Forms\Components\DateTimePicker::make('end_date')
                     ->afterOrEqual('start_date')
@@ -90,48 +88,45 @@ class PrescriptionHasMedicinesRelationManager extends RelationManager
                     ->label(false)
                     ->content(function (Closure $get) {
                         $frequency = (int)$get('frequency');
-                        if ($frequency > 0) {
-                            $sos = $get('emergency');
-                            $dosage = $get('dosage');
-                            $type = $get('status');
-                            $medicine = Medicine::where('id', (int)$get('medicine_id'))->first();
-                            if ($frequency < 24) {
-                                $totalTimes = intdiv(24, $frequency);
-                            } else {
+                        $sos = $get('emergency');
+                        $type = $get('status');
+                        $dosage = $get('dosage');
+                        $medicine = Medicine::where('id', (int)$get('medicine_id'))->first();
+                        switch ($type) {
+                            case 'canceled':
+                                $content = __('pet/prescriptionmedicines.shout.canceled', ['medicine' => $medicine->name ?? '']);
+                                break;
+                            case 'on_hold':
+                                $content = __('pet/prescriptionmedicines.shout.on_hold', ['medicine' => $medicine->name ?? '']);
+                                break;
+                            case 'completed':
+                                $content = __('pet/prescriptionmedicines.shout.completed', ['medicine' => $medicine->name ?? '']);
+                                break;
+                            default:
+                                if ($frequency === 0) {
+                                    $content = __('pet/prescriptionmedicines.shout.one_take', ['medicine' => $medicine->name ?? '']);
+                                    break;
+                                }
+                                if ($frequency < 24) {
+                                    $totalTimes = intdiv(24, $frequency);
+                                    $content = __('pet/prescriptionmedicines.shout.times_day', ['dosage' => $dosage, 'medicine' => $medicine->name ?? '', 'total_times' => $totalTimes]);
+                                    break;
+                                }
                                 $totalTimes = intdiv($frequency, 24);
-                            }
-                            switch ($type) {
-                                case 'canceled':
-                                    $content = __('pet/prescriptionmedicines.shout.canceled', ['medicine' => $medicine->name ?? '']);
-                                    break;
-                                case 'on_hold':
-                                    $content = __('pet/prescriptionmedicines.shout.on_hold', ['medicine' => $medicine->name ?? '']);
-                                    break;
-                                case 'completed':
-                                    $content = __('pet/prescriptionmedicines.shout.completed', ['medicine' => $medicine->name ?? '']);
-                                    break;
-                                default:
-                                    if ($frequency < 24) {
-                                        $content = __('pet/prescriptionmedicines.shout.times_day', ['dosage' => $dosage, 'medicine' => $medicine->name ?? '', 'total_times' => $totalTimes]);
-                                    } else {
-                                        $content = __('pet/prescriptionmedicines.shout.every_days', ['dosage' => $dosage, 'medicine' => $medicine->name ?? '', 'total_times' => $totalTimes]);
-                                    }
-                                    break;
-                            }
-
-                            return view('filament.components.placeholder-alert')
-                                ->with('content', $content)
-                                ->with('type', $sos ? 'danger' : match ($type) {
-                                    'active' => 'info',
-                                    'on_hold' => 'warning',
-                                    'completed' => 'success',
-                                    'canceled' => 'danger',
-                                });
+                                $content = __('pet/prescriptionmedicines.shout.every_days', ['dosage' => $dosage, 'medicine' => $medicine->name ?? '', 'total_times' => $totalTimes]);
+                                break;
                         }
-                        return '';
-                    })
 
-                    ->hidden(fn (Closure $get): bool => empty($get('frequency')) || empty($get('medicine_id')))
+                        return view('filament.components.placeholder-alert')
+                            ->with('content', $content)
+                            ->with('type', $sos ? 'danger' : match ($type) {
+                                'active' => 'info',
+                                'on_hold' => 'warning',
+                                'completed' => 'success',
+                                'canceled' => 'danger',
+                            });
+                    })
+                    ->visible(fn (Closure $get): bool => (bool)$get('medicine_id'))
                     ->columnSpan('full'),
                 Forms\Components\Textarea::make('observation')
                     ->maxLength(200)
@@ -159,13 +154,16 @@ class PrescriptionHasMedicinesRelationManager extends RelationManager
                     ]),
                 Tables\Columns\TextColumn::make('dosage'),
                 Tables\Columns\TextColumn::make('frequency')
-                    ->formatStateUsing(function (string $state): string {
-                        if ($state < 24) {
-                            return __('pet/prescriptionmedicines.shout.repeat_hour', ['frequency' => $state]);
-                        } else {
-                            $frequency = intdiv($state, 24);
-                            return __('pet/prescriptionmedicines.shout.repeat_day', ['frequency' => $frequency]);
+                    ->formatStateUsing(function (string|null $state): string {
+                        $value = (int)$state;
+                        if ($value === 0) {
+                            return '-';
                         }
+                        if ($value < 24) {
+                            return __('pet/prescriptionmedicines.shout.repeat_hour', ['frequency' => $value]);
+                        }
+                        $frequency = intdiv($value, 24);
+                        return __('pet/prescriptionmedicines.shout.repeat_day', ['frequency' => $frequency]);
                     }),
                 Tables\Columns\TextColumn::make('start_date')
                     ->sortable()
@@ -194,10 +192,35 @@ class PrescriptionHasMedicinesRelationManager extends RelationManager
             ])
             ->actions([
                 Tables\Actions\ViewAction::make(),
-                Tables\Actions\EditAction::make(),
-                Tables\Actions\DeleteAction::make(),
+                Tables\Actions\EditAction::make()
+                    ->visible(fn ($livewire) => $livewire->pageClass !== ViewPrescription::class),
+                Tables\Actions\ReplicateAction::make()
+                    ->icon('heroicon-o-document-duplicate')
+                    ->color('secondary'),
+                Tables\Actions\DeleteAction::make()
+                    ->visible(fn ($livewire) => $livewire->pageClass !== ViewPrescription::class),
             ])
             ->bulkActions([
+                Tables\Actions\BulkAction::make('change_status')
+                    ->icon('heroicon-s-pencil')
+                    ->action(function (Collection $records, array $data): void {
+                        if (isset($data['new_status']))
+                            foreach ($records as $record) {
+                                $record['status'] = $data['new_status'];
+                                $record->save();
+                            }
+                        Notification::make()
+                            ->title('All status changed')
+                            ->success()
+                            ->send();
+                    })
+                    ->form([
+                        Forms\Components\Select::make('new_status')
+                            ->options(__('pet/prescriptionmedicines.status'))
+                            ->required()
+                    ])
+                    ->deselectRecordsAfterCompletion(),
+
                 Tables\Actions\DeleteBulkAction::make(),
             ]);
     }

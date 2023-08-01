@@ -44,8 +44,11 @@ class ClinicsRelationManager extends RelationManager
                 ->visible(fn ($livewire) => $livewire->pageClass !== ViewPerson::class),
             ])
             ->actions([
-                Tables\Actions\EditAction::make(),
-                Tables\Actions\DetachAction::make(),
+                Tables\Actions\ViewAction::make(),
+                Tables\Actions\EditAction::make()
+                ->visible(fn ($livewire) => $livewire->pageClass !== ViewPerson::class),
+                Tables\Actions\DetachAction::make()
+                ->visible(fn ($livewire) => $livewire->pageClass !== ViewPerson::class),
             ])
             ->bulkActions([
                 Tables\Actions\DetachBulkAction::make(),
