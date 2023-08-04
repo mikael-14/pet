@@ -15,6 +15,7 @@ return new class extends Migration
     {
         Schema::create('prescriptions', function (Blueprint $table) {
             $table->id();
+            $table->string('number',12)->unique();
             $table->foreignId('pet_id')->constrained();  
             $table->unsignedBigInteger('clinic_id')->nullable(); 
             $table->foreign('clinic_id')->references('id')->on('clinics');

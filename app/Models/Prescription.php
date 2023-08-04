@@ -17,16 +17,17 @@ use Spatie\MediaLibrary\InteractsWithMedia;
  * Class Prescription
  * 
  * @property int $id
+ * @property string $number
  * @property int $pet_id
- * @property int $clinic_id
+ * @property int|null $clinic_id
  * @property int $person_id
  * @property Carbon $date
- * @property string $observation
+ * @property string|null $observation
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
  * @property string|null $deleted_at
  * 
- * @property Clinic $clinic
+ * @property Clinic|null $clinic
  * @property Person $person
  * @property Pet $pet
  * @property Collection|Medicine[] $medicines
@@ -44,10 +45,11 @@ class Prescription extends Model implements HasMedia
 		'pet_id' => 'int',
 		'clinic_id' => 'int',
 		'person_id' => 'int',
-		'date' => 'date'
+		'date' => 'datetime'
 	];
 
 	protected $fillable = [
+		'number',
 		'pet_id',
 		'clinic_id',
 		'person_id',
@@ -76,11 +78,33 @@ class Prescription extends Model implements HasMedia
 			->withPivot('id', 'dosage', 'status', 'frequency', 'emergency', 'start_date', 'end_date', 'observation', 'deleted_at')
 			->withTimestamps();
 	}
+	// end generation of code
 	public function prescription_has_medicines()
 	{
 		return $this->hasMany(PrescriptionHasMedicine::class);
 	}
-	//custom attribute to get is $model->medicine_start_date
+	protected static function boot()
+	{
+		parent::boot();
+
+		static::creating(function ($model) {
+			$last_number = 1;
+			// get last inserted in current month 
+			$currentMonth = Carbon::now()->startOfMonth(); // Get the start date of the current month
+			$lastInsertedRecord = Prescription::whereMonth('created_at', $currentMonth->month)
+				->whereYear('created_at', $currentMonth->year)
+				->latest('created_at')
+				->first();
+			if($lastInsertedRecord) {
+				$last_number = (int)substr($lastInsertedRecord->number, -3);
+				$last_number++;
+			}
+			$last_number = str_pad($last_number, 3, '0', STR_PAD_LEFT);
+			// get the current year and month in the format 'YYYYMM'
+			$yearMonth = date('Ym');
+			$model->number = "$yearMonth-$last_number";
+		});
+	}
 	public function getMedicineStartDateAttribute()
 	{
 		return $this->prescription_has_medicines()?->orderBy('start_date', 'asc')->first()->start_date ?? null;
@@ -93,10 +117,11 @@ class Prescription extends Model implements HasMedia
 		return $this->prescription_has_medicines()?->orderBy('end_date', 'desc')->first()->end_date ?? null;
 	}
 
-	public function getCountMedicinesAttribute() {
+	public function getCountMedicinesAttribute()
+	{
 		return count($this->medicines()->get());
 	}
-	
+
 	public function getGlobalStateAttribute(): array
 	{
 		$status = array_merge(__('pet/prescriptionmedicines.additional_status'), __('pet/prescriptionmedicines.status'));
@@ -109,19 +134,15 @@ class Prescription extends Model implements HasMedia
 				$counter['unstarted']++;
 				continue;
 			}
-			// if (isset($medicine->pivot->end_date) && $currentDate->greaterThan($medicine->pivot->end_date)) {
-			// 	$counter['completed']++;
-			// 	continue;
-			// }
 			$counter[$medicine->pivot->status]++;
 		}
-		$counter = array_filter($counter, fn ($value) =>  $value !== 0);
-		// array_walk($counter, function (&$value, $key) use ($status) {
-		// 	if ($value == 1)
-		// 		$value = $status[$key] ?? $key;
-		// 	else
-		// 		$value =  ($status[$key] ?? $key) . ' + ' . $value;
-		// });
-		return $counter;
+		return array_filter($counter, fn ($value) =>  $value !== 0);
+	}
+
+	public static function processPrescription()
+	{
+		// get active prescription medication (status == active)
+		$endOfDay = Carbon::now()->endOfDay();
+		$startOfDay = Carbon::now()->startOfDay();
 	}
 }
