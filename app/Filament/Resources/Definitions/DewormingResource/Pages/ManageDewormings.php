@@ -10,7 +10,7 @@ class ManageDewormings extends ManageRecords
 {
     protected static string $resource = DewormingResource::class;
 
-    protected function getActions(): array
+    protected function getHeaderActions(): array
     {
         return [
             Actions\CreateAction::make(),

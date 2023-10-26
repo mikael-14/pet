@@ -27,7 +27,7 @@
 
     <div class="space-y-3">
 
-        <form wire:submit.prevent="createApiToken" class="col-span-2 sm:col-span-1 mt-5 md:mt-0">
+        <form wire:submit="createApiToken" class="col-span-2 sm:col-span-1 mt-5 md:mt-0">
 
             <x-filament::card>
                 @if($plain_text_token)

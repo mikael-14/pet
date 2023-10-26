@@ -16,7 +16,7 @@ class ViewPet extends ViewRecord
 
     // protected static ?string $title = '';
     
-    protected function getActions(): array
+    protected function getHeaderActions(): array
     {
         return [
             Actions\EditAction::make(),
@@ -24,7 +24,7 @@ class ViewPet extends ViewRecord
             Actions\RestoreAction::make(),
             Actions\Action::make('back')
             ->icon('heroicon-o-arrow-left')
-            ->color('secondary')
+            ->color('gray')
             ->action(function () {
                 redirect($this->getResource()::getUrl('index'));
         }),

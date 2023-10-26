@@ -127,7 +127,7 @@ class EditPet extends EditRecord
                 ->columns(3)
         ];
     }
-    protected function getActions(): array
+    protected function getHeaderActions(): array
     {
         return [
             Actions\DeleteAction::make(),

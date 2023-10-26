@@ -12,7 +12,7 @@ class EditPerson extends EditRecord
 {
     protected static string $resource = PersonResource::class;
 
-    protected function getActions(): array
+    protected function getHeaderActions(): array
     {
         return [
             Actions\DeleteAction::make(),

@@ -13,9 +13,9 @@ use BezhanSalleh\FilamentShield\Contracts\HasShieldPermissions;
 use Filament\Facades\Filament;
 use Filament\Forms;
 use Filament\Forms\Components\Card;
-use Filament\Resources\Form;
+use Filament\Forms\Form;
 use Filament\Resources\Resource;
-use Filament\Resources\Table;
+use Filament\Tables\Table;
 use Filament\Tables;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
@@ -111,7 +111,7 @@ class PersonResource extends Resource implements HasShieldPermissions
                             ->updateLatLng() // update the lat/lng fields on your form when a Place is selected
                             ->maxLength(1024)
                             ->placeholder('Search ...')
-                            ->visible(fn (Closure $get): bool => $get('show_geocomplete'))
+                            ->visible(fn (\Filament\Forms\Get $get): bool => $get('show_geocomplete'))
                             ->hint('Search by Google')
                             ->helperText('Search an address to help get data')
                             ->hiddenOn('view')
@@ -143,7 +143,7 @@ class PersonResource extends Resource implements HasShieldPermissions
                             })
                             ->hint('Map by Google')
                             ->helperText('Move the pin to help get data')
-                            ->visible(fn (Closure $get, $livewire): bool => $livewire instanceof ViewRecord && $get('latitude') && $get('longitude') ? true : $get('show_map'))
+                            ->visible(fn (\Filament\Forms\Get $get, $livewire): bool => $livewire instanceof ViewRecord && $get('latitude') && $get('longitude') ? true : $get('show_map'))
                             ->columnSpanFull(),
                         Forms\Components\Toggle::make('show_geocomplete')->reactive()->default(false)->dehydrated(false)->hidden(),
                         Forms\Components\Toggle::make('show_map')->reactive()->default(false)->dehydrated(false)->hidden(),
@@ -180,7 +180,7 @@ class PersonResource extends Resource implements HasShieldPermissions
                             ->columnSpan(9),
                         DropInAction::make('buttons_show_hide')
                             ->disableLabel()
-                            ->execute(function (Closure $get, Closure $set,Page $livewire) {
+                            ->execute(function (\Filament\Forms\Get $get, \Filament\Forms\Set $set,Page $livewire) {
                                 $form[] = Forms\Components\Actions\Action::make('map')
                                     ->icon('tabler-map-search')
                                     ->label('Map')

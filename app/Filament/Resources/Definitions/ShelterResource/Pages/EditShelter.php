@@ -10,7 +10,7 @@ class EditShelter extends EditRecord
 {
     protected static string $resource = ShelterResource::class;
 
-    protected function getActions(): array
+    protected function getHeaderActions(): array
     {
         return [
             Actions\DeleteAction::make(),

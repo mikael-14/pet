@@ -7,9 +7,9 @@ use App\Models\Vaccine;
 use Carbon\Carbon;
 use Closure;
 use Filament\Forms;
-use Filament\Resources\Form;
+use Filament\Forms\Form;
 use Filament\Resources\RelationManagers\RelationManager;
-use Filament\Resources\Table;
+use Filament\Tables\Table;
 use Filament\Tables;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
@@ -24,14 +24,14 @@ class PetHasVaccineRelationManager extends RelationManager
 
     protected static ?string $pluralModelLabel = 'vaccines';
 
-    public static function form(Form $form): Form
+    public function form(Form $form): Form
     {
         return $form
             ->schema([
                 Forms\Components\Select::make('vaccine_id')
                     ->options(Vaccine::all()->pluck('name', 'id'))
                     ->reactive()
-                    ->afterStateUpdated(function (Closure $set, Closure $get, $state) {
+                    ->afterStateUpdated(function (\Filament\Forms\Set $set, \Filament\Forms\Get $get, $state) {
                         if ($get('id') === null) {
                             $expire = Vaccine::find($state)?->expire ?? 0;
                             if ($expire > 0 && !empty($get('date'))) {
@@ -45,7 +45,7 @@ class PetHasVaccineRelationManager extends RelationManager
                 Forms\Components\DatePicker::make('date')
                     ->displayFormat(config('filament.date_format'))
                     ->reactive()
-                    ->afterStateUpdated(function (Closure $set, Closure $get, $state) {
+                    ->afterStateUpdated(function (\Filament\Forms\Set $set, \Filament\Forms\Get $get, $state) {
                         if ($get('id') === null) {
                             $expire = Vaccine::find($get('vaccine_id'))?->expire ?? 0;
                             if ($expire > 0 && !empty($state)) {
@@ -56,7 +56,7 @@ class PetHasVaccineRelationManager extends RelationManager
                     })
                     ->required(),
                 Forms\Components\DatePicker::make('expire_at')
-                    ->helperText(function (Closure $get) {
+                    ->helperText(function (\Filament\Forms\Get $get) {
                         $expire = Vaccine::find($get('vaccine_id'))?->expire ?? 0;
                         if ($expire > 0) {
                             return "Default expiration in {$expire} days" . $get('id') . '';
@@ -71,7 +71,7 @@ class PetHasVaccineRelationManager extends RelationManager
             ]);
     }
 
-    public static function table(Table $table): Table
+    public function table(Table $table): Table
     {
         return $table
             ->columns([

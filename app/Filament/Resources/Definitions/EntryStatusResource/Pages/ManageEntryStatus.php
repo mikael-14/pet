@@ -10,7 +10,7 @@ class ManageEntryStatus extends ManageRecords
 {
     protected static string $resource = EntryStatusResource::class;
 
-    protected function getActions(): array
+    protected function getHeaderActions(): array
     {
         return [
             Actions\CreateAction::make(),

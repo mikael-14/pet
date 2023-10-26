@@ -31,7 +31,7 @@ class EditUser extends EditRecord
         return $data;
     }
 
-    protected function getActions(): array
+    protected function getHeaderActions(): array
     {
         return [
             ImpersonateAction::make()->record($this->getRecord()),
@@ -77,13 +77,13 @@ class EditUser extends EditRecord
                         ->dehydrateStateUsing(fn ($state) => Hash::make($state))
                         ->dehydrated(fn ($state) => filled($state))
                         ->same('confirm_password')
-                        ->visible(fn (Closure $get): bool => Filament::auth()->user()->id == $this->record->id),
+                        ->visible(fn (\Filament\Forms\Get $get): bool => Filament::auth()->user()->id == $this->record->id),
                     \Filament\Forms\Components\TextInput::make('confirm_password')
                         ->dehydrated(false)
                         ->password()
-                        ->visible(fn (Closure $get): bool => Filament::auth()->user()->id == $this->record->id),
+                        ->visible(fn (\Filament\Forms\Get $get): bool => Filament::auth()->user()->id == $this->record->id),
                 ])
-                ->visible(fn (Closure $get): bool => Filament::auth()->user()->id == $this->record->id)
+                ->visible(fn (\Filament\Forms\Get $get): bool => Filament::auth()->user()->id == $this->record->id)
                 ->columns(2)
         ];
     }

@@ -8,9 +8,9 @@ use App\Models\PetHasMedicine;
 use Carbon\Carbon;
 use Closure;
 use Filament\Forms;
-use Filament\Resources\Form;
+use Filament\Forms\Form;
 use Filament\Resources\RelationManagers\RelationManager;
-use Filament\Resources\Table;
+use Filament\Tables\Table;
 use Filament\Tables;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
@@ -25,7 +25,7 @@ class PetHasMedicineRelationManager extends RelationManager
 
     protected static ?string $pluralModelLabel = 'medicines';
 
-    public static function form(Form $form): Form
+    public function form(Form $form): Form
     {
         return $form
             ->schema([
@@ -51,7 +51,7 @@ class PetHasMedicineRelationManager extends RelationManager
                     ]),
                 Forms\Components\TextInput::make('dosage')
                     ->required()
-                    ->suffix(function (Closure $get) {
+                    ->suffix(function (\Filament\Forms\Get $get) {
                         $find = Medicine::find($get('medicine_id'))?->type;
                         return $find ? __("pet/medicine.$find") : '';
                     })
@@ -67,7 +67,7 @@ class PetHasMedicineRelationManager extends RelationManager
                     ->options(Person::getPersonByFlag(['veterinary', 'medication_volunteer'])->toArray())
                     ->searchable()
                     ->preload()
-                    ->required(fn (Closure $get) => Carbon::parse($get('date'))->lessThan(Carbon::now())),
+                    ->required(fn (\Filament\Forms\Get $get) => Carbon::parse($get('date'))->lessThan(Carbon::now())),
                 Forms\Components\Toggle::make('administered')
                     ->default(true)
                     ->inline(false)
@@ -78,7 +78,7 @@ class PetHasMedicineRelationManager extends RelationManager
             ]);
     }
 
-    public static function table(Table $table): Table
+    public function table(Table $table): Table
     {
         return $table
             ->columns([

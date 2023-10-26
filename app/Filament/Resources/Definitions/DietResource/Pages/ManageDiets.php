@@ -10,7 +10,7 @@ class ManageDiets extends ManageRecords
 {
     protected static string $resource = DietResource::class;
 
-    protected function getActions(): array
+    protected function getHeaderActions(): array
     {
         return [
             Actions\CreateAction::make(),

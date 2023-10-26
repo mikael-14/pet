@@ -10,9 +10,9 @@ use Closure;
 use Filament\Forms;
 use Filament\Forms\Components\Grid;
 use Filament\Forms\Components\TextInput\Mask;
-use Filament\Resources\Form;
+use Filament\Forms\Form;
 use Filament\Resources\RelationManagers\RelationManager;
-use Filament\Resources\Table;
+use Filament\Tables\Table;
 use Filament\Tables;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
@@ -30,7 +30,7 @@ class PrescriptionHasMedicinesRelationManager extends RelationManager
 
     protected static ?string $pluralModelLabel = 'medicines';
 
-    public static function form(Form $form): Form
+    public function form(Form $form): Form
     {
         return $form
             ->schema([
@@ -45,7 +45,7 @@ class PrescriptionHasMedicinesRelationManager extends RelationManager
                     ->searchable(),
                 Forms\Components\TextInput::make('dosage')
                     ->required()
-                    ->suffix(function (Closure $get) {
+                    ->suffix(function (\Filament\Forms\Get $get) {
                         $find = Medicine::find($get('medicine_id'))?->type;
                         return $find ? __("pet/medicine.$find") : '';
                     })
@@ -86,7 +86,7 @@ class PrescriptionHasMedicinesRelationManager extends RelationManager
                     ->minutesStep(15),
                 Placeholder::make('shout')
                     ->label(false)
-                    ->content(function (Closure $get) {
+                    ->content(function (\Filament\Forms\Get $get) {
                         $frequency = (int)$get('frequency');
                         $sos = $get('emergency');
                         $type = $get('status');
@@ -126,7 +126,7 @@ class PrescriptionHasMedicinesRelationManager extends RelationManager
                                 'canceled' => 'danger',
                             });
                     })
-                    ->visible(fn (Closure $get): bool => (bool)$get('medicine_id'))
+                    ->visible(fn (\Filament\Forms\Get $get): bool => (bool)$get('medicine_id'))
                     ->columnSpan('full'),
                 Forms\Components\Textarea::make('observation')
                     ->maxLength(200)
@@ -135,7 +135,7 @@ class PrescriptionHasMedicinesRelationManager extends RelationManager
             ]);
     }
 
-    public static function table(Table $table): Table
+    public function table(Table $table): Table
     {
         return $table
             ->columns([
@@ -196,7 +196,7 @@ class PrescriptionHasMedicinesRelationManager extends RelationManager
                     ->visible(fn ($livewire) => $livewire->pageClass !== ViewPrescription::class),
                 Tables\Actions\ReplicateAction::make()
                     ->icon('heroicon-o-document-duplicate')
-                    ->color('secondary'),
+                    ->color('gray'),
                 Tables\Actions\DeleteAction::make()
                     ->visible(fn ($livewire) => $livewire->pageClass !== ViewPrescription::class),
             ])

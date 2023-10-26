@@ -52,7 +52,7 @@
                     {{$this->getCachedAction('disable2fa')}}
                 </div>
             @elseif($this->user->has_enabled_two_factor)
-                <form wire:submit.prevent="confirmTwoFactor">
+                <form wire:submit="confirmTwoFactor">
                     <div class="flex items-center justify-between">
                         <div>{{$this->confirmTwoFactorForm}}</div>
                         <div class="mt-5">

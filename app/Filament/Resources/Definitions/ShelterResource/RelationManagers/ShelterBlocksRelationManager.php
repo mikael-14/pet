@@ -4,9 +4,9 @@ namespace App\Filament\Resources\Definitions\ShelterResource\RelationManagers;
 
 use App\Filament\Resources\Definitions\ShelterResource\Pages\ViewShelter;
 use Filament\Forms;
-use Filament\Resources\Form;
+use Filament\Forms\Form;
 use Filament\Resources\RelationManagers\RelationManager;
-use Filament\Resources\Table;
+use Filament\Tables\Table;
 use Filament\Tables;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
@@ -23,7 +23,7 @@ class ShelterBlocksRelationManager extends RelationManager
 
     protected static ?string $pluralModelLabel = 'shelter blocks';
 
-    public static function form(Form $form): Form
+    public function form(Form $form): Form
     {
         return $form
             ->schema([
@@ -34,7 +34,7 @@ class ShelterBlocksRelationManager extends RelationManager
             ]);
     }
 
-    public static function table(Table $table): Table
+    public function table(Table $table): Table
     {
         return $table
             ->columns([
@@ -48,7 +48,7 @@ class ShelterBlocksRelationManager extends RelationManager
             ])
             ->headerActions([
                 Tables\Actions\CreateAction::make()
-                ->modalHeading(__('filament-support::actions/create.single.modal.heading', ['label' => self::getTitle()]))
+                ->modalHeading(__('filament-actions::create.single.modal.heading', ['label'  => self::$title]))
                 ->visible(fn ($livewire) => $livewire->pageClass !== ViewShelter::class),
             ])
             ->actions([

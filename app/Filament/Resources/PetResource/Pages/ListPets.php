@@ -11,7 +11,7 @@ class ListPets extends ListRecords
 {
     protected static string $resource = PetResource::class;
 
-    protected function getActions(): array
+    protected function getHeaderActions(): array
     {
         return [
             Actions\CreateAction::make(),

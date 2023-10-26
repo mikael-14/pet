@@ -64,7 +64,7 @@ class User extends Authenticatable implements FilamentUser
         // Let's prevent impersonating other users that are super admins
         return !$this->hasRole('super_admin') ? true : false;
     }
-    public function canAccessFilament(): bool
+    public function canAccessPanel($panel): bool
     {
         // add this method to acept only verified email addresses
         # $this->hasVerifiedEmail(); 

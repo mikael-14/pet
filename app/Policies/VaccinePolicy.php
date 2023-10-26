@@ -14,9 +14,9 @@ class VaccinePolicy
      * Determine whether the user can view any models.
      *
      * @param  \App\Models\User  $user
-     * @return \Illuminate\Auth\Access\Response|bool
+     * @return bool
      */
-    public function viewAny(User $user)
+    public function viewAny(User $user): bool
     {
         return $user->can('view_any_definitions::vaccine');
     }
@@ -26,9 +26,9 @@ class VaccinePolicy
      *
      * @param  \App\Models\User  $user
      * @param  \App\Models\Vaccine  $vaccine
-     * @return \Illuminate\Auth\Access\Response|bool
+     * @return bool
      */
-    public function view(User $user, Vaccine $vaccine)
+    public function view(User $user, Vaccine $vaccine): bool
     {
         return $user->can('view_definitions::vaccine');
     }
@@ -37,9 +37,9 @@ class VaccinePolicy
      * Determine whether the user can create models.
      *
      * @param  \App\Models\User  $user
-     * @return \Illuminate\Auth\Access\Response|bool
+     * @return bool
      */
-    public function create(User $user)
+    public function create(User $user): bool
     {
         return $user->can('create_definitions::vaccine');
     }
@@ -49,9 +49,9 @@ class VaccinePolicy
      *
      * @param  \App\Models\User  $user
      * @param  \App\Models\Vaccine  $vaccine
-     * @return \Illuminate\Auth\Access\Response|bool
+     * @return bool
      */
-    public function update(User $user, Vaccine $vaccine)
+    public function update(User $user, Vaccine $vaccine): bool
     {
         return $user->can('update_definitions::vaccine');
     }
@@ -61,9 +61,9 @@ class VaccinePolicy
      *
      * @param  \App\Models\User  $user
      * @param  \App\Models\Vaccine  $vaccine
-     * @return \Illuminate\Auth\Access\Response|bool
+     * @return bool
      */
-    public function delete(User $user, Vaccine $vaccine)
+    public function delete(User $user, Vaccine $vaccine): bool
     {
         return $user->can('delete_definitions::vaccine');
     }
@@ -72,9 +72,9 @@ class VaccinePolicy
      * Determine whether the user can bulk delete.
      *
      * @param  \App\Models\User  $user
-     * @return \Illuminate\Auth\Access\Response|bool
+     * @return bool
      */
-    public function deleteAny(User $user)
+    public function deleteAny(User $user): bool
     {
         return $user->can('delete_any_definitions::vaccine');
     }
@@ -84,9 +84,9 @@ class VaccinePolicy
      *
      * @param  \App\Models\User  $user
      * @param  \App\Models\Vaccine  $vaccine
-     * @return \Illuminate\Auth\Access\Response|bool
+     * @return bool
      */
-    public function forceDelete(User $user, Vaccine $vaccine)
+    public function forceDelete(User $user, Vaccine $vaccine): bool
     {
         return $user->can('force_delete_definitions::vaccine');
     }
@@ -95,9 +95,9 @@ class VaccinePolicy
      * Determine whether the user can permanently bulk delete.
      *
      * @param  \App\Models\User  $user
-     * @return \Illuminate\Auth\Access\Response|bool
+     * @return bool
      */
-    public function forceDeleteAny(User $user)
+    public function forceDeleteAny(User $user): bool
     {
         return $user->can('force_delete_any_definitions::vaccine');
     }
@@ -107,9 +107,9 @@ class VaccinePolicy
      *
      * @param  \App\Models\User  $user
      * @param  \App\Models\Vaccine  $vaccine
-     * @return \Illuminate\Auth\Access\Response|bool
+     * @return bool
      */
-    public function restore(User $user, Vaccine $vaccine)
+    public function restore(User $user, Vaccine $vaccine): bool
     {
         return $user->can('restore_definitions::vaccine');
     }
@@ -118,9 +118,9 @@ class VaccinePolicy
      * Determine whether the user can bulk restore.
      *
      * @param  \App\Models\User  $user
-     * @return \Illuminate\Auth\Access\Response|bool
+     * @return bool
      */
-    public function restoreAny(User $user)
+    public function restoreAny(User $user): bool
     {
         return $user->can('restore_any_definitions::vaccine');
     }
@@ -130,9 +130,9 @@ class VaccinePolicy
      *
      * @param  \App\Models\User  $user
      * @param  \App\Models\Vaccine  $vaccine
-     * @return \Illuminate\Auth\Access\Response|bool
+     * @return bool
      */
-    public function replicate(User $user, Vaccine $vaccine)
+    public function replicate(User $user, Vaccine $vaccine): bool
     {
         return $user->can('replicate_definitions::vaccine');
     }
@@ -141,9 +141,9 @@ class VaccinePolicy
      * Determine whether the user can reorder.
      *
      * @param  \App\Models\User  $user
-     * @return \Illuminate\Auth\Access\Response|bool
+     * @return bool
      */
-    public function reorder(User $user)
+    public function reorder(User $user): bool
     {
         return $user->can('reorder_definitions::vaccine');
     }

@@ -6,15 +6,15 @@ use App\Filament\Resources\ClinicResource\Pages;
 use App\Filament\Resources\ClinicResource\Pages\ViewClinic;
 use App\Filament\Resources\ClinicResource\RelationManagers;
 use App\Models\Clinic;
-use Awcodes\DropInAction\Forms\Components\DropInAction;
 use Cheesegrits\FilamentGoogleMaps\Fields\Geocomplete;
 use Cheesegrits\FilamentGoogleMaps\Fields\Map;
 use Closure;
+use Filament\Actions\Action;
 use Filament\Forms;
-use Filament\Resources\Form;
+use Filament\Forms\Form;
 use Filament\Resources\Pages\ViewRecord;
 use Filament\Resources\Resource;
-use Filament\Resources\Table;
+use Filament\Tables\Table;
 use Filament\Tables;
 use Filament\Resources\Pages\Page;
 
@@ -22,7 +22,7 @@ class ClinicResource extends Resource
 {
     protected static ?string $model = Clinic::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-collection';
+    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
 
     protected static ?string $recordTitleAttribute = 'name';
 
@@ -57,7 +57,7 @@ class ClinicResource extends Resource
                             ->updateLatLng() // update the lat/lng fields on your form when a Place is selected
                             ->maxLength(1024)
                             ->placeholder('Search ...')
-                            ->visible(fn (Closure $get): bool => $get('show_geocomplete'))
+                            ->visible(fn (\Filament\Forms\Get $get): bool => $get('show_geocomplete'))
                             ->hint('Search by Google')
                             ->helperText('Search an address to help get data')
                             ->hiddenOn('view')
@@ -89,7 +89,7 @@ class ClinicResource extends Resource
                             })
                             ->hint('Map by Google')
                             ->helperText('Move the pin to help get data')
-                            ->visible(fn (Closure $get, $livewire): bool => $livewire instanceof ViewRecord && $get('latitude') && $get('longitude') ? true : $get('show_map'))
+                            ->visible(fn (\Filament\Forms\Get $get, $livewire): bool => $livewire instanceof ViewRecord && $get('latitude') && $get('longitude') ? true : $get('show_map'))
                             ->columnSpanFull(),
                         Forms\Components\Toggle::make('show_geocomplete')->reactive()->default(false)->dehydrated(false)->hidden(),
                         Forms\Components\Toggle::make('show_map')->reactive()->default(false)->dehydrated(false)->hidden(),
@@ -124,9 +124,9 @@ class ClinicResource extends Resource
                         Forms\Components\TextInput::make('street')
                             ->maxLength(100)
                             ->columnSpan(9),
-                        DropInAction::make('buttons_show_hide')
-                            ->disableLabel()
-                            ->execute(function (Closure $get, Closure $set, Page $livewire) {
+                        Action::make('buttons_show_hide')
+                            ->hiddenLabel()
+                            ->execute(function (\Filament\Forms\Get $get, \Filament\Forms\Set $set, Page $livewire) {
                                 $form[] = Forms\Components\Actions\Action::make('map')
                                     ->icon('tabler-map-search')
                                     ->label('Map')
@@ -160,7 +160,7 @@ class ClinicResource extends Resource
                             ->columnSpan(5),
                         Forms\Components\TextInput::make('zip')
                             ->placeholder('0000-000')
-                            ->mask(fn (Forms\Components\TextInput\Mask $mask) => $mask->pattern('0000-000'))
+                            ->mask(fn ($mask) => $mask->pattern('0000-000'))
                             ->maxLength(20)
                             ->columnSpan(5),
 

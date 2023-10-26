@@ -8,7 +8,7 @@
         {{ __('filament-breezy::default.profile.personal_info.subheading') }}
     </x-slot>
 
-    <form wire:submit.prevent="updateProfile" class="col-span-2 sm:col-span-1 mt-5 md:mt-0">
+    <form wire:submit="updateProfile" class="col-span-2 sm:col-span-1 mt-5 md:mt-0">
         <x-filament::card>
 
             {{ $this->updateProfileForm }}

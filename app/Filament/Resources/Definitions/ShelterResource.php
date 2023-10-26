@@ -7,26 +7,25 @@ use App\Filament\Resources\Definitions\ShelterResource\Pages\ViewShelter;
 use App\Filament\Resources\Definitions\ShelterResource\RelationManagers;
 use App\Models\Shelter;
 use Filament\Forms;
-use Filament\Resources\Form;
+use Filament\Forms\Form;
 use Filament\Resources\Resource;
-use Filament\Resources\Table;
+use Filament\Tables\Table;
 use Filament\Tables;
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\SoftDeletingScope;
 use Cheesegrits\FilamentGoogleMaps\Fields\Map;
 use Cheesegrits\FilamentGoogleMaps\Fields\Geocomplete;
 use Filament\Forms\Components\Actions\Action;
-use Awcodes\DropInAction\Forms\Components\DropInAction;
 use Closure;
 use Filament\Facades\Filament;
+use Filament\Forms\Components\Actions;
 use Filament\Resources\Pages\Page;
 use Filament\Resources\Pages\ViewRecord;
-
+use Filament\Forms\Set;
+use Filament\Forms\Get;
 class ShelterResource extends Resource
 {
     protected static ?string $model = Shelter::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-collection';
+    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
 
     protected static ?string $slug = 'definitions/shelters';
 
@@ -65,7 +64,7 @@ class ShelterResource extends Resource
                             ->updateLatLng() // update the lat/lng fields on your form when a Place is selected
                             ->maxLength(1024)
                             ->placeholder('Search ...')
-                            ->visible(fn (Closure $get): bool => $get('show_geocomplete'))
+                            ->visible(fn (\Filament\Forms\Get $get): bool => $get('show_geocomplete'))
                             ->hint('Search by Google')
                             ->helperText('Search an address to help get data')
                             ->hiddenOn('view')
@@ -97,7 +96,7 @@ class ShelterResource extends Resource
                             })
                             ->hint('Map by Google')
                             ->helperText('Move the pin to help get data')
-                            ->visible(fn (Closure $get, $livewire): bool => $livewire instanceof ViewRecord && $get('latitude') && $get('longitude') ? true : $get('show_map'))
+                            ->visible(fn (\Filament\Forms\Get $get, $livewire): bool => $livewire instanceof ViewRecord && $get('latitude') && $get('longitude') ? true : $get('show_map'))
                             ->columnSpanFull(),
                         Forms\Components\Toggle::make('show_geocomplete')->reactive()->default(false)->dehydrated(false)->hidden(),
                         Forms\Components\Toggle::make('show_map')->reactive()->default(false)->dehydrated(false)->hidden(),
@@ -132,33 +131,30 @@ class ShelterResource extends Resource
                         Forms\Components\TextInput::make('street')
                             ->maxLength(100)
                             ->columnSpan(9),
-                        DropInAction::make('buttons_show_hide')
-                            ->disableLabel()
-                            ->execute(function (Closure $get, Closure $set,Page $livewire) {
-                                $form[] = Forms\Components\Actions\Action::make('map')
+                            Actions::make([
+
+                               Action::make('map')
                                     ->icon('tabler-map-search')
                                     ->label('Map')
-                                    ->action(function () use ($get, $set) {
+                                    ->action(function (Get $get,Set $set) {
                                         $set('show_geocomplete', false);
                                         $set('show_map', !$get('show_map'));
-                                    });
-                                if ($livewire instanceof ViewShelter !== true) {
-                                    array_unshift(
-                                        $form,
-                                        Forms\Components\Actions\Action::make('geolocate')
+                                    }),
+                               Action::make('geolocate')
                                             ->icon('tabler-input-search')
                                             ->label('Geocode')
-                                            ->action(function () use ($get, $set) {
+                                            ->action(function (Get $get,Set $set) {
                                                 $set('show_geocomplete', !$get('show_geocomplete'));
                                                 $set('show_map', false);
                                             })
-                                    );
-                                }
-                                return $form;
-                            })
+                                 
+                        
+                            ])
                             ->hiddenOn('view')
                             ->columnSpan(1),
                         Forms\Components\Select::make('country')
+                        ->searchable(true)
+                        ->native(false)
                             ->options(__('pet/country'))
                             ->columnSpan(5),
                         Forms\Components\TextInput::make('state')
@@ -168,8 +164,8 @@ class ShelterResource extends Resource
                             ->maxLength(100)
                             ->columnSpan(5),
                         Forms\Components\TextInput::make('zip')
-                            ->placeholder('0000-000')
-                            ->mask(fn (Forms\Components\TextInput\Mask $mask) => $mask->pattern('0000-000'))
+                            ->placeholder('9999-999')
+                            ->mask('9999-999')
                             ->maxLength(20)
                             ->columnSpan(5),
 

@@ -6,9 +6,9 @@ use App\Filament\Resources\Definitions\DewormingResource\Pages;
 use App\Filament\Resources\Definitions\DewormingResource\RelationManagers;
 use App\Models\Deworming;
 use Filament\Forms;
-use Filament\Resources\Form;
+use Filament\Forms\Form;
 use Filament\Resources\Resource;
-use Filament\Resources\Table;
+use Filament\Tables\Table;
 use Filament\Tables;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
@@ -17,7 +17,7 @@ class DewormingResource extends Resource
 {
     protected static ?string $model = Deworming::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-collection';
+    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
 
     protected static ?string $slug = 'definitions/deworming';
 
