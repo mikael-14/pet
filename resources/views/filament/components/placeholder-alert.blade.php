@@ -1,12 +1,15 @@
-<div role="alert" class="shout-component border 
-rounded-lg p-4 
-{{ match($type) {
-                'success' => 'bg-success-200 border-success-300 text-success-900 dark:border-success-300 dark:bg-success-200',
-                'warning' => 'bg-warning-100 border-warning-300 text-warning-900 dark:border-warning-300 dark:bg-warning-200',
-                'danger' => 'bg-danger-100 border-danger-300 text-danger-900 dark:border-danger-300 dark:bg-danger-200',
-                default => 'bg-info-100 border-info-300 text-info-900 dark:border-info-300 dark:bg-info-200',
-            }
-        }}">
+
+
+<div role="alert"  class="shout-component border 
+rounded-lg p-4 fi-color-custom bg-custom-50 text-custom-600 ring-custom-600/10 dark:bg-custom-400/10 dark:text-custom-400 dark:ring-custom-400/30" 
+style="{{
+    match($type) {
+        'success' => '--c-50:var(--success-50);--c-400:var(--success-400);--c-600:var(--success-600);',
+        'warning' => '--c-50:var(--warning-50);--c-400:var(--warning-400);--c-600:var(--warning-600);',
+        'danger' => '--c-50:var(--danger-50);--c-400:var(--danger-400);--c-600:var(--danger-600);',
+        default => '--c-50:var(--info-50);--c-400:var(--info-400);--c-600:var(--info-600);',
+    }
+}}" >
     <div class="flex">
         <div class="flex-shrink-0 ltr:mr-3 rtl:ml-3 text-{{$type}}-500">
             @switch($type)

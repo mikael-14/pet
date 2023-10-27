@@ -124,35 +124,37 @@ class PrescriptionResource extends Resource
                     ->placeholder('-'),
                 Tables\Columns\TextColumn::make('count_medicines')
                 ->badge()
+                ->color(fn (string $state): string => match ($state) {
+                    'unstarted' => 'gray',
+                    'on_hold' => 'warning',
+                    'active' => 'info',
+                    'completed' => 'success',
+                    'canceled' => 'danger',
+                })
                     ->formatStateUsing(function (?Prescription $record) {
                         $states = $record->global_state;
                         $badges = [];
                         foreach ($states as $name => $value) {
                             switch ($name) {
                                 case 'active':
-                                    $badges[] = Badge::make($name)
-                                        ->label(__('pet/prescriptionmedicines.status.active') . ($value > 1 ? "($value)" : ''))
-                                        ->color('#dbeafe');
+                                    $badges[] = __('pet/prescriptionmedicines.status.active') . ($value > 1 ? "($value)" : '');
+                                      //  ->color('#dbeafe');
                                     break;
                                 case 'on_hold':
-                                    $badges[] = Badge::make($name)
-                                        ->label(__('pet/prescriptionmedicines.status.on_hold') . ($value > 1 ? "($value)" : ''))
-                                        ->color('#fef3c7');
+                                    $badges[] = __('pet/prescriptionmedicines.status.on_hold') . ($value > 1 ? "($value)" : '');
+                                      //  ->color('#fef3c7');
                                     break;
                                 case 'canceled':
-                                    $badges[] = Badge::make($name)
-                                        ->label(__('pet/prescriptionmedicines.status.canceled') . ($value > 1 ? "($value)" : ''))
-                                        ->color('#ffe4e6');
+                                    $badges[] = __('pet/prescriptionmedicines.status.canceled') . ($value > 1 ? "($value)" : '');
+                                      //  ->color('#ffe4e6');
                                     break;
                                 case 'completed':
-                                    $badges[] = Badge::make($name)
-                                        ->label(__('pet/prescriptionmedicines.status.completed') . ($value > 1 ? "($value)" : ''))
-                                        ->color('#bbf7d0');
+                                    $badges[] = __('pet/prescriptionmedicines.status.completed') . ($value > 1 ? "($value)" : '');
+                                 //       ->color('#bbf7d0');
                                     break;
                                 case 'unstarted':
-                                    $badges[] = Badge::make($name)
-                                        ->label(__('pet/prescriptionmedicines.additional_status.unstarted') . ($value > 1 ? "($value)" : ''))
-                                        ->color('#f7f8f8');
+                                    $badges[] = __('pet/prescriptionmedicines.additional_status.unstarted') . ($value > 1 ? "($value)" : '');
+                                  //      ->color('#f7f8f8');
                                     break;
                                 default:
                                     # code...
