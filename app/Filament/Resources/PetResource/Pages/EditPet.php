@@ -6,11 +6,11 @@ use App\Filament\Resources\PetResource;
 use App\Models\EntryStatus;
 use App\Models\Pet;
 use App\Models\ShelterBlock;
-use Filament\Pages\Actions;
+use Filament\Actions;
 use Filament\Resources\Pages\EditRecord;
 use Carbon\Carbon;
 use Closure;
-use Filament\Forms\Components\Card;
+use Filament\Forms;
 use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\Group;
 use Filament\Forms\Components\Placeholder;
@@ -21,12 +21,13 @@ use Filament\Forms\Components\SpatieMediaLibraryFileUpload;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
 use Kenepa\ResourceLock\Resources\Pages\Concerns\UsesResourceLock;
+
 class EditPet extends EditRecord
 {
     use UsesResourceLock;
 
     protected static string $resource = PetResource::class;
-    
+
     public function getFormSchema(): array
     {
         return [
@@ -34,7 +35,7 @@ class EditPet extends EditRecord
                 ->schema([
                     Group::make()
                         ->schema([
-                            Card::make()
+                            Forms\Components\Section::make()
                                 ->schema([
                                     TextInput::make('name')
                                         ->required()
@@ -43,7 +44,7 @@ class EditPet extends EditRecord
                                         ->options(
                                             __('pet/species')
                                         )->default(array_key_first(__('pet/species')))
-                                        ->disablePlaceholderSelection(),
+                                        ->selectablePlaceholder(false),
                                     Select::make('gender')
                                         ->options([
                                             'male' => 'Male',
@@ -58,14 +59,14 @@ class EditPet extends EditRecord
                                         ->lazy(),
                                     DatePicker::make('chip_date')
                                         ->displayFormat(config('filament.date_format')),
-                                   
-                                  TextInput::make('color')
+
+                                    TextInput::make('color')
                                         ->maxLength(50),
                                     TextInput::make('coat')
                                         ->maxLength(50),
                                     TextInput::make('breed')
                                         ->maxLength(50),
-                                        Toggle::make('adoptable')
+                                    Toggle::make('adoptable')
                                         ->inline(false),
                                     RichEditor::make('observation')->columnSpan('full'),
                                 ])->columns(2),
@@ -88,7 +89,7 @@ class EditPet extends EditRecord
                                     DatePicker::make('entry_date')
                                         ->displayFormat(config('filament.date_format'))
                                         ->required(),
-                                  
+
                                     Toggle::make('sterilized')
                                         ->inline(false)->reactive(),
                                     DatePicker::make('sterilized_date')
@@ -102,17 +103,17 @@ class EditPet extends EditRecord
 
                     Group::make()
                         ->schema([
-                            Card::make()
+                            Forms\Components\Section::make()
                                 ->schema([
                                     SpatieMediaLibraryFileUpload::make('image')
                                         ->acceptedFileTypes(['image/*'])
                                         ->disk('petsMainImage')
                                         ->collection('pets-main-image')
-                                        ->enableOpen()
-                                        ->enableDownload()
+                                        ->openable()
+                                        ->downloadable()
                                         ->columnSpan('full'),
                                 ]),
-                            Card::make()
+                            Forms\Components\Section::make()
                                 ->schema([
                                     Placeholder::make('created_at')
                                         ->label('Created at')

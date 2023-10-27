@@ -7,31 +7,29 @@ use App\Models\EntryStatus;
 use App\Models\Pet;
 use App\Models\ShelterBlock;
 use Carbon\Carbon;
-use Filament\Forms\Components\Card;
+use Filament\Forms;
 use Filament\Forms\Components\DatePicker;
-use Filament\Forms\Components\Group;
 use Filament\Forms\Components\RichEditor;
 use Filament\Forms\Components\Section;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\SpatieMediaLibraryFileUpload;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
-use Filament\Pages\Actions;
 use Filament\Resources\Pages\CreateRecord;
-use Livewire\TemporaryUploadedFile;
+
 
 class CreatePet extends CreateRecord
 {
     protected static string $resource = PetResource::class;
-    
+
     public function getFormSchema(): array
     {
         return [
-            Group::make()
+            Forms\Components\Group::make()
                 ->schema([
-                    Group::make()
+                    Forms\Components\Group::make()
                         ->schema([
-                            Card::make()
+                            Forms\Components\Section::make()
                                 ->schema([
                                     TextInput::make('name')
                                         ->required()
@@ -40,7 +38,7 @@ class CreatePet extends CreateRecord
                                         ->options(
                                             __('pet/species')
                                         )->default(array_key_first(__('pet/species')))
-                                        ->disablePlaceholderSelection(),
+                                        ->selectablePlaceholder(false),
                                     Select::make('gender')
                                         ->options([
                                             'male' => 'Male',
@@ -84,7 +82,7 @@ class CreatePet extends CreateRecord
                                     DatePicker::make('entry_date')
                                         ->displayFormat(config('filament.date_format'))
                                         ->required(),
-                                   
+
                                     Toggle::make('sterilized')
                                         ->inline(false)->reactive(),
                                     DatePicker::make('sterilized_date')
@@ -95,16 +93,16 @@ class CreatePet extends CreateRecord
                                         ->maxLength(50),
                                 ])->columns(2)->collapsible(),
                         ])->columnSpan(['lg' => 2]),
-                    Group::make()
+                    Forms\Components\Group::make()
                         ->schema([
-                            Card::make()
+                            Forms\Components\Section::make()
                                 ->schema([
                                     SpatieMediaLibraryFileUpload::make('image')
                                         ->acceptedFileTypes(['image/*'])
                                         ->disk('petsMainImage')
                                         ->collection('pets-main-image')
-                                        ->enableOpen()
-                                        ->enableDownload()
+                                        ->openable()
+                                        ->downloadable()
                                         ->columnSpan('full'),
                                 ]),
 

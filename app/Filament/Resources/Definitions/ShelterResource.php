@@ -13,14 +13,13 @@ use Filament\Tables\Table;
 use Filament\Tables;
 use Cheesegrits\FilamentGoogleMaps\Fields\Map;
 use Cheesegrits\FilamentGoogleMaps\Fields\Geocomplete;
-use Filament\Forms\Components\Actions\Action;
 use Closure;
 use Filament\Facades\Filament;
-use Filament\Forms\Components\Actions;
 use Filament\Resources\Pages\Page;
 use Filament\Resources\Pages\ViewRecord;
 use Filament\Forms\Set;
 use Filament\Forms\Get;
+
 class ShelterResource extends Resource
 {
     protected static ?string $model = Shelter::class;
@@ -37,7 +36,7 @@ class ShelterResource extends Resource
     {
         return $form
             ->schema([
-                Forms\Components\Card::make()
+                Forms\Components\Section::make()
                     ->schema([
                         Forms\Components\TextInput::make('name')
                             ->required()
@@ -51,6 +50,27 @@ class ShelterResource extends Resource
                     ])->columns(10),
                 Forms\Components\Section::make('Address')
                     ->schema([
+                        Forms\Components\TextInput::make('street')
+                            ->maxLength(100)
+                            ->suffixActions([
+                                Forms\Components\Actions\Action::make('map')
+                                    ->icon('tabler-map-search')
+                                    ->label('Map')
+                                    ->hiddenLabel()
+                                    ->action(function (Get $get, Set $set) {
+                                        $set('show_geocomplete', false);
+                                        $set('show_map', !$get('show_map'));
+                                    }),
+                                Forms\Components\Actions\Action::make('geolocate')
+                                    ->icon('tabler-input-search')
+                                    ->label('Geocode')
+                                    ->hiddenLabel()
+                                    ->action(function (Get $get, Set $set) {
+                                        $set('show_geocomplete', !$get('show_geocomplete'));
+                                        $set('show_map', false);
+                                    })
+                            ])
+                            ->columnSpan(10),
                         Geocomplete::make('location')
                             ->isLocation()
                             ->reverseGeocode([
@@ -128,33 +148,9 @@ class ShelterResource extends Resource
                             })
                             ->hidden()
                             ->lazy(),
-                        Forms\Components\TextInput::make('street')
-                            ->maxLength(100)
-                            ->columnSpan(9),
-                            Actions::make([
-
-                               Action::make('map')
-                                    ->icon('tabler-map-search')
-                                    ->label('Map')
-                                    ->action(function (Get $get,Set $set) {
-                                        $set('show_geocomplete', false);
-                                        $set('show_map', !$get('show_map'));
-                                    }),
-                               Action::make('geolocate')
-                                            ->icon('tabler-input-search')
-                                            ->label('Geocode')
-                                            ->action(function (Get $get,Set $set) {
-                                                $set('show_geocomplete', !$get('show_geocomplete'));
-                                                $set('show_map', false);
-                                            })
-                                 
-                        
-                            ])
-                            ->hiddenOn('view')
-                            ->columnSpan(1),
                         Forms\Components\Select::make('country')
-                        ->searchable(true)
-                        ->native(false)
+                            ->searchable(true)
+                            ->native(false)
                             ->options(__('pet/country'))
                             ->columnSpan(5),
                         Forms\Components\TextInput::make('state')

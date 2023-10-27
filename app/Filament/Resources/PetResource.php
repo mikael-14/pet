@@ -33,7 +33,7 @@ class PetResource extends Resource
             ->columns([
                 Tables\Columns\SpatieMediaLibraryImageColumn::make('image')->collection('pets-main-image')->square(),
                 Tables\Columns\TextColumn::make('name')->searchable(),
-                Tables\Columns\BadgeColumn::make('gender')->icons([
+                Tables\Columns\TextColumn::make('gender')->badge()->icons([
                     'tabler-gender-male' =>'male',
                     'tabler-gender-female' =>'female',
                 ])->iconPosition('after')

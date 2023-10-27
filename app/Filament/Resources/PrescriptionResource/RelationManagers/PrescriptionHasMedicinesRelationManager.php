@@ -54,14 +54,14 @@ class PrescriptionHasMedicinesRelationManager extends RelationManager
                 Grid::make(8)->schema([
                     Forms\Components\TextInput::make('frequency')
                         ->numeric()
-                        ->mask(fn (Mask $mask) => $mask->pattern('00000'))
+                        ->mask('99999')
                         ->integer() // Disallow decimal numbers.
                         ->minValue(1)
                         ->suffix('time in hours')
                         ->lazy()
                         ->columnSpan(4),
                     Forms\Components\Select::make('status')
-                        ->disablePlaceholderSelection()
+                        ->selectablePlaceholder(false)
                         ->required()
                         ->options(__('pet/prescriptionmedicines.status'))
                         ->reactive()
@@ -76,13 +76,13 @@ class PrescriptionHasMedicinesRelationManager extends RelationManager
                 ]),
                 Forms\Components\DateTimePicker::make('start_date')
                     ->displayFormat(config('filament.date_time_format'))
-                    ->withoutSeconds()
+                    ->seconds(false)
                     ->minutesStep(15)
                     ->required(),
                 Forms\Components\DateTimePicker::make('end_date')
                     ->afterOrEqual('start_date')
                     ->displayFormat(config('filament.date_time_format'))
-                    ->withoutSeconds()
+                    ->seconds(false)
                     ->minutesStep(15),
                 Placeholder::make('shout')
                     ->label(false)
@@ -144,8 +144,9 @@ class PrescriptionHasMedicinesRelationManager extends RelationManager
                     ->icon(fn (PrescriptionHasMedicine $record): string => $record->emergency ? 'uni-medical-square-o' : '')
                     ->iconPosition('after')
                     ->description(fn (PrescriptionHasMedicine $record): string => $record->emergency ? '(SOS) ' : '' . $record->observation ?? ''),
-                Tables\Columns\BadgeColumn::make('status')
-                    ->enum(__('pet/prescriptionmedicines.status'))
+                Tables\Columns\TextColumn::make('status')
+                    ->badge()
+                    ->formatStateUsing(fn (string $state): string =>  __('pet/prescriptionmedicines.status')[$state] ?? '-')
                     ->colors([
                         'primary' => 'active',
                         'warning' => 'on_hold',

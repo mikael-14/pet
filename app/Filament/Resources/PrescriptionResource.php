@@ -16,9 +16,7 @@ use Filament\Tables\Table;
 use Filament\Tables;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
-use Awcodes\FilamentBadgeableColumn\Components\Badge;
-use Awcodes\FilamentBadgeableColumn\Components\BadgeField;
-use Awcodes\FilamentBadgeableColumn\Components\BadgeableColumn;
+
 
 
 class PrescriptionResource extends Resource
@@ -31,7 +29,7 @@ class PrescriptionResource extends Resource
     {
         return $form
             ->schema([
-                Forms\Components\Card::make()
+                Forms\Components\Section::make()
                     ->schema([
                         Forms\Components\Select::make('pet_id')
                             ->allowHtml()
@@ -90,8 +88,8 @@ class PrescriptionResource extends Resource
                         SpatieMediaLibraryFileUpload::make('file')
                             ->disk('petsPrescriptions')
                             ->collection('pets-prescriptions')
-                            ->enableOpen()
-                            ->enableDownload()
+                            ->openable()
+                            ->downloadable()
                             ->columnSpan('full')
                             ->hiddenOn('view'),
                         Forms\Components\Textarea::make('observation')
@@ -124,8 +122,9 @@ class PrescriptionResource extends Resource
                     ->dateTime(config('filament.date_time_format'))
                     ->toggleable(isToggledHiddenByDefault: true)
                     ->placeholder('-'),
-                BadgeableColumn::make('count_medicines')
-                    ->badges(function (?Prescription $record) {
+                Tables\Columns\TextColumn::make('count_medicines')
+                ->badge()
+                    ->formatStateUsing(function (?Prescription $record) {
                         $states = $record->global_state;
                         $badges = [];
                         foreach ($states as $name => $value) {

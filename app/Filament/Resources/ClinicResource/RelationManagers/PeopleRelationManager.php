@@ -5,7 +5,6 @@ namespace App\Filament\Resources\ClinicResource\RelationManagers;
 use App\Filament\Resources\ClinicResource\Pages\ViewClinic;
 use App\Filament\Resources\PersonResource;
 use App\Models\Person;
-use Awcodes\FilamentBadgeableColumn\Components\BadgeableTagsColumn;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\RelationManagers\RelationManager;
@@ -31,7 +30,8 @@ class PeopleRelationManager extends RelationManager
             ->columns([
                 Tables\Columns\TextColumn::make('name')->searchable(),
                 Tables\Columns\TextColumn::make('email')->searchable(),
-                BadgeableTagsColumn::make('flags')
+                Tables\Columns\TextColumn::make('flags')
+                ->badge()
                 ->colors([
                     'danger' => 'Black list',
                     '#fdecce' => 'Adopter',

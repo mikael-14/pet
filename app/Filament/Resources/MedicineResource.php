@@ -55,9 +55,10 @@ class MedicineResource extends Resource
                 Tables\Columns\TextColumn::make('name')
                     ->searchable(),
                 Tables\Columns\TextColumn::make('type')
-                    ->enum(__('pet/medicine')),
+                ->formatStateUsing(fn (string $state): string =>  __('pet/medicine')[$state] ?? '-'),
                 Tables\Columns\TextColumn::make('dosage'),
-                Tables\Columns\TagsColumn::make('active_ingredient')
+                Tables\Columns\TextColumn::make('active_ingredient')
+                ->badge()
                     ->searchable(),
                 Tables\Columns\TextColumn::make('aplication'),
                 Tables\Columns\TextColumn::make('created_at')

@@ -42,7 +42,7 @@ class PetHasTestRelationManager extends RelationManager
                         'negative' => 'Negative',
                     ])
                     ->default('unknown')
-                    ->disablePlaceholderSelection()
+                    ->selectablePlaceholder(false)
                     ->required(),
                 Forms\Components\TextInput::make('local')->maxLength(50),
                 Forms\Components\Select::make('person_id')->options(Person::getPersonByFlag(['veterinary','medication_volunteer'])->toArray())->searchable(),
@@ -50,8 +50,8 @@ class PetHasTestRelationManager extends RelationManager
                 SpatieMediaLibraryFileUpload::make('file')
                 ->disk('petsTests')
                 ->collection('pets-tests')
-                ->enableOpen()
-                ->enableDownload()
+                ->openable()
+                ->downloadable()
                 ->columnSpan('full'),
             ]);
     }
@@ -65,7 +65,8 @@ class PetHasTestRelationManager extends RelationManager
                 Tables\Columns\TextColumn::make('date')
                     ->sortable()
                     ->date(config('filament.date_format')),
-                Tables\Columns\BadgeColumn::make('result')
+                Tables\Columns\TextColumn::make('result')
+                ->badge()
                     ->colors([
                         'warning' => 'unknown',
                         'danger' => 'positive',
@@ -93,7 +94,7 @@ class PetHasTestRelationManager extends RelationManager
             ])
             ->headerActions([
                 Tables\Actions\CreateAction::make()
-                ->modalHeading( __('filament-support::actions/create.single.modal.heading', ['label' => self::getTitle()])),
+                ->modalHeading( __('filament-support::actions/create.single.modal.heading', ['label' => self::$title])),
             ])
             ->actions([
                 Tables\Actions\Action::make('file')
@@ -103,8 +104,8 @@ class PetHasTestRelationManager extends RelationManager
                 ->visible(fn (PetHasTest $record): bool => isset($record->getMedia('pets-tests')[0]) ? true : false)
                 ->openUrlInNewTab()
                 ->icon('tabler-file-download'),
-                Tables\Actions\ViewAction::make()->modalHeading(fn ($record) => __('filament-support::actions/view.single.modal.heading', ['label' => $record->test()?->first()->name ?? self::getTitle()])),
-                Tables\Actions\EditAction::make()->modalHeading(fn ($record) => __('filament-support::actions/edit.single.modal.heading', ['label' => $record->test()?->first()->name ?? self::getTitle()])),
+                Tables\Actions\ViewAction::make()->modalHeading(fn ($record) => __('filament-support::actions/view.single.modal.heading', ['label' => $record->test()?->first()->name ?? self::$title])),
+                Tables\Actions\EditAction::make()->modalHeading(fn ($record) => __('filament-support::actions/edit.single.modal.heading', ['label' => $record->test()?->first()->name ?? self::$title])),
                 Tables\Actions\DeleteAction::make(),
             ])
             ->bulkActions([

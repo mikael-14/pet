@@ -59,7 +59,7 @@ class PetHasMedicineRelationManager extends RelationManager
                 Forms\Components\DateTimePicker::make('date')
                     ->displayFormat(config('filament.date_time_format'))
                     ->default(Carbon::now(config('app.timezone'))->format('Y-m-d H:00:00'))
-                    ->withoutSeconds()
+                    ->seconds(false)
                     ->minutesStep(15)
                     ->reactive()
                     ->required(),
@@ -112,11 +112,11 @@ class PetHasMedicineRelationManager extends RelationManager
             ])
             ->headerActions([
                 Tables\Actions\CreateAction::make()
-                    ->modalHeading(__('filament-support::actions/create.single.modal.heading', ['label' => self::getTitle()])),
+                    ->modalHeading(__('filament-support::actions/create.single.modal.heading', ['label' => self::$title])),
             ])
             ->actions([
-                Tables\Actions\ViewAction::make()->modalHeading(fn ($record) => __('filament-support::actions/view.single.modal.heading', ['label' => $record->medicine()?->first()->name ?? self::getTitle()])),
-                Tables\Actions\EditAction::make()->modalHeading(fn ($record) => __('filament-support::actions/edit.single.modal.heading', ['label' => $record->medicine()?->first()->name ?? self::getTitle()])),
+                Tables\Actions\ViewAction::make()->modalHeading(fn ($record) => __('filament-support::actions/view.single.modal.heading', ['label' => $record->medicine()?->first()->name ?? self::$title])),
+                Tables\Actions\EditAction::make()->modalHeading(fn ($record) => __('filament-support::actions/edit.single.modal.heading', ['label' => $record->medicine()?->first()->name ?? self::$title])),
                 Tables\Actions\DeleteAction::make(),
             ])
             ->bulkActions([

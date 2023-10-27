@@ -58,11 +58,13 @@ class DewormingResource extends Resource
         return $table
             ->columns([
                 Tables\Columns\TextColumn::make('name'),
-                Tables\Columns\TextColumn::make('type')->enum([
-                    'internal' => 'Internal',
-                    'external' => 'External',
-                    'internal and external' => 'Internal and external',
-                ]),
+                Tables\Columns\TextColumn::make('type')
+                    ->formatStateUsing(fn (string $state): string => match ($state) {
+                        'internal' => 'Internal',
+                        'external' => 'External',
+                        'internal and external' => 'Internal and external',
+                    })->badge()
+                    ->color('primary'),
                 Tables\Columns\TextColumn::make('expire'),
                 Tables\Columns\TextColumn::make('notification'),
                 Tables\Columns\TextColumn::make('created_at')

@@ -55,7 +55,7 @@ class EditUser extends EditRecord
                     \Filament\Forms\Components\Select::make('locale')->options(
                         config('filament-spatie-laravel-translatable-plugin.available_locales')
                     )->default('pt')
-                        ->disablePlaceholderSelection(),
+                        ->selectablePlaceholder(false),
                     \Filament\Forms\Components\Toggle::make('status')
                         ->inline(false)
                         ->helperText('Admin panel access')

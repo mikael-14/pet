@@ -20,7 +20,7 @@ class CreateUser extends CreateRecord
     public function getFormSchema(): array
     {
         return [
-            \Filament\Forms\Components\Card::make()
+            \Filament\Forms\Components\Section::make()
                 ->schema([
                     \Filament\Forms\Components\TextInput::make('name')
                         ->required(),
@@ -32,7 +32,7 @@ class CreateUser extends CreateRecord
                     \Filament\Forms\Components\Select::make('locale')->options(
                         config('filament-spatie-laravel-translatable-plugin.available_locales')
                     )->default('pt')
-                        ->disablePlaceholderSelection(),
+                        ->selectablePlaceholder(false),
                     \Filament\Forms\Components\Toggle::make('status')
                         ->inline(false)
                         ->helperText('Admin panel access')
@@ -43,7 +43,7 @@ class CreateUser extends CreateRecord
                                 ->toArray()
                         ),
                 ])->columns(2),
-            \Filament\Forms\Components\Card::make()
+            \Filament\Forms\Components\Section::make()
                 ->schema([
                     \Filament\Forms\Components\TextInput::make('password')
                         ->label('Define a password')
