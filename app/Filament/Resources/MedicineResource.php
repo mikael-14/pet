@@ -59,7 +59,7 @@ class MedicineResource extends Resource
                 Tables\Columns\TextColumn::make('dosage'),
                 Tables\Columns\TextColumn::make('active_ingredient')
                 ->badge()
-                ->color('info')
+                ->color('primary')
                     ->searchable(),
                 Tables\Columns\TextColumn::make('aplication'),
                 Tables\Columns\TextColumn::make('created_at')
