@@ -30,7 +30,7 @@ class AdminPanelProvider extends PanelProvider
             ->favicon(asset('images/favicon.png'))
             ->brandLogo('/images/logo-light.png')
             ->darkModeBrandLogo('/images/logo-dark.png')
-            ->brandLogoHeight('60px')
+            ->brandLogoHeight('55px')
             ->sidebarCollapsibleOnDesktop()
             ->colors([
                 'primary' => '#FF7C94',
@@ -58,6 +58,9 @@ class AdminPanelProvider extends PanelProvider
             ])
             ->authMiddleware([
                 Authenticate::class,
+            ])
+            ->plugins([
+                \BezhanSalleh\FilamentShield\FilamentShieldPlugin::make()
             ]);
     }
 }

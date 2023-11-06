@@ -3,7 +3,7 @@
 namespace App\Filament\Resources\Definitions\EntryStatusResource\Pages;
 
 use App\Filament\Resources\Definitions\EntryStatusResource;
-use Filament\Pages\Actions;
+use Filament\Actions;
 use Filament\Resources\Pages\ManageRecords;
 
 class ManageEntryStatus extends ManageRecords

@@ -4,7 +4,7 @@ namespace App\Filament\Resources\PetResource\Pages;
 
 use App\Filament\Resources\PetResource;
 use Filament\Forms\Components\TextInput;
-use Filament\Pages\Actions;
+use Filament\Actions;
 use Filament\Resources\Pages\ViewRecord;
 
 class ViewPet extends ViewRecord
