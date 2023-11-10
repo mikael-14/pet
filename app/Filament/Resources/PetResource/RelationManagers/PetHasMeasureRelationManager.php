@@ -45,14 +45,16 @@ class PetHasMeasureRelationManager extends RelationManager
                     ->label('Value')
                     ->visibleOn('create')
                     ->numeric()
-                    ->mask(
-                        fn (Forms\Components\TextInput\Mask $mask) => $mask
-                            ->numeric()
-                            ->decimalPlaces(3) // Set the number of digits after the decimal point.
-                            ->decimalSeparator('.') // Add a separator for decimal numbers.
-                            ->mapToDecimalSeparator([',']) // Map additional characters to the decimal separator.
-                            ->minValue(0) // Set the minimum value that the number can be.
-                            ->padFractionalZeros() // Pad zeros at the end of the number to always maintain the maximum number of decimal places.
+                    ->mask('9'
+    //                     RawJs::make(<<<'JS'
+    //      '999999999999.999'
+    // JS)
+                     
+    //                         ->decimalPlaces(3) // Set the number of digits after the decimal point.
+    //                         ->decimalSeparator('.') // Add a separator for decimal numbers.
+    //                         ->mapToDecimalSeparator([',']) // Map additional characters to the decimal separator.
+    //                         ->minValue(0) // Set the minimum value that the number can be.
+    //                         ->padFractionalZeros() // Pad zeros at the end of the number to always maintain the maximum number of decimal places.
                     ),
             ]);
         }
@@ -75,7 +77,7 @@ class PetHasMeasureRelationManager extends RelationManager
                         ->minValue(0) // Set the minimum value that the number can be.
                         ->padFractionalZeros() // Pad zeros at the end of the number to always maintain the maximum number of decimal places.
                 ),
-            Forms\Components\DatePicker::make('date')->displayFormat(config('filament.date_format'))->required(),
+            Forms\Components\DatePicker::make('date')->native(false)->displayFormat(config('filament.date_format'))->required(),
             Forms\Components\TextInput::make('local')->maxLength(50),
             Forms\Components\Select::make('person_id')->options(Person::getPersonByFlag(['veterinary','medication_volunteer'])->toArray())->searchable()->columnSpanFull(),
             Forms\Components\Textarea::make('observation')->maxLength(300)->columnSpanFull(),

@@ -57,6 +57,7 @@ class PetHasMedicineRelationManager extends RelationManager
                     })
                     ->maxLength(50),
                 Forms\Components\DateTimePicker::make('date')
+                ->native(false)
                     ->displayFormat(config('filament.date_time_format'))
                     ->default(Carbon::now(config('app.timezone'))->format('Y-m-d H:00:00'))
                     ->seconds(false)

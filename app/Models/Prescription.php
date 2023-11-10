@@ -88,6 +88,7 @@ class Prescription extends Model implements HasMedia
 		parent::boot();
 
 		static::creating(function ($model) {
+			// Your custom function for when the model is being created
 			$last_number = 1;
 			// get last inserted in current month 
 			$currentMonth = Carbon::now()->startOfMonth(); // Get the start date of the current month
@@ -95,7 +96,7 @@ class Prescription extends Model implements HasMedia
 				->whereYear('created_at', $currentMonth->year)
 				->latest('created_at')
 				->first();
-			if($lastInsertedRecord) {
+			if ($lastInsertedRecord) {
 				$last_number = (int)substr($lastInsertedRecord->number, -3);
 				$last_number++;
 			}
@@ -103,6 +104,9 @@ class Prescription extends Model implements HasMedia
 			// get the current year and month in the format 'YYYYMM'
 			$yearMonth = date('Ym');
 			$model->number = "$yearMonth-$last_number";
+		});
+		static::deleting(function ($model) {
+			// Your custom function for when the model is being deleted
 		});
 	}
 	public function getMedicineStartDateAttribute()

@@ -82,6 +82,7 @@ class PersonResource extends Resource implements HasShieldPermissions
                         Forms\Components\TextInput::make('cc')
                             ->maxLength(30),
                         Forms\Components\DatePicker::make('birth_date')
+                        ->native(false)
                             ->displayFormat(config('filament.date_format')),
                         Forms\Components\Select::make('user_id')->options(
                             Person::avaibleUsers()

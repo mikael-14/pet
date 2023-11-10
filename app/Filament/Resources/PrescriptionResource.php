@@ -82,6 +82,7 @@ class PrescriptionResource extends Resource
                             ->searchable()
                             ->options(Clinic::limit(10)->pluck('name', 'id')),
                         Forms\Components\DatePicker::make('date')
+                        ->native(false)
                             ->displayFormat(config('filament.date_format'))
                             ->default(now())
                             ->required(),

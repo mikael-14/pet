@@ -3,7 +3,7 @@
 namespace App\Filament\Resources\Definitions\ShelterResource\Pages;
 
 use App\Filament\Resources\Definitions\ShelterResource;
-use Filament\Pages\Actions;
+use Filament\Actions;
 use Filament\Resources\Pages\EditRecord;
 
 class EditShelter extends EditRecord

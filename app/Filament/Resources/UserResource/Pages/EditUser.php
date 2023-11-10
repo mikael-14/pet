@@ -11,7 +11,7 @@ use Filament\Facades\Filament;
 use Filament\Forms\Components\Card;
 use Filament\Forms\Components\Fieldset;
 use Filament\Forms\Components\Section;
-use Filament\Pages\Actions;
+use Filament\Actions;
 use Filament\Resources\Pages\EditRecord;
 use XliteDev\FilamentImpersonate\Pages\Actions\ImpersonateAction;
 use Filament\Forms\Concerns\InteractsWithForms;

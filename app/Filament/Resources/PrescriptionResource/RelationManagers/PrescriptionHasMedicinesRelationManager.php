@@ -9,7 +9,6 @@ use Carbon\Carbon;
 use Closure;
 use Filament\Forms;
 use Filament\Forms\Components\Grid;
-use Filament\Forms\Components\TextInput\Mask;
 use Filament\Forms\Form;
 use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Tables\Table;
@@ -75,11 +74,13 @@ class PrescriptionHasMedicinesRelationManager extends RelationManager
                         ->columnSpan(1),
                 ]),
                 Forms\Components\DateTimePicker::make('start_date')
+                ->native(false)
                     ->displayFormat(config('filament.date_time_format'))
                     ->seconds(false)
                     ->minutesStep(15)
                     ->required(),
                 Forms\Components\DateTimePicker::make('end_date')
+                ->native(false)
                     ->afterOrEqual('start_date')
                     ->displayFormat(config('filament.date_time_format'))
                     ->seconds(false)

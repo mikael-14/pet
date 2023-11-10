@@ -3,7 +3,7 @@
 namespace App\Filament\Resources\MedicineResource\Pages;
 
 use App\Filament\Resources\MedicineResource;
-use Filament\Pages\Actions;
+use Filament\Actions;
 use Filament\Resources\Pages\ManageRecords;
 
 class ManageMedicines extends ManageRecords

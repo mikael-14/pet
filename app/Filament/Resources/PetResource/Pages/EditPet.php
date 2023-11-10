@@ -51,6 +51,7 @@ class EditPet extends EditRecord
                                             'female' => 'Female',
                                         ])->required(),
                                     DatePicker::make('birth_date')
+                                    ->native(false)
                                         ->displayFormat(config('filament.date_format')),
                                     TextInput::make('chip')
                                         ->unique(table: Pet::class, column: 'chip', ignorable: fn () => $this->getRecord(), ignoreRecord: true)
@@ -58,6 +59,7 @@ class EditPet extends EditRecord
                                         ->hint(fn ($state) => 'Digits: ' . strlen($state) . '')
                                         ->lazy(),
                                     DatePicker::make('chip_date')
+                                    ->native(false)
                                         ->displayFormat(config('filament.date_format')),
 
                                     TextInput::make('color')
@@ -93,6 +95,7 @@ class EditPet extends EditRecord
                                     Toggle::make('sterilized')
                                         ->inline(false)->reactive(),
                                     DatePicker::make('sterilized_date')
+                                    ->native(false)
                                         ->displayFormat(config('filament.date_format'))
                                         ->visible(fn ($get) => $get('sterilized')),
                                     TextInput::make('sterilized_local')

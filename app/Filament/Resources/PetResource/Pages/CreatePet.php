@@ -45,6 +45,7 @@ class CreatePet extends CreateRecord
                                             'female' => 'Female',
                                         ])->required(),
                                     DatePicker::make('birth_date')
+                                    ->native(false)
                                         ->displayFormat(config('filament.date_format')),
                                     TextInput::make('chip')
                                         ->unique(table: Pet::class, column: 'chip', ignoreRecord: true)
@@ -52,6 +53,7 @@ class CreatePet extends CreateRecord
                                         ->hint(fn ($state) => 'Digits: ' . strlen($state) . '')
                                         ->lazy(),
                                     DatePicker::make('chip_date')
+                                    ->native(false)
                                         ->displayFormat(config('filament.date_format')),
                                     TextInput::make('color')
                                         ->maxLength(50),
@@ -80,12 +82,14 @@ class CreatePet extends CreateRecord
                                             PetResource::getOptionWithColor(EntryStatus::all())
                                         )->required(),
                                     DatePicker::make('entry_date')
+                                    ->native(false)
                                         ->displayFormat(config('filament.date_format'))
                                         ->required(),
 
                                     Toggle::make('sterilized')
                                         ->inline(false)->reactive(),
                                     DatePicker::make('sterilized_date')
+                                    ->native(false)
                                         ->displayFormat(config('filament.date_format'))
                                         ->visible(fn ($get) => $get('sterilized')),
                                     TextInput::make('sterilized_local')

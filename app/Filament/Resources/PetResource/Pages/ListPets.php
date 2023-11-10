@@ -3,7 +3,7 @@
 namespace App\Filament\Resources\PetResource\Pages;
 
 use App\Filament\Resources\PetResource;
-use Filament\Pages\Actions;
+use Filament\Actions;
 use Filament\Resources\Pages\ListRecords;
 use Filament\Tables\Actions\Action;
 

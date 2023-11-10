@@ -3,7 +3,7 @@
 namespace App\Filament\Resources\ClinicResource\Pages;
 
 use App\Filament\Resources\ClinicResource;
-use Filament\Pages\Actions;
+use Filament\Actions;
 use Filament\Resources\Pages\EditRecord;
 
 class EditClinic extends EditRecord

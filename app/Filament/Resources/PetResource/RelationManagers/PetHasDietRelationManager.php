@@ -30,6 +30,7 @@ class PetHasDietRelationManager extends RelationManager
                     ->columnSpanFull()
                     ->required(),
                 Forms\Components\DatePicker::make('date')
+                ->native(false)
                     ->displayFormat(config('filament.date_format'))
                     ->required(),
                 Forms\Components\TextInput::make('portion'),

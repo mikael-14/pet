@@ -6,7 +6,7 @@ use App\Filament\Resources\UserResource;
 use App\Models\ModelHasRole;
 use App\Models\Role;
 use App\Models\User;
-use Filament\Pages\Actions;
+use Filament\Actions;
 use Filament\Resources\Pages\CreateRecord;
 use Filament\Forms\Concerns\InteractsWithForms;
 use Illuminate\Support\Facades\Hash;

@@ -43,6 +43,7 @@ class PetHasVaccineRelationManager extends RelationManager
                     ->columnSpanFull()
                     ->required(),
                 Forms\Components\DatePicker::make('date')
+                ->native(false)
                     ->displayFormat(config('filament.date_format'))
                     ->reactive()
                     ->afterStateUpdated(function (\Filament\Forms\Set $set, \Filament\Forms\Get $get, $state) {
@@ -56,6 +57,7 @@ class PetHasVaccineRelationManager extends RelationManager
                     })
                     ->required(),
                 Forms\Components\DatePicker::make('expire_at')
+                ->native(false)
                     ->helperText(function (\Filament\Forms\Get $get) {
                         $expire = Vaccine::find($get('vaccine_id'))?->expire ?? 0;
                         if ($expire > 0) {
