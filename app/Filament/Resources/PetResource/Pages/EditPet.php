@@ -8,11 +8,10 @@ use App\Models\Pet;
 use App\Models\ShelterBlock;
 use Filament\Actions;
 use Filament\Resources\Pages\EditRecord;
-use Carbon\Carbon;
-use Closure;
 use Filament\Forms;
+use Filament\Forms\Form;
 use Filament\Forms\Components\DatePicker;
-use Filament\Forms\Components\Group;
+use Filament\Forms\Components\Grid;
 use Filament\Forms\Components\Placeholder;
 use Filament\Forms\Components\RichEditor;
 use Filament\Forms\Components\Section;
@@ -25,111 +24,112 @@ use Kenepa\ResourceLock\Resources\Pages\Concerns\UsesResourceLock;
 class EditPet extends EditRecord
 {
     use UsesResourceLock;
-
     protected static string $resource = PetResource::class;
 
-    public function getFormSchema(): array
+
+    public function form(Form $form): Form
     {
-        return [
-            Group::make()
-                ->schema([
-                    Group::make()
-                        ->schema([
-                            Forms\Components\Section::make()
-                                ->schema([
-                                    TextInput::make('name')
-                                        ->required()
-                                        ->maxLength(255),
-                                    Select::make('species')
-                                        ->options(
-                                            __('pet/species')
-                                        )->default(array_key_first(__('pet/species')))
-                                        ->selectablePlaceholder(false),
-                                    Select::make('gender')
-                                        ->options([
-                                            'male' => 'Male',
-                                            'female' => 'Female',
-                                        ])->required(),
-                                    DatePicker::make('birth_date')
-                                    ->native(false)
-                                        ->displayFormat(config('filament.date_format')),
-                                    TextInput::make('chip')
-                                        ->unique(table: Pet::class, column: 'chip', ignorable: fn () => $this->getRecord(), ignoreRecord: true)
-                                        ->maxLength(20)
-                                        ->hint(fn ($state) => 'Digits: ' . strlen($state) . '')
-                                        ->lazy(),
-                                    DatePicker::make('chip_date')
-                                    ->native(false)
-                                        ->displayFormat(config('filament.date_format')),
-
-                                    TextInput::make('color')
-                                        ->maxLength(50),
-                                    TextInput::make('coat')
-                                        ->maxLength(50),
-                                    TextInput::make('breed')
-                                        ->maxLength(50),
-                                    Toggle::make('adoptable')
-                                        ->inline(false),
-                                    RichEditor::make('observation')->columnSpan('full'),
-                                ])->columns(2),
-                            Section::make('Status')
-                                ->schema([
-                                    Select::make('shelter_block_id')
-                                        ->allowHtml()
-                                        ->searchable()
-                                        ->preload()
-                                        ->options(
-                                            PetResource::getOptionWithColor(ShelterBlock::getOptions())
-                                        )->required(),
-                                    Select::make('entry_status_id')
-                                        ->allowHtml()
-                                        ->searchable()
-                                        ->preload()
-                                        ->options(
-                                            PetResource::getOptionWithColor(EntryStatus::all())
-                                        )->required(),
-                                    DatePicker::make('entry_date')
-                                        ->displayFormat(config('filament.date_format'))
-                                        ->required(),
-
-                                    Toggle::make('sterilized')
-                                        ->inline(false)->reactive(),
-                                    DatePicker::make('sterilized_date')
-                                    ->native(false)
-                                        ->displayFormat(config('filament.date_format'))
-                                        ->visible(fn ($get) => $get('sterilized')),
-                                    TextInput::make('sterilized_local')
-                                        ->visible(fn ($get) => $get('sterilized'))
-                                        ->maxLength(50),
-                                ])->collapsible()->columns(2),
-                        ])->columnSpan(['lg' => 2]),
-
-                    Group::make()
-                        ->schema([
-                            Forms\Components\Section::make()
-                                ->schema([
-                                    SpatieMediaLibraryFileUpload::make('image')
-                                        ->acceptedFileTypes(['image/*'])
-                                        ->disk('petsMainImage')
-                                        ->collection('pets-main-image')
-                                        ->openable()
-                                        ->downloadable()
-                                        ->columnSpan('full'),
-                                ]),
-                            Forms\Components\Section::make()
-                                ->schema([
-                                    Placeholder::make('created_at')
-                                        ->label('Created at')
-                                        ->content(fn (Pet $record): ?string => $record->created_at?->diffForHumans()),
-
-                                    Placeholder::make('updated_at')
-                                        ->label('Last modified at')
-                                        ->content(fn (Pet $record): ?string => $record->updated_at?->diffForHumans()),
-                                ])
-                        ])->columnSpan(['lg' => 1]),
+        return $form
+            ->schema([
+                Grid::make([
+                    'sm' => 1,
+                    'md' => 3,
                 ])
-                ->columns(3)
-        ];
+                    ->schema([
+                        Grid::make(2)
+                            ->schema([
+                                Section::make()
+                                    ->schema([
+                                        TextInput::make('name')
+                                            ->required()
+                                            ->maxLength(255),
+                                        Select::make('species')
+                                            ->options(
+                                                __('pet/species')
+                                            )->default(array_key_first(__('pet/species')))
+                                            ->selectablePlaceholder(false),
+                                        Select::make('gender')
+                                            ->options([
+                                                'male' => 'Male',
+                                                'female' => 'Female',
+                                            ])->required(),
+                                        DatePicker::make('birth_date')
+                                            ->native(false)
+                                            ->displayFormat(config('filament.date_format')),
+                                        TextInput::make('chip')
+                                            ->unique(table: Pet::class, column: 'chip', ignorable: fn () => $this->getRecord(), ignoreRecord: true)
+                                            ->maxLength(20)
+                                            ->hint(fn ($state) => 'Digits: ' . strlen($state) . '')
+                                            ->lazy(),
+                                        DatePicker::make('chip_date')
+                                            ->native(false)
+                                            ->displayFormat(config('filament.date_format')),
+                                        TextInput::make('color')
+                                            ->maxLength(50),
+                                        TextInput::make('coat')
+                                            ->maxLength(50),
+                                        TextInput::make('breed')
+                                            ->maxLength(50),
+                                        Toggle::make('adoptable')
+                                            ->inline(false),
+                                        RichEditor::make('observation')->columnSpan('full'),
+                                    ])->columns(2),
+                                Section::make('Status')
+                                    ->schema([
+                                        Select::make('shelter_block_id')
+                                            ->allowHtml()
+                                            ->searchable()
+                                            ->preload()
+                                            ->options(
+                                                PetResource::getOptionWithColor(ShelterBlock::getOptions())
+                                            )->required(),
+                                        Select::make('entry_status_id')
+                                            ->allowHtml()
+                                            ->searchable()
+                                            ->preload()
+                                            ->options(
+                                                PetResource::getOptionWithColor(EntryStatus::all())
+                                            )->required(),
+                                        DatePicker::make('entry_date')
+                                            ->displayFormat(config('filament.date_format'))
+                                            ->required(),
+
+                                        Toggle::make('sterilized')
+                                            ->inline(false)->reactive(),
+                                        DatePicker::make('sterilized_date')
+                                            ->native(false)
+                                            ->displayFormat(config('filament.date_format'))
+                                            ->visible(fn ($get) => $get('sterilized')),
+                                        TextInput::make('sterilized_local')
+                                            ->visible(fn ($get) => $get('sterilized'))
+                                            ->maxLength(50),
+                                    ])->collapsible()->columns(2),
+                            ])->columnSpan(2),
+                        Grid::make(2)
+                            ->schema([
+                                Forms\Components\Section::make()
+                                    ->schema([
+                                        SpatieMediaLibraryFileUpload::make('image')
+                                            ->acceptedFileTypes(['image/*'])
+                                            ->disk('petsMainImage')
+                                            ->visibility('private')
+                                            ->collection('pets-main-image')
+                                            ->openable()
+                                            ->downloadable()
+                                            ->columnSpan('full'),
+                                    ]),
+                                Forms\Components\Section::make()
+                                    ->schema([
+                                        Placeholder::make('Created')
+                                            ->label('Created at')
+                                            ->content(fn (): ?string => $this->record?->created_at->diffForHumans()),
+                                        Placeholder::make('updated_at')
+                                            ->label('Last modified at')
+                                            ->content(fn (): ?string => $this->record?->updated_at->diffForHumans()),
+                                    ])
+                            ])->columnSpan(1),
+                    ]),
+            ]);
     }
     protected function getHeaderActions(): array
     {

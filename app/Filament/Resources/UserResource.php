@@ -5,8 +5,6 @@ namespace App\Filament\Resources;
 use App\Filament\Resources\UserResource\Pages;
 use App\Filament\Resources\UserResource\RelationManagers;
 use App\Models\User;
-use Filament\Forms;
-use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables\Table;
 use Filament\Tables;
@@ -42,7 +40,7 @@ class UserResource extends Resource implements HasShieldPermissions
             'access_lock_resource',
         ];
     }
-
+    
  
     public static function table(Table $table): Table
     {
@@ -51,7 +49,7 @@ class UserResource extends Resource implements HasShieldPermissions
                 Tables\Columns\TextColumn::make('name'),
                 Tables\Columns\TextColumn::make('email'),
                 Tables\Columns\IconColumn::make('status')
-                    ->options([
+                    ->icons([
                         'heroicon-o-x-circle',
                         'heroicon-o-check-circle' => 1,
                     ])->colors([

@@ -226,14 +226,15 @@ class PersonResource extends Resource implements HasShieldPermissions
                 Tables\Columns\TextColumn::make('vat')->searchable(),
                 Tables\Columns\TextColumn::make('cc')->toggleable(isToggledHiddenByDefault: true),
                 Tables\Columns\TextColumn::make('flags')
-                    ->badge()
-                    ->colors([
-                        'danger' => 'Black list',
-                        '#fdecce' => 'Adopter',
-                        '#fceacc' => 'Temporary host family',
-                        '#f7e7cd' => 'Sponsor',
-                        '#f7e3c3' => 'Veterinary',
-                    ])
+                ->badge()
+                ->color(fn (string $state): string => match ($state) {
+                    'Black list' => 'danger',
+                    'Adopter' => 'info',
+                    'Temporary host family' => 'warning',
+                    'Sponsor' => 'info',
+                    'Veterinary' => 'success',
+                    default => 'primary',
+                })
                     ->getStateUsing(function ($record) {
                         return $record->person_flags()->get()->map(function ($item) {
                             return $item->getName();

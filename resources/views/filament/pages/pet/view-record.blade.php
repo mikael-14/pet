@@ -57,7 +57,7 @@
                 <div class="border border-grey-light mt-2 mb-2 mr-1 ml-1"></div>
             </div>
             <div class="p-4 bg-white rounded-xl dark:bg-gray-800 col-span-1 md:col-span-3">
-                {{ var_dump($this->data)}}
+               
             </div>
         </div>
     </div>

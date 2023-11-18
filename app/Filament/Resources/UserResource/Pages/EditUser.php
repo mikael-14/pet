@@ -12,16 +12,15 @@ use Filament\Forms\Components\Card;
 use Filament\Forms\Components\Fieldset;
 use Filament\Forms\Components\Section;
 use Filament\Actions;
+use Filament\Forms\Form;
 use Filament\Resources\Pages\EditRecord;
 use XliteDev\FilamentImpersonate\Pages\Actions\ImpersonateAction;
-use Filament\Forms\Concerns\InteractsWithForms;
 use Illuminate\Container\Container;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 
 class EditUser extends EditRecord
 {
-    use InteractsWithForms;
 
     protected static string $resource = UserResource::class;
 
@@ -39,9 +38,10 @@ class EditUser extends EditRecord
         ];
     }
 
-    public function getFormSchema(): array
+    public function form(Form $form): Form
     {
-        return [
+        return $form
+        ->schema([
             Section::make('Update your data')
                 ->description('Update your account information')
                 ->schema([
@@ -85,7 +85,7 @@ class EditUser extends EditRecord
                 ])
                 ->visible(fn (\Filament\Forms\Get $get): bool => Filament::auth()->user()->id == $this->record->id)
                 ->columns(2)
-        ];
+        ]);
     }
     // protected function getRedirectUrl(): string
     // {

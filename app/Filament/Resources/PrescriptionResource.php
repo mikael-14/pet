@@ -139,23 +139,18 @@ class PrescriptionResource extends Resource
                             switch ($name) {
                                 case 'active':
                                     $badges[] = __('pet/prescriptionmedicines.status.active') . ($value > 1 ? "($value)" : '');
-                                      //  ->color('#dbeafe');
                                     break;
                                 case 'on_hold':
                                     $badges[] = __('pet/prescriptionmedicines.status.on_hold') . ($value > 1 ? "($value)" : '');
-                                      //  ->color('#fef3c7');
                                     break;
                                 case 'canceled':
                                     $badges[] = __('pet/prescriptionmedicines.status.canceled') . ($value > 1 ? "($value)" : '');
-                                      //  ->color('#ffe4e6');
                                     break;
                                 case 'completed':
                                     $badges[] = __('pet/prescriptionmedicines.status.completed') . ($value > 1 ? "($value)" : '');
-                                 //       ->color('#bbf7d0');
                                     break;
                                 case 'unstarted':
                                     $badges[] = __('pet/prescriptionmedicines.additional_status.unstarted') . ($value > 1 ? "($value)" : '');
-                                  //      ->color('#f7f8f8');
                                     break;
                                 default:
                                     # code...

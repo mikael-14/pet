@@ -16,6 +16,7 @@ use Filament\Facades\Filament;
 use Filament\Notifications\Notification;
 use Filament\Tables\Actions\CreateAction;
 use Filament\Tables\Contracts\HasRelationshipTable;
+use Filament\Support\RawJs;
 
 class PetHasMeasureRelationManager extends RelationManager
 {
@@ -43,19 +44,10 @@ class PetHasMeasureRelationManager extends RelationManager
                     ->disabled(),
                 Forms\Components\TextInput::make('value-' . $key)
                     ->label('Value')
+                    ->inputMode('decimal')
+                    ->minValue(0)
                     ->visibleOn('create')
                     ->numeric()
-                    ->mask('9'
-    //                     RawJs::make(<<<'JS'
-    //      '999999999999.999'
-    // JS)
-                     
-    //                         ->decimalPlaces(3) // Set the number of digits after the decimal point.
-    //                         ->decimalSeparator('.') // Add a separator for decimal numbers.
-    //                         ->mapToDecimalSeparator([',']) // Map additional characters to the decimal separator.
-    //                         ->minValue(0) // Set the minimum value that the number can be.
-    //                         ->padFractionalZeros() // Pad zeros at the end of the number to always maintain the maximum number of decimal places.
-                    ),
             ]);
         }
         $schema = array_merge($schema, [
@@ -67,19 +59,12 @@ class PetHasMeasureRelationManager extends RelationManager
                 ->disabled(),
             Forms\Components\TextInput::make('value')
                 ->numeric()
-                ->visibleOn('edit')
-                ->mask(
-                    fn (Forms\Components\TextInput\Mask $mask) => $mask
-                        ->numeric()
-                        ->decimalPlaces(3) // Set the number of digits after the decimal point.
-                        ->decimalSeparator('.') // Add a separator for decimal numbers.
-                        ->mapToDecimalSeparator([',']) // Map additional characters to the decimal separator.
-                        ->minValue(0) // Set the minimum value that the number can be.
-                        ->padFractionalZeros() // Pad zeros at the end of the number to always maintain the maximum number of decimal places.
-                ),
+                ->inputMode('decimal')
+                ->minValue(0)
+                ->visibleOn('edit'),
             Forms\Components\DatePicker::make('date')->native(false)->displayFormat(config('filament.date_format'))->required(),
             Forms\Components\TextInput::make('local')->maxLength(50),
-            Forms\Components\Select::make('person_id')->options(Person::getPersonByFlag(['veterinary','medication_volunteer'])->toArray())->searchable()->columnSpanFull(),
+            Forms\Components\Select::make('person_id')->options(Person::getPersonByFlag(['veterinary', 'medication_volunteer'])->toArray())->searchable()->columnSpanFull(),
             Forms\Components\Textarea::make('observation')->maxLength(300)->columnSpanFull(),
         ]);
         return $form
@@ -106,8 +91,8 @@ class PetHasMeasureRelationManager extends RelationManager
             ])
             ->filters([
                 Tables\Filters\SelectFilter::make('person_id')
-                ->relationship('person', 'name')
-                ->searchable()
+                    ->relationship('person', 'name')
+                    ->searchable()
             ])
             ->headerActions([
                 Tables\Actions\CreateAction::make()->afterFormValidated(function (CreateAction $action, array $data) {
@@ -120,7 +105,7 @@ class PetHasMeasureRelationManager extends RelationManager
                     $filteredArr = array_filter($filteredArr);
                     if (count($filteredArr) === 0)
                         $action->halt();
-                })->using(function (HasRelationshipTable $livewire, array $data) {
+                })->using(function ($livewire, array $data) {
                     $filteredArr = array_filter(
                         $data,
                         fn ($key) => str_starts_with($key, 'type-'),

@@ -8,18 +8,17 @@ use App\Models\Role;
 use App\Models\User;
 use Filament\Actions;
 use Filament\Resources\Pages\CreateRecord;
-use Filament\Forms\Concerns\InteractsWithForms;
 use Illuminate\Support\Facades\Hash;
-
-class CreateUser extends CreateRecord
+use Filament\Forms\Form;
+class CreateUser extends CreateRecord 
 {
-    use InteractsWithForms;
-
+    
     protected static string $resource = UserResource::class;
 
-    public function getFormSchema(): array
+    public function form(Form $form): Form
     {
-        return [
+        return $form
+        ->schema([
             \Filament\Forms\Components\Section::make()
                 ->schema([
                     \Filament\Forms\Components\TextInput::make('name')
@@ -59,7 +58,7 @@ class CreateUser extends CreateRecord
                         ->required(),
                 ])
                 ->columns(2),
-        ];
+        ]);
     }
     protected function afterCreate(): void
     {
