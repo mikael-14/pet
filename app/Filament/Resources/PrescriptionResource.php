@@ -5,6 +5,7 @@ namespace App\Filament\Resources;
 use App\Filament\Resources\PrescriptionResource\Pages;
 use App\Filament\Resources\PrescriptionResource\RelationManagers;
 use App\Models\Clinic;
+use App\Models\Medicine;
 use App\Models\Person;
 use App\Models\Pet;
 use App\Models\Prescription;
@@ -135,28 +136,31 @@ class PrescriptionResource extends Resource
                     ->toggleable(isToggledHiddenByDefault: true)
                     ->placeholder('-'),
                 BadgeableColumn::make('count_medicines')
-                ->suffixBadges(function ($record) {
-                    return $record->prescription_has_medicines->map(function ($medicines) {
-                        return Badge::make($medicines->medicine->name)->color(fn () => match ($medicines->status) {
-                            default => 'primary',
-                            'unstarted' => 'gray',
-                            'on_hold' => 'warning',
-                            'active' => 'info',
-                            'completed' => 'success',
-                            'canceled' => 'danger',
+                    ->suffixBadges(function ($record) {
+                        return $record->prescription_has_medicines->map(function ($medicines) {
+                            return Badge::make($medicines->medicine->name)->color(fn () => match ($medicines->status) {
+                                default => 'primary',
+                                'unstarted' => 'gray',
+                                'on_hold' => 'warning',
+                                'active' => 'info',
+                                'completed' => 'success',
+                                'canceled' => 'danger',
+                            });
                         });
-                    });
-                }),
+                    }),
                 Tables\Columns\TextColumn::make('created_at')
                     ->dateTime(config('filament.date_time_format'))->toggleable(isToggledHiddenByDefault: true),
                 Tables\Columns\TextColumn::make('deleted_at')
                     ->dateTime(config('filament.date_time_format'))->toggleable(isToggledHiddenByDefault: true),
             ])
             ->filters([
-                Tables\Filters\SelectFilter::make('pet.name'),
-                Tables\Filters\SelectFilter::make('prescription_has_medicines.medicine.name')
-                ->multiple()
-                ->searchable(),
+                Tables\Filters\SelectFilter::make('pet_id')
+                    ->relationship('pet', 'name')
+                    ->searchable(),
+                Tables\Filters\SelectFilter::make('medicines.id')
+                ->relationship('medicines', 'name')
+                    ->multiple()
+                    ->searchable(),
                 Tables\Filters\TrashedFilter::make(),
             ])
             ->actions([
@@ -203,7 +207,8 @@ class PrescriptionResource extends Resource
     }
     public static function getOptionPet(Pet $model): string
     {
-        $image = $model->getMedia('pets-main-image')[0]?->getUrl();
+        $mediaCollection = $model->getMedia('pets-main-image');
+        $image = $mediaCollection->isNotEmpty() ? $mediaCollection[0]->getUrl() : '';
         return
             view('filament.components.select-with-image')
             ->with('label', $model?->name)
