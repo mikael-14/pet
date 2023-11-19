@@ -113,6 +113,16 @@ class CreatePet extends CreateRecord
                                             ->collection('pets-main-image')
                                             ->openable()
                                             ->downloadable()
+                                            ->deletable(false)
+                                            ->hintAction(
+                                                Forms\Components\Actions\Action::make('removeImage')
+                                                    ->icon('heroicon-m-x-mark')
+                                                    ->color('danger')
+                                                    ->requiresConfirmation()
+                                                    ->action(function (Forms\Set $set, $state) {
+                                                        $set('image', null);
+                                                    })
+                                            )
                                             ->columnSpan('full'),
                                     ]),
                             ])->columnSpan(['md' => 1]),

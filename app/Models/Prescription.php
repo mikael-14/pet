@@ -143,10 +143,4 @@ class Prescription extends Model implements HasMedia
 		return array_filter($counter, fn ($value) =>  $value !== 0);
 	}
 
-	public static function processPrescription()
-	{
-		// get active prescription medication (status == active)
-		$endOfDay = Carbon::now()->endOfDay();
-		$startOfDay = Carbon::now()->startOfDay();
-	}
 }

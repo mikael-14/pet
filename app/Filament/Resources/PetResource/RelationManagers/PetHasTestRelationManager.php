@@ -28,12 +28,12 @@ class PetHasTestRelationManager extends RelationManager
     {
         return $form
             ->schema([
-                  Forms\Components\Select::make('test_id')
+                Forms\Components\Select::make('test_id')
                     ->options(Test::all()->pluck('name', 'id'))
                     ->columnSpanFull()
                     ->required(),
                 Forms\Components\DatePicker::make('date')
-                ->native(false)
+                    ->native(false)
                     ->displayFormat(config('filament.date_format'))
                     ->required(),
                 Forms\Components\Select::make('result')
@@ -46,14 +46,24 @@ class PetHasTestRelationManager extends RelationManager
                     ->selectablePlaceholder(false)
                     ->required(),
                 Forms\Components\TextInput::make('local')->maxLength(50),
-                Forms\Components\Select::make('person_id')->options(Person::getPersonByFlag(['veterinary','medication_volunteer'])->toArray())->searchable(),
+                Forms\Components\Select::make('person_id')->options(Person::getPersonByFlag(['veterinary', 'medication_volunteer'])->toArray())->searchable(),
                 Forms\Components\Textarea::make('observation')->maxLength(300)->columnSpanFull(),
                 SpatieMediaLibraryFileUpload::make('file')
-                ->disk('petsTests')
-                ->collection('pets-tests')
-                ->openable()
-                ->downloadable()
-                ->columnSpan('full'),
+                    ->disk('petsTests')
+                    ->collection('pets-tests')
+                    ->openable()
+                    ->downloadable()
+                    ->deletable(false)
+                    ->hintAction(
+                        Forms\Components\Actions\Action::make('removeFile')
+                            ->icon('heroicon-m-x-mark')
+                            ->color('danger')
+                            ->requiresConfirmation()
+                            ->action(function (Forms\Set $set, $state) {
+                                $set('file', null);
+                            })
+                    )
+                    ->columnSpan('full'),
             ]);
     }
 
@@ -67,7 +77,7 @@ class PetHasTestRelationManager extends RelationManager
                     ->sortable()
                     ->date(config('filament.date_format')),
                 Tables\Columns\TextColumn::make('result')
-                ->badge()
+                    ->badge()
                     ->colors([
                         'warning' => 'unknown',
                         'danger' => 'positive',
@@ -77,34 +87,34 @@ class PetHasTestRelationManager extends RelationManager
                 Tables\Columns\TextColumn::make('local')
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
-                    Tables\Columns\TextColumn::make('person.name')
+                Tables\Columns\TextColumn::make('person.name')
                     ->toggleable(),
                 Tables\Columns\TextColumn::make('observation')
                     ->toggleable(isToggledHiddenByDefault: true),
             ])
             ->filters([
                 Tables\Filters\SelectFilter::make('person_id')
-                ->relationship('person', 'name')
-                ->searchable(),
+                    ->relationship('person', 'name')
+                    ->searchable(),
                 Tables\Filters\SelectFilter::make('result')
-                ->options([
-                    'unknown' => 'Unkown',
-                    'positive' => 'Positive',
-                    'negative' => 'Negative',
-                ]),
+                    ->options([
+                        'unknown' => 'Unkown',
+                        'positive' => 'Positive',
+                        'negative' => 'Negative',
+                    ]),
             ])
             ->headerActions([
                 Tables\Actions\CreateAction::make()
-                ->modalHeading( __('filament-support::actions/create.single.modal.heading', ['label' => self::$title])),
+                    ->modalHeading(__('filament-support::actions/create.single.modal.heading', ['label' => self::$title])),
             ])
             ->actions([
                 Tables\Actions\Action::make('file')
-                ->label('View file')
-                ->color('info')
-                ->url(fn  (PetHasTest $record) => $record->getMedia('pets-tests')[0]?->getFullUrl())
-                ->visible(fn (PetHasTest $record): bool => isset($record->getMedia('pets-tests')[0]) ? true : false)
-                ->openUrlInNewTab()
-                ->icon('tabler-file-download'),
+                    ->label('View file')
+                    ->color('info')
+                    ->url(fn (PetHasTest $record) => $record->getMedia('pets-tests')[0]?->getFullUrl())
+                    ->visible(fn (PetHasTest $record): bool => isset($record->getMedia('pets-tests')[0]) ? true : false)
+                    ->openUrlInNewTab()
+                    ->icon('tabler-file-download'),
                 Tables\Actions\ViewAction::make()->modalHeading(fn ($record) => __('filament-support::actions/view.single.modal.heading', ['label' => $record->test()?->first()->name ?? self::$title])),
                 Tables\Actions\EditAction::make()->modalHeading(fn ($record) => __('filament-support::actions/edit.single.modal.heading', ['label' => $record->test()?->first()->name ?? self::$title])),
                 Tables\Actions\DeleteAction::make(),
@@ -121,7 +131,7 @@ class PetHasTestRelationManager extends RelationManager
             ->withoutGlobalScopes([
                 SoftDeletingScope::class,
             ]);
-    }  
+    }
     protected function getDefaultTableSortColumn(): ?string
     {
         return 'date';
@@ -130,5 +140,5 @@ class PetHasTestRelationManager extends RelationManager
     protected function getDefaultTableSortDirection(): ?string
     {
         return 'desc';
-    } 
+    }
 }

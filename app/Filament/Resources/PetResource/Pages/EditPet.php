@@ -7,6 +7,7 @@ use App\Models\EntryStatus;
 use App\Models\Pet;
 use App\Models\ShelterBlock;
 use Filament\Actions;
+use Filament\Facades\Filament;
 use Filament\Resources\Pages\EditRecord;
 use Filament\Forms;
 use Filament\Forms\Form;
@@ -116,7 +117,18 @@ class EditPet extends EditRecord
                                             ->collection('pets-main-image')
                                             ->openable()
                                             ->downloadable()
+                                            ->deletable(false)
+                                            ->hintAction(
+                                                Forms\Components\Actions\Action::make('removeImage')
+                                                    ->icon('heroicon-m-x-mark')
+                                                    ->color('danger')
+                                                    ->requiresConfirmation()
+                                                    ->action(function (Forms\Set $set, $state) {
+                                                        $set('image', null);
+                                                    })
+                                            )
                                             ->columnSpan('full'),
+                                          
                                     ]),
                                 Forms\Components\Section::make()
                                     ->schema([

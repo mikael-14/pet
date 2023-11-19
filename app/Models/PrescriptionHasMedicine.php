@@ -60,6 +60,20 @@ class PrescriptionHasMedicine extends Model
 		'observation'
 	];
 
+	protected static function boot()
+	{
+		parent::boot();
+
+		static::creating(function ($model) {
+			
+		});
+		static::updating(function ($model) {
+
+		});
+		static::deleting(function ($model) {
+		});
+	}
+
 	public function medicine()
 	{
 		return $this->belongsTo(Medicine::class);
