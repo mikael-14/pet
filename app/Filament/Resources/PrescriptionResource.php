@@ -118,6 +118,9 @@ class PrescriptionResource extends Resource
             ->columns([
                 Tables\Columns\TextColumn::make('pet.name')
                     ->searchable(),
+                Tables\Columns\TextColumn::make('number')
+                    ->toggleable(isToggledHiddenByDefault: true)
+                    ->searchable(),
                 Tables\Columns\TextColumn::make('clinic.name')
                     ->toggleable(isToggledHiddenByDefault: true)
                     ->placeholder('-')
@@ -130,12 +133,15 @@ class PrescriptionResource extends Resource
                     ->toggleable(isToggledHiddenByDefault: true),
                 Tables\Columns\TextColumn::make('medicine_start_date')
                     ->dateTime(config('filament.date_time_format'))
+                    ->sortable()
                     ->placeholder('-'),
                 Tables\Columns\TextColumn::make('medicine_end_date')
                     ->dateTime(config('filament.date_time_format'))
                     ->toggleable(isToggledHiddenByDefault: true)
+                    ->sortable()
                     ->placeholder('-'),
                 BadgeableColumn::make('count_medicines')
+                    ->label('Medicines')
                     ->suffixBadges(function ($record) {
                         return $record->prescription_has_medicines->map(function ($medicines) {
                             return Badge::make($medicines->medicine->name)->color(fn () => match ($medicines->status) {
@@ -158,7 +164,7 @@ class PrescriptionResource extends Resource
                     ->relationship('pet', 'name')
                     ->searchable(),
                 Tables\Filters\SelectFilter::make('medicines.id')
-                ->relationship('medicines', 'name')
+                    ->relationship('medicines', 'name')
                     ->multiple()
                     ->searchable(),
                 Tables\Filters\TrashedFilter::make(),

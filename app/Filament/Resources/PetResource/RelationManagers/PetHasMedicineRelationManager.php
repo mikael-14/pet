@@ -101,15 +101,15 @@ class PetHasMedicineRelationManager extends RelationManager
                     ->options([
                         1 => 'Yes',
                         0 => 'No',
-                    ]),
+                    ])->label('Administered'),
                 Tables\Filters\SelectFilter::make('emergency')
                     ->options([
                         0 => 'No',
                         1 => 'Yes',
-                    ]),
+                    ])->label('emergency'),
                 Tables\Filters\SelectFilter::make('medicine_id')
                     ->relationship('medicine', 'name')
-                    ->searchable()
+                    ->searchable()->label('Medicine')
             ])
             ->headerActions([
                 Tables\Actions\CreateAction::make()
