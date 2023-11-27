@@ -4,6 +4,7 @@ namespace App\Filament\Resources\PrescriptionResource\RelationManagers;
 
 use App\Filament\Resources\PrescriptionResource\Pages\ViewPrescription;
 use App\Models\Medicine;
+use App\Models\Prescription;
 use App\Models\PrescriptionHasMedicine;
 use Carbon\Carbon;
 use Closure;
@@ -33,13 +34,11 @@ class PrescriptionHasMedicinesRelationManager extends RelationManager
     {
         return $form
             ->schema([
-
                 Forms\Components\Select::make('medicine_id')
                     ->required()
                     ->options(Medicine::all()->mapWithKeys(function ($medicine) {
                         return [$medicine->id => $medicine->name . ' - ' . __("pet/medicine.$medicine->type")];
                     }))
-
                     ->reactive()
                     ->searchable(),
                 Forms\Components\TextInput::make('dosage')
@@ -58,6 +57,7 @@ class PrescriptionHasMedicinesRelationManager extends RelationManager
                         ->minValue(1)
                         ->suffix('time in hours')
                         ->lazy()
+                        ->live(onBlur: true)
                         ->columnSpan(4),
                     Forms\Components\Select::make('status')
                         ->selectablePlaceholder(false)
@@ -74,17 +74,18 @@ class PrescriptionHasMedicinesRelationManager extends RelationManager
                         ->columnSpan(1),
                 ]),
                 Forms\Components\DateTimePicker::make('start_date')
-                ->native(false)
+                    ->native(false)
                     ->displayFormat(config('filament.date_time_format'))
                     ->seconds(false)
                     ->minutesStep(15)
                     ->required(),
                 Forms\Components\DateTimePicker::make('end_date')
-                ->native(false)
+                    ->native(false)
                     ->afterOrEqual('start_date')
                     ->displayFormat(config('filament.date_time_format'))
                     ->seconds(false)
-                    ->minutesStep(15),
+                    ->minutesStep(15)
+                    ->required(fn (Forms\Get $get): bool => filled($get('frequency'))),
                 Placeholder::make('shout')
                     ->label(false)
                     ->content(function (\Filament\Forms\Get $get) {
@@ -132,7 +133,6 @@ class PrescriptionHasMedicinesRelationManager extends RelationManager
                 Forms\Components\Textarea::make('observation')
                     ->maxLength(200)
                     ->columnSpanFull(),
-
             ]);
     }
 
@@ -169,11 +169,11 @@ class PrescriptionHasMedicinesRelationManager extends RelationManager
                     }),
                 Tables\Columns\TextColumn::make('start_date')
                     ->sortable()
-                    ->date(config('filament.date_format')),
+                    ->date(config('filament.date_time_format')),
                 Tables\Columns\TextColumn::make('end_date')
                     ->placeholder('-')
                     ->sortable()
-                    ->date(config('filament.date_format')),
+                    ->date(config('filament.date_time_format')),
             ])
             ->filters([
                 Tables\Filters\SelectFilter::make('status')

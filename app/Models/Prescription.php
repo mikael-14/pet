@@ -12,6 +12,8 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\InteractsWithMedia;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 
 /**
  * Class Prescription
@@ -105,8 +107,63 @@ class Prescription extends Model implements HasMedia
 			$yearMonth = date('Ym');
 			$model->number = "$yearMonth-$last_number";
 		});
+		static::restoring(function ($model) {
+			DB::beginTransaction();
+			try {
+				PrescriptionHasMedicine::withTrashed()->where(['prescription_id' => $model->id])->restore();
+				$model->withoutEvents(function () use ($model) {
+					$model->restore();
+				});
+				DB::commit();
+			} catch (\Illuminate\Database\QueryException $e) {
+				DB::rollback();
+				Log::error('Error restoring model: ' . $e->getMessage());
+				throw $e;
+			} catch (\Exception $e) {
+				// If an exception occurs, rollback the transaction
+				DB::rollback();
+				Log::error('Error restoring model: ' . $e->getMessage());
+				// Don't forget to throw the exception to stop the creating process
+				throw $e;
+			}
+		});
 		static::deleting(function ($model) {
-			// Your custom function for when the model is being deleted
+			DB::beginTransaction();
+			try {
+				// Your custom function for when the model is being deleted
+				PrescriptionHasMedicine::where(['prescription_id' => $model->id])->delete();
+				DB::commit();
+			} catch (\Illuminate\Database\QueryException $e) {
+				DB::rollback();
+				Log::error('Error deleting model: ' . $e->getMessage());
+				throw $e;
+			} catch (\Exception $e) {
+				// If an exception occurs, rollback the transaction
+				DB::rollback();
+				Log::error('Error deleting model: ' . $e->getMessage());
+				// Don't forget to throw the exception to stop the creating process
+				throw $e;
+			}
+		});
+		static::updating(function ($model) {
+			DB::beginTransaction();
+			try {
+				PrescriptionHasMedicine::where(['prescription_id' => $model->id])->delete();
+				$model->delete();
+				DB::commit();
+			} catch (\Illuminate\Database\QueryException $e) {
+				DB::rollback();
+				Log::error('Error updating model: ' . $e->getMessage());
+				throw $e;
+			} catch (\Exception $e) {
+				// If an exception occurs, rollback the transaction
+				DB::rollback();
+				// Log the error or handle it as needed
+				// You might also throw the exception to propagate it up the stack
+				Log::error('Error updating model: ' . $e->getMessage());
+				// Don't forget to throw the exception to stop the creating process
+				throw $e;
+			}
 		});
 	}
 	public function getMedicineStartDateAttribute()
@@ -142,5 +199,4 @@ class Prescription extends Model implements HasMedia
 		}
 		return array_filter($counter, fn ($value) =>  $value !== 0);
 	}
-
 }
