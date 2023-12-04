@@ -18,6 +18,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @property int $medicine_id
  * @property string $dosage
  * @property string|null $status
+ * @property bool $emergency
  * @property bool|null $administered
  * @property Carbon $date
  * @property string|null $observation
@@ -42,6 +43,7 @@ class PetHasMedicine extends Model
 	protected $casts = [
 		'pet_id' => 'int',
 		'medicine_id' => 'int',
+		'emergency' => 'bool',
 		'administered' => 'bool',
 		'date' => 'datetime',
 		'person_id' => 'int',
@@ -53,6 +55,7 @@ class PetHasMedicine extends Model
 		'medicine_id',
 		'dosage',
 		'status',
+		'emergency',
 		'administered',
 		'date',
 		'observation',

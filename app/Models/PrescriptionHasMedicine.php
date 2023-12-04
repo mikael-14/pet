@@ -66,7 +66,7 @@ class PrescriptionHasMedicine extends Model
 	{
 		parent::boot();
 
-		static::creating(function ($model) {
+		static::created(function ($model) {
 			// Start a database transaction
 			DB::beginTransaction();
 			try {
@@ -86,15 +86,23 @@ class PrescriptionHasMedicine extends Model
 				throw $e;
 			}
 		});
-		static::updating(function ($model) {
+		static::updated(function ($model) {
 			DB::beginTransaction();
 			try {
-				PetHasMedicine::where([
-					'prescription_has_medicine_id' => $model->id,
-					'pet_id' => $model->pet_id,
-					'medicine_id' => $model->medicine_id,
-				])->delete();
-				self::create_process($model);
+				$originalValues = $model->getOriginal();
+				if ($model->end_date->greaterThan($originalValues['end_date'])) {
+					//ending date was increased
+					if ((int)$model->frequency > 1) {
+						$date = $originalValues['end_date']->addHours($model->frequency);
+						self::create_process($model, $date);
+					}
+				} elseif ($model->end_date->lessThan($originalValues['end_date'])) {
+					//ending date was increased
+					PetHasMedicine::where('date', '>', $originalValues['end_date']->format('Y-m-d H:i:s'))
+						->where('prescription_has_medicine_id', '=', $model->id)
+						->delete();
+				}
+				//ending date is equal 
 				DB::commit();
 			} catch (\Illuminate\Database\QueryException $e) {
 				DB::rollback();
@@ -110,28 +118,11 @@ class PrescriptionHasMedicine extends Model
 				throw $e;
 			}
 		});
-		static::deleting(function ($model) {
-			DB::beginTransaction();
-			try {
-				PetHasMedicine::where([
-					'prescription_has_medicine_id' => $model->id,
-					'pet_id' => $model->pet_id,
-					'medicine_id' => $model->medicine_id,
-				])->delete();
-				DB::commit();
-			} catch (\Illuminate\Database\QueryException $e) {
-				DB::rollback();
-				Log::error('Error deleting model: ' . $e->getMessage());
-				throw $e;
-			} catch (\Exception $e) {
-				// If an exception occurs, rollback the transaction
-				DB::rollback();
-				// Log the error or handle it as needed
-				// You might also throw the exception to propagate it up the stack
-				Log::error('Error deleting model: ' . $e->getMessage());
-				// Don't forget to throw the exception to stop the creating process
-				throw $e;
-			}
+		static::deleted(function ($model) {
+			PetHasMedicine::where([
+				'prescription_has_medicine_id' => $model->id,
+				'medicine_id' => $model->medicine_id,
+			])->delete();
 		});
 	}
 
@@ -176,17 +167,18 @@ class PrescriptionHasMedicine extends Model
 			'prescription_has_medicine_id' => $model->id
 		]);
 	}
-	private static function create_process(PrescriptionHasMedicine $model)
+	private static function create_process(PrescriptionHasMedicine $model, null|Carbon $start_from_date = null)
 	{
 		$now = Carbon::now();
 		$pet_id = $model->prescription->pet_id;
 		if (empty($model->frequency) || (int)$model->frequency < 1) {
 			self::create_pet_has_medicne($model, $model->start_date, $now, $pet_id);
 		} else {
-			do {
-				self::create_pet_has_medicne($model, $model->start_date, $now, $pet_id);
-				$model->start_date = $model->start_date->addHours($model->frequency);
-			} while ($model->start_date < $model->end_date);
+			$start_date = $start_from_date ?? $model->start_date;
+			while ($start_date < $model->end_date) {
+				self::create_pet_has_medicne($model, $start_date, $now, $pet_id);
+				$start_date = $start_date->addHours($model->frequency);
+			}
 		}
 	}
 }

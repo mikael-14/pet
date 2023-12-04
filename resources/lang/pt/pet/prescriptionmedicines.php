@@ -16,8 +16,8 @@ return [
         'completed' => 'O medicamento :medicine já concluiu a prescrição',
         'on_hold' => 'O medicamento :medicine está em pausa até ser novamente retomado',
         'canceled' => 'O medicamento :medicine foi cancelado',
-        'times_day'=> 'Vai levar :dosage de :medicine :total_times vezes ao dia.',
-        'every_days' => 'Vai levar :dosage de :medicine a cada :total_times dias.',
+        'times_day'=> 'Vai levar :dosage de :medicine :total_times vezes ao dia. (Total :takes)',
+        'every_days' => 'Vai levar :dosage de :medicine a cada :total_times dias. (Total :takes)',
         'repeat_hour' => 'cada :frequency horas',
         'repeat_day' => 'cada :frequency dias',
     ]

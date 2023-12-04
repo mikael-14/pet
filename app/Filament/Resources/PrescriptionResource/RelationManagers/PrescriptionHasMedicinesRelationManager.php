@@ -4,7 +4,6 @@ namespace App\Filament\Resources\PrescriptionResource\RelationManagers;
 
 use App\Filament\Resources\PrescriptionResource\Pages\ViewPrescription;
 use App\Models\Medicine;
-use App\Models\Prescription;
 use App\Models\PrescriptionHasMedicine;
 use Carbon\Carbon;
 use Closure;
@@ -39,10 +38,12 @@ class PrescriptionHasMedicinesRelationManager extends RelationManager
                     ->options(Medicine::all()->mapWithKeys(function ($medicine) {
                         return [$medicine->id => $medicine->name . ' - ' . __("pet/medicine.$medicine->type")];
                     }))
-                    ->reactive()
+                    ->live(onBlur: true)
+                    ->disabled(fn ($context) => $context !== 'create')
                     ->searchable(),
                 Forms\Components\TextInput::make('dosage')
                     ->required()
+                    ->disabled(fn ($context) => $context !== 'create')
                     ->suffix(function (\Filament\Forms\Get $get) {
                         $find = Medicine::find($get('medicine_id'))?->type;
                         return $find ? __("pet/medicine.$find") : '';
@@ -58,18 +59,19 @@ class PrescriptionHasMedicinesRelationManager extends RelationManager
                         ->suffix('time in hours')
                         ->lazy()
                         ->live(onBlur: true)
+                        ->disabled(fn ($context) => $context !== 'create')
                         ->columnSpan(4),
                     Forms\Components\Select::make('status')
                         ->selectablePlaceholder(false)
                         ->required()
                         ->options(__('pet/prescriptionmedicines.status'))
-                        ->reactive()
+                        ->live(onBlur: true)
                         ->default('active')
                         ->columnSpan(3),
                     Forms\Components\Toggle::make('emergency')
                         ->default(false)
                         ->inline(false)
-                        ->reactive()
+                        ->live(onBlur: true)
                         ->required()
                         ->columnSpan(1),
                 ]),
@@ -78,6 +80,8 @@ class PrescriptionHasMedicinesRelationManager extends RelationManager
                     ->displayFormat(config('filament.date_time_format'))
                     ->seconds(false)
                     ->minutesStep(15)
+                    ->disabled(fn ($context) => $context !== 'create')
+                    ->live(debounce: 500)
                     ->required(),
                 Forms\Components\DateTimePicker::make('end_date')
                     ->native(false)
@@ -85,6 +89,7 @@ class PrescriptionHasMedicinesRelationManager extends RelationManager
                     ->displayFormat(config('filament.date_time_format'))
                     ->seconds(false)
                     ->minutesStep(15)
+                    ->live(debounce: 500)
                     ->required(fn (Forms\Get $get): bool => filled($get('frequency'))),
                 Placeholder::make('shout')
                     ->label(false)
@@ -109,13 +114,17 @@ class PrescriptionHasMedicinesRelationManager extends RelationManager
                                     $content = __('pet/prescriptionmedicines.shout.one_take', ['medicine' => $medicine->name ?? '']);
                                     break;
                                 }
+                                $date1 = Carbon::create($get('start_date'));
+                                $date2 = Carbon::create($get('end_date'));
+                                $takes = floor($date2->diffInHours($date1, true) / $frequency) + 1;
+
                                 if ($frequency < 24) {
                                     $totalTimes = intdiv(24, $frequency);
-                                    $content = __('pet/prescriptionmedicines.shout.times_day', ['dosage' => $dosage, 'medicine' => $medicine->name ?? '', 'total_times' => $totalTimes]);
+                                    $content = __('pet/prescriptionmedicines.shout.times_day', ['dosage' => $dosage, 'medicine' => $medicine->name ?? '', 'total_times' => $totalTimes, 'takes' => $takes]);
                                     break;
                                 }
                                 $totalTimes = intdiv($frequency, 24);
-                                $content = __('pet/prescriptionmedicines.shout.every_days', ['dosage' => $dosage, 'medicine' => $medicine->name ?? '', 'total_times' => $totalTimes]);
+                                $content = __('pet/prescriptionmedicines.shout.every_days', ['dosage' => $dosage, 'medicine' => $medicine->name ?? '', 'total_times' => $totalTimes, 'takes' => $takes]);
                                 break;
                         }
 
@@ -194,11 +203,8 @@ class PrescriptionHasMedicinesRelationManager extends RelationManager
             ])
             ->actions([
                 Tables\Actions\ViewAction::make(),
-                Tables\Actions\EditAction::make()
+                Tables\Actions\EditAction::make('edit-modal')
                     ->visible(fn ($livewire) => $livewire->pageClass !== ViewPrescription::class),
-                Tables\Actions\ReplicateAction::make()
-                    ->icon('heroicon-o-document-duplicate')
-                    ->color('gray'),
                 Tables\Actions\DeleteAction::make()
                     ->visible(fn ($livewire) => $livewire->pageClass !== ViewPrescription::class),
             ])

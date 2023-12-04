@@ -107,49 +107,39 @@ class Prescription extends Model implements HasMedia
 			$yearMonth = date('Ym');
 			$model->number = "$yearMonth-$last_number";
 		});
-		static::restoring(function ($model) {
-			DB::beginTransaction();
-			try {
-				PrescriptionHasMedicine::withTrashed()->where(['prescription_id' => $model->id])->restore();
-				$model->withoutEvents(function () use ($model) {
-					$model->restore();
-				});
-				DB::commit();
-			} catch (\Illuminate\Database\QueryException $e) {
-				DB::rollback();
-				Log::error('Error restoring model: ' . $e->getMessage());
-				throw $e;
-			} catch (\Exception $e) {
-				// If an exception occurs, rollback the transaction
-				DB::rollback();
-				Log::error('Error restoring model: ' . $e->getMessage());
-				// Don't forget to throw the exception to stop the creating process
-				throw $e;
-			}
+		static::restored(function ($model) {
+			PrescriptionHasMedicine::withTrashed()->where(['prescription_id' => $model->id])->restore();
 		});
-		static::deleting(function ($model) {
+		static::deleted(function ($model) {
 			DB::beginTransaction();
 			try {
-				// Your custom function for when the model is being deleted
-				PrescriptionHasMedicine::where(['prescription_id' => $model->id])->delete();
-				DB::commit();
-			} catch (\Illuminate\Database\QueryException $e) {
-				DB::rollback();
-				Log::error('Error deleting model: ' . $e->getMessage());
-				throw $e;
-			} catch (\Exception $e) {
-				// If an exception occurs, rollback the transaction
-				DB::rollback();
-				Log::error('Error deleting model: ' . $e->getMessage());
-				// Don't forget to throw the exception to stop the creating process
-				throw $e;
-			}
+			//$ids = PrescriptionHasMedicine::where(['prescription_id' => $model->id])->get();
+			//PetHasMedicine::whereIn(['prescription_id' => $ids])->delete();
+			PrescriptionHasMedicine::where(['prescription_id' => $model->id])->delete();
+			DB::commit();
+		} catch (\Illuminate\Database\QueryException $e) {
+			DB::rollback();
+			Log::error('Error updating model: ' . $e->getMessage());
+			throw $e;
+		} catch (\Exception $e) {
+			// If an exception occurs, rollback the transaction
+			DB::rollback();
+			// Log the error or handle it as needed
+			// You might also throw the exception to propagate it up the stack
+			Log::error('Error updating model: ' . $e->getMessage());
+			// Don't forget to throw the exception to stop the creating process
+			throw $e;
+		}
 		});
 		static::updating(function ($model) {
 			DB::beginTransaction();
 			try {
-				PrescriptionHasMedicine::where(['prescription_id' => $model->id])->delete();
-				$model->delete();
+				$originalValues = $model->getOriginal();
+				$oldPetValue = $originalValues['pet_id'];
+				if ($oldPetValue !== $model->pet_id) {
+					$ids = PrescriptionHasMedicine::withTrashed()->where(['prescription_id' => $model->id]);
+					PetHasMedicine::withTrashed()->whereIn('prescription_id', $ids)->update(['pet_id' => $model->pet_id]);
+				}
 				DB::commit();
 			} catch (\Illuminate\Database\QueryException $e) {
 				DB::rollback();
