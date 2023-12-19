@@ -164,7 +164,8 @@ class PrescriptionHasMedicine extends Model
 			'emergency' => $model->emergency,
 			'administered' => self::set_administered_medicine($carbon_date, $now, $model->status),
 			'date' => $carbon_date->format('Y-m-d H:i:s'),
-			'prescription_has_medicine_id' => $model->id
+			'prescription_has_medicine_id' => $model->id,
+			'observation' => $model->observation
 		]);
 	}
 	private static function create_process(PrescriptionHasMedicine $model, null|Carbon $start_from_date = null)

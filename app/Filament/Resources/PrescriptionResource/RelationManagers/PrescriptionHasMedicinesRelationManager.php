@@ -18,7 +18,7 @@ use Illuminate\Database\Eloquent\SoftDeletingScope;
 use Filament\Forms\Components\Placeholder;
 use Filament\Notifications\Notification;
 use Illuminate\Database\Eloquent\Collection;
-
+use Filament\Forms\Components\ViewField;
 class PrescriptionHasMedicinesRelationManager extends RelationManager
 {
     protected static string $relationship = 'prescription_has_medicines';
@@ -116,7 +116,11 @@ class PrescriptionHasMedicinesRelationManager extends RelationManager
                                 }
                                 $date1 = Carbon::create($get('start_date'));
                                 $date2 = Carbon::create($get('end_date'));
-                                $takes = floor($date2->diffInHours($date1, true) / $frequency) + 1;
+                                $diffdates = $date2->diffInHours($date1);
+                                $takes = 1;
+                                if($get('end_date') && $get('start_date')) {
+                                    $takes = floor($diffdates/$frequency) + 1;
+                                }
 
                                 if ($frequency < 24) {
                                     $totalTimes = intdiv(24, $frequency);
@@ -142,6 +146,9 @@ class PrescriptionHasMedicinesRelationManager extends RelationManager
                 Forms\Components\Textarea::make('observation')
                     ->maxLength(200)
                     ->columnSpanFull(),
+                ViewField::make('rating')
+                    ->view('filament.components.table-pet-has-medicines')
+                    ->columnSpan('full')
             ]);
     }
 
