@@ -1,46 +1,51 @@
-@php 
+@php
 $data = $getRecord()->pet_has_medicines;
+$date_format = config('filament.date_time_format');
 @endphp
+
 <div class="flex flex-col ">
     <div class="fi-ta-ctn divide-y divide-gray-200 overflow-hidden rounded-xl bg-white shadow-sm ring-1 ring-gray-950/5 dark:divide-white/10 dark:bg-gray-900 dark:ring-white/10">
         <div class="fi-ta-content relative divide-y divide-gray-200 overflow-x-auto dark:divide-white/10 dark:border-t-white/10">
+            @if ($data)
             <table class="fi-ta-table w-full table-auto divide-y divide-gray-200 text-start dark:divide-white/5">
                 <thead class="bg-gray-50 dark:bg-white/5">
                     <tr>
-                        <th class="fi-ta-header-cell px-3 py-3.5 sm:first-of-type:ps-6 sm:last-of-type:pe-6 fi-table-header-cell-medicine.name">
+                        <th class="fi-ta-header-cell px-3 py-3.5 sm:first-of-type:ps-6 sm:last-of-type:pe-6">
                             <span class="group flex w-full items-center gap-x-1 whitespace-nowrap justify-start">
                                 <span class="fi-ta-header-cell-label text-sm font-semibold text-gray-950 dark:text-white">
                                     Date
                                 </span>
                             </span>
                         </th>
-                        <th class="fi-ta-header-cell px-3 py-3.5 sm:first-of-type:ps-6 sm:last-of-type:pe-6 fi-table-header-cell-status">
+                        <th class="fi-ta-header-cell px-3 py-3.5 sm:first-of-type:ps-6 sm:last-of-type:pe-6">
                             <span class="group flex w-full items-center gap-x-1 whitespace-nowrap justify-start">
                                 <span class="fi-ta-header-cell-label text-sm font-semibold text-gray-950 dark:text-white">
                                     Status
                                 </span>
                             </span>
                         </th>
-                        <th class="fi-ta-header-cell px-3 py-3.5 sm:first-of-type:ps-6 sm:last-of-type:pe-6 fi-table-header-cell-dosage">
+                        <th class="fi-ta-header-cell px-3 py-3.5 sm:first-of-type:ps-6 sm:last-of-type:pe-6">
                             <span class="group flex w-full items-center gap-x-1 whitespace-nowrap justify-start">
                                 <span class="fi-ta-header-cell-label text-sm font-semibold text-gray-950 dark:text-white">
-                                    Administered 
+                                    Administered
                                 </span>
                             </span>
                         </th>
-                        <th class="fi-ta-header-cell px-3 py-3.5 sm:first-of-type:ps-6 sm:last-of-type:pe-6 fi-table-header-cell-frequency">
+                        <th class="fi-ta-header-cell px-3 py-3.5 sm:first-of-type:ps-6 sm:last-of-type:pe-6">
                             <span class="group flex w-full items-center gap-x-1 whitespace-nowrap justify-start">
                                 <span class="fi-ta-header-cell-label text-sm font-semibold text-gray-950 dark:text-white">
-                                Dosage 
+                                    Dosage
                                 </span>
                             </span>
                         </th>
-                        <th class="fi-ta-header-cell px-3 py-3.5 sm:first-of-type:ps-6 sm:last-of-type:pe-6 fi-table-header-cell-start-date">
-                            <span class="fi-ta-header-cell-label text-sm font-semibold text-gray-950 dark:text-white">
-                                Observation 
+                        <th class="fi-ta-header-cell px-3 py-3.5 sm:first-of-type:ps-6 sm:last-of-type:pe-6">
+                            <span class="group flex w-full items-center gap-x-1 whitespace-nowrap justify-start">
+                                <span class="fi-ta-header-cell-label text-sm font-semibold text-gray-950 dark:text-white">
+                                    Observation
+                                </span>
                             </span>
                         </th>
-                        <th class="fi-ta-header-cell px-3 py-3.5 sm:first-of-type:ps-6 sm:last-of-type:pe-6 fi-table-header-cell-end-date">
+                        <th class="fi-ta-header-cell px-3 py-3.5 sm:first-of-type:ps-6 sm:last-of-type:pe-6">
                             <span class="fi-ta-header-cell-label text-sm font-semibold text-gray-950 dark:text-white">
                                 Person
                             </span>
@@ -49,15 +54,15 @@ $data = $getRecord()->pet_has_medicines;
                 </thead>
                 <tbody class="divide-y divide-gray-200 whitespace-nowrap dark:divide-white/5">
                     @foreach($data as $row)
-                    <tr class="fi-ta-row [@media(hover:hover)]:transition [@media(hover:hover)]:duration-75 hover:bg-gray-50 dark:hover:bg-white/5" >
+                    <tr class="fi-ta-row [@media(hover:hover)]:transition [@media(hover:hover)]:duration-75 hover:bg-gray-50 dark:hover:bg-white/5">
                         <td class="fi-ta-cell p-0 first-of-type:ps-1 last-of-type:pe-1 sm:first-of-type:ps-3 sm:last-of-type:pe-3">
                             <div class="fi-ta-col-wrp">
                                 <div class="fi-ta-text grid gap-y-1 px-3 py-4">
-                                    <div class="">
+                                    <div class="flex flex-wrap items-center gap-1.5">
                                         <div class="flex max-w-max">
                                             <div class="fi-ta-text-item inline-flex items-center gap-1.5 ">
-                                                <span class="fi-ta-text-item-label text-sm text-gray-950 dark:text-white" >
-                                                {{$row->date}}
+                                                <span class="fi-ta-text-item-label text-sm text-gray-950 dark:text-white">
+                                                    {{optional($row->date)->format($date_format)}}
                                                 </span>
                                             </div>
                                         </div>
@@ -66,7 +71,7 @@ $data = $getRecord()->pet_has_medicines;
 
                             </div>
                         </td>
-                        <td class="fi-ta-cell p-0 first-of-type:ps-1 last-of-type:pe-1 sm:first-of-type:ps-3 sm:last-of-type:pe-3 fi-table-cell-status" >
+                        <td class="fi-ta-cell p-0 first-of-type:ps-1 last-of-type:pe-1 sm:first-of-type:ps-3 sm:last-of-type:pe-3 fi-table-cell-status">
                             <div class="fi-ta-col-wrp">
                                 <div class="fi-ta-text grid gap-y-1 px-3 py-4">
                                     <div class="flex flex-wrap items-center gap-1.5">
@@ -83,17 +88,17 @@ $data = $getRecord()->pet_has_medicines;
                                 </div>
                             </div>
                         </td>
-                        <td class="fi-ta-cell p-0 first-of-type:ps-1 last-of-type:pe-1 sm:first-of-type:ps-3 sm:last-of-type:pe-3 fi-table-cell-dosage" >
+                        <td class="fi-ta-cell p-0 first-of-type:ps-1 last-of-type:pe-1 sm:first-of-type:ps-3 sm:last-of-type:pe-3 fi-table-cell-dosage">
                             <div class="fi-ta-col-wrp">
                                 <div class="fi-ta-text grid gap-y-1 px-3 py-4">
-                                    <div class="">
+                                    <div class="flex flex-wrap items-center gap-1.5">
                                         <div class="flex max-w-max">
                                             <div class="fi-ta-text-item inline-flex items-center gap-1.5 ">
-                                                <span class="fi-ta-text-item-label text-sm text-gray-950 dark:text-white" >
+                                                <span class="fi-ta-text-item-label text-sm text-gray-950 dark:text-white">
                                                     @if ($row->administered)
                                                     <x-heroicon-o-check-circle class="fi-ta-icon-item fi-ta-icon-item-size-lg h-6 w-6 fi-color-custom text-custom-500 dark:text-custom-400" style="--c-400:var(--success-400);--c-500:var(--success-500);" />
                                                     @else
-                                                    <x-heroicon-o-x-circle class="fi-ta-icon-item fi-ta-icon-item-size-lg h-6 w-6 fi-color-custom text-custom-500 dark:text-custom-400" style="--c-400:var(--danger-400);--c-500:var(--danger-500);"/>
+                                                    <x-heroicon-o-x-circle class="fi-ta-icon-item fi-ta-icon-item-size-lg h-6 w-6 fi-color-custom text-custom-500 dark:text-custom-400" style="--c-400:var(--danger-400);--c-500:var(--danger-500);" />
                                                     @endif
                                                 </span>
                                             </div>
@@ -102,14 +107,14 @@ $data = $getRecord()->pet_has_medicines;
                                 </div>
                             </div>
                         </td>
-                        <td class="fi-ta-cell p-0 first-of-type:ps-1 last-of-type:pe-1 sm:first-of-type:ps-3 sm:last-of-type:pe-3 fi-table-cell-frequency" >
+                        <td class="fi-ta-cell p-0 first-of-type:ps-1 last-of-type:pe-1 sm:first-of-type:ps-3 sm:last-of-type:pe-3 fi-table-cell-frequency">
                             <div class="fi-ta-col-wrp">
                                 <div class="fi-ta-text grid gap-y-1 px-3 py-4">
-                                    <div class="">
+                                    <div class="flex flex-wrap items-center gap-1.5">
                                         <div class="flex max-w-max">
                                             <div class="fi-ta-text-item inline-flex items-center gap-1.5 ">
-                                                <span class="fi-ta-text-item-label text-sm text-gray-950 dark:text-white" >
-                                                {{$row->dosage}}
+                                                <span class="fi-ta-text-item-label text-sm text-gray-950 dark:text-white">
+                                                    {{$row->dosage}}
                                                 </span>
                                             </div>
                                         </div>
@@ -117,14 +122,17 @@ $data = $getRecord()->pet_has_medicines;
                                 </div>
                             </div>
                         </td>
-                        <td class="fi-ta-cell p-0 first-of-type:ps-1 last-of-type:pe-1 sm:first-of-type:ps-3 sm:last-of-type:pe-3 fi-table-cell-start-date" >
+                        <td x-tooltip="{
+            content: '{{ json_encode($row->observation)}}',
+            theme: $store.theme,
+        }" class="fi-ta-cell p-0 first-of-type:ps-1 last-of-type:pe-1 sm:first-of-type:ps-3 sm:last-of-type:pe-3 fi-table-cell-start-date">
                             <div class="fi-ta-col-wrp">
                                 <div class="fi-ta-text grid gap-y-1 px-3 py-4">
-                                    <div class="">
+                                    <div class="flex flex-wrap items-center gap-1.5">
                                         <div class="flex max-w-max">
                                             <div class="fi-ta-text-item inline-flex items-center gap-1.5 ">
-                                                <span class="fi-ta-text-item-label text-sm text-gray-950 dark:text-white" >
-                                                {{$row->observation}}
+                                                <span class="fi-ta-text-item-label text-sm text-gray-950 dark:text-white">
+                                                    {{ \Illuminate\Support\Str::limit($row->observation,25,'...') }}
                                                 </span>
                                             </div>
                                         </div>
@@ -132,14 +140,14 @@ $data = $getRecord()->pet_has_medicines;
                                 </div>
                             </div>
                         </td>
-                        <td class="fi-ta-cell p-0 first-of-type:ps-1 last-of-type:pe-1 sm:first-of-type:ps-3 sm:last-of-type:pe-3 fi-table-cell-end-date" >
+                        <td class="fi-ta-cell p-0 first-of-type:ps-1 last-of-type:pe-1 sm:first-of-type:ps-3 sm:last-of-type:pe-3 fi-table-cell-end-date">
                             <div class="fi-ta-col-wrp">
                                 <div class="fi-ta-text grid gap-y-1 px-3 py-4">
-                                    <div class="">
+                                    <div class="flex flex-wrap items-center gap-1.5">
                                         <div class="flex max-w-max">
                                             <div class="fi-ta-text-item inline-flex items-center gap-1.5 ">
-                                                <span class="fi-ta-text-item-label text-sm text-gray-950 dark:text-white" >
-                                                {{$row->person?->name}}
+                                                <span class="fi-ta-text-item-label text-sm text-gray-950 dark:text-white">
+                                                    {{$row->person?->name}}
                                                 </span>
                                             </div>
                                         </div>
@@ -151,6 +159,7 @@ $data = $getRecord()->pet_has_medicines;
                     @endforeach
                 </tbody>
             </table>
+            @endif
         </div>
     </div>
 </div>
