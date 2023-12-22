@@ -5,14 +5,14 @@ namespace App\Filament\Resources\PersonResource\Pages;
 use App\Filament\Resources\PersonResource;
 use App\Models\Person;
 use App\Models\PersonFlag;
-use Filament\Pages\Actions;
+use Filament\Actions;
 use Filament\Resources\Pages\EditRecord;
 
 class EditPerson extends EditRecord
 {
     protected static string $resource = PersonResource::class;
 
-    protected function getActions(): array
+    protected function getHeaderActions(): array
     {
         return [
             Actions\DeleteAction::make(),

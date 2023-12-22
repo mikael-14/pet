@@ -10,6 +10,8 @@ use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 
 /**
  * Class PrescriptionHasMedicine
@@ -60,6 +62,72 @@ class PrescriptionHasMedicine extends Model
 		'observation'
 	];
 
+	protected static function boot()
+	{
+		parent::boot();
+
+		static::created(function ($model) {
+			// Start a database transaction
+			DB::beginTransaction();
+			try {
+				self::create_process($model);
+				DB::commit();
+			} catch (\Illuminate\Database\QueryException $e) {
+				DB::rollback();
+				Log::error('Error creating model: ' . $e->getMessage());
+				throw $e;
+			} catch (\Exception $e) {
+				// If an exception occurs, rollback the transaction
+				DB::rollback();
+				// Log the error or handle it as needed
+				// You might also throw the exception to propagate it up the stack
+				Log::error('Error creating model: ' . $e->getMessage());
+				// Don't forget to throw the exception to stop the creating process
+				throw $e;
+			}
+		});
+		static::updated(function ($model) {
+			DB::beginTransaction();
+			try {
+				$originalValues = $model->getOriginal();
+				if (!empty($originalValues['end_date'])) {
+					if ($model->end_date->greaterThan($originalValues['end_date'])) {
+						//ending date was increased
+						if ((int)$model->frequency > 1) {
+							$date = $originalValues['end_date']->addHours($model->frequency);
+							self::create_process($model, $date);
+						}
+					} elseif ($model->end_date->lessThan($originalValues['end_date'])) {
+						//ending date was increased
+						PetHasMedicine::where('date', '>', $originalValues['end_date']->format('Y-m-d H:i:s'))
+							->where('prescription_has_medicine_id', '=', $model->id)
+							->delete();
+					}
+				}
+				//ending date is equal 
+				DB::commit();
+			} catch (\Illuminate\Database\QueryException $e) {
+				DB::rollback();
+				Log::error('Error updating model: ' . $e->getMessage());
+				throw $e;
+			} catch (\Exception $e) {
+				// If an exception occurs, rollback the transaction
+				DB::rollback();
+				// Log the error or handle it as needed
+				// You might also throw the exception to propagate it up the stack
+				Log::error('Error updating model: ' . $e->getMessage());
+				// Don't forget to throw the exception to stop the creating process
+				throw $e;
+			}
+		});
+		static::deleted(function ($model) {
+			PetHasMedicine::where([
+				'prescription_has_medicine_id' => $model->id,
+				'medicine_id' => $model->medicine_id,
+			])->delete();
+		});
+	}
+
 	public function medicine()
 	{
 		return $this->belongsTo(Medicine::class);
@@ -73,5 +141,49 @@ class PrescriptionHasMedicine extends Model
 	public function pet_has_medicines()
 	{
 		return $this->hasMany(PetHasMedicine::class);
+	}
+
+	private static function set_administered_medicine($date, $now, $status)
+	{
+		if ($now->lessThan($date)) {
+			return 0;
+		}
+		return match ($status) {
+			default => 1,
+			'active' => 1,
+			'on_hold' => 0,
+			'canceled' => 0,
+			'completed' => 1,
+		};
+	}
+	private static function create_pet_has_medicne(PrescriptionHasMedicine $model, Carbon $carbon_date, Carbon $now, int $pet_id)
+	{
+		PetHasMedicine::create([
+			'pet_id' => $pet_id,
+			'medicine_id' => $model->medicine_id,
+			'dosage' => $model->dosage,
+			'status' => $model->status,
+			'emergency' => $model->emergency,
+			'administered' => self::set_administered_medicine($carbon_date, $now, $model->status),
+			'date' => $carbon_date->format('Y-m-d H:i:s'),
+			'prescription_has_medicine_id' => $model->id,
+			'observation' => $model->observation
+		]);
+	}
+	private static function create_process(PrescriptionHasMedicine $model, null|Carbon $start_from_date = null)
+	{
+		if ($model->emergency === false) {
+			$now = Carbon::now();
+			$pet_id = $model->prescription->pet_id;
+			if (empty($model->frequency) || (int)$model->frequency < 1) {
+				self::create_pet_has_medicne($model, $model->start_date, $now, $pet_id);
+			} else {
+				$start_date = $start_from_date ?? $model->start_date;
+				while ($start_date <= $model->end_date) {
+					self::create_pet_has_medicne($model, $start_date, $now, $pet_id);
+					$start_date = $start_date->addHours($model->frequency);
+				}
+			}
+		}
 	}
 }

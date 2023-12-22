@@ -3,7 +3,7 @@
 namespace App\Filament\Resources\PetResource\Pages;
 
 use App\Filament\Resources\PetResource;
-use Filament\Pages\Actions;
+use Filament\Actions;
 use Filament\Resources\Pages\ListRecords;
 use Filament\Tables\Actions\Action;
 
@@ -11,7 +11,7 @@ class ListPets extends ListRecords
 {
     protected static string $resource = PetResource::class;
 
-    protected function getActions(): array
+    protected function getHeaderActions(): array
     {
         return [
             Actions\CreateAction::make(),

@@ -7,9 +7,9 @@ use App\Models\Vaccine;
 use Carbon\Carbon;
 use Closure;
 use Filament\Forms;
-use Filament\Resources\Form;
+use Filament\Forms\Form;
 use Filament\Resources\RelationManagers\RelationManager;
-use Filament\Resources\Table;
+use Filament\Tables\Table;
 use Filament\Tables;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
@@ -24,14 +24,14 @@ class PetHasVaccineRelationManager extends RelationManager
 
     protected static ?string $pluralModelLabel = 'vaccines';
 
-    public static function form(Form $form): Form
+    public function form(Form $form): Form
     {
         return $form
             ->schema([
                 Forms\Components\Select::make('vaccine_id')
                     ->options(Vaccine::all()->pluck('name', 'id'))
                     ->reactive()
-                    ->afterStateUpdated(function (Closure $set, Closure $get, $state) {
+                    ->afterStateUpdated(function (\Filament\Forms\Set $set, \Filament\Forms\Get $get, $state) {
                         if ($get('id') === null) {
                             $expire = Vaccine::find($state)?->expire ?? 0;
                             if ($expire > 0 && !empty($get('date'))) {
@@ -43,9 +43,10 @@ class PetHasVaccineRelationManager extends RelationManager
                     ->columnSpanFull()
                     ->required(),
                 Forms\Components\DatePicker::make('date')
+                ->native(false)
                     ->displayFormat(config('filament.date_format'))
                     ->reactive()
-                    ->afterStateUpdated(function (Closure $set, Closure $get, $state) {
+                    ->afterStateUpdated(function (\Filament\Forms\Set $set, \Filament\Forms\Get $get, $state) {
                         if ($get('id') === null) {
                             $expire = Vaccine::find($get('vaccine_id'))?->expire ?? 0;
                             if ($expire > 0 && !empty($state)) {
@@ -56,7 +57,8 @@ class PetHasVaccineRelationManager extends RelationManager
                     })
                     ->required(),
                 Forms\Components\DatePicker::make('expire_at')
-                    ->helperText(function (Closure $get) {
+                ->native(false)
+                    ->helperText(function (\Filament\Forms\Get $get) {
                         $expire = Vaccine::find($get('vaccine_id'))?->expire ?? 0;
                         if ($expire > 0) {
                             return "Default expiration in {$expire} days" . $get('id') . '';
@@ -71,7 +73,7 @@ class PetHasVaccineRelationManager extends RelationManager
             ]);
     }
 
-    public static function table(Table $table): Table
+    public function table(Table $table): Table
     {
         return $table
             ->columns([
@@ -97,24 +99,16 @@ class PetHasVaccineRelationManager extends RelationManager
                 ->searchable()
             ])
             ->headerActions([
-                Tables\Actions\CreateAction::make()->modalHeading(__('filament-support::actions/create.single.modal.heading', ['label' => self::getTitle()])),
+                Tables\Actions\CreateAction::make()->modalHeading(__('filament-actions::create.single.modal.heading', ['label' => self::$title])),
             ])
             ->actions([
-                Tables\Actions\ViewAction::make()->modalHeading(fn ($record) => __('filament-support::actions/view.single.modal.heading', ['label' => $record->vaccine()?->first()->name ?? self::getTitle()])),
-                Tables\Actions\EditAction::make()->modalHeading(fn ($record) => __('filament-support::actions/edit.single.modal.heading', ['label' => $record->vaccine()?->first()->name ?? self::getTitle()])),
+                Tables\Actions\ViewAction::make()->modalHeading(fn ($record) => __('filament-actions::view.single.modal.heading', ['label' => $record->vaccine()?->first()->name ?? self::$title])),
+                Tables\Actions\EditAction::make()->modalHeading(fn ($record) => __('filament-actions::edit.single.modal.heading', ['label' => $record->vaccine()?->first()->name ?? self::$title])),
                 Tables\Actions\DeleteAction::make(),
             ])
             ->bulkActions([
                 Tables\Actions\DeleteBulkAction::make(),
-            ]);
+            ])->defaultSort('date', 'desc');
     }
-    protected function getDefaultTableSortColumn(): ?string
-    {
-        return 'date';
-    }
-
-    protected function getDefaultTableSortDirection(): ?string
-    {
-        return 'desc';
-    }
+ 
 }

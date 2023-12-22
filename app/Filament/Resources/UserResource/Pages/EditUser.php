@@ -11,17 +11,16 @@ use Filament\Facades\Filament;
 use Filament\Forms\Components\Card;
 use Filament\Forms\Components\Fieldset;
 use Filament\Forms\Components\Section;
-use Filament\Pages\Actions;
+use Filament\Actions;
+use Filament\Forms\Form;
 use Filament\Resources\Pages\EditRecord;
 use XliteDev\FilamentImpersonate\Pages\Actions\ImpersonateAction;
-use Filament\Forms\Concerns\InteractsWithForms;
 use Illuminate\Container\Container;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 
 class EditUser extends EditRecord
 {
-    use InteractsWithForms;
 
     protected static string $resource = UserResource::class;
 
@@ -31,7 +30,7 @@ class EditUser extends EditRecord
         return $data;
     }
 
-    protected function getActions(): array
+    protected function getHeaderActions(): array
     {
         return [
             ImpersonateAction::make()->record($this->getRecord()),
@@ -39,9 +38,10 @@ class EditUser extends EditRecord
         ];
     }
 
-    public function getFormSchema(): array
+    public function form(Form $form): Form
     {
-        return [
+        return $form
+        ->schema([
             Section::make('Update your data')
                 ->description('Update your account information')
                 ->schema([
@@ -55,7 +55,7 @@ class EditUser extends EditRecord
                     \Filament\Forms\Components\Select::make('locale')->options(
                         config('filament-spatie-laravel-translatable-plugin.available_locales')
                     )->default('pt')
-                        ->disablePlaceholderSelection(),
+                        ->selectablePlaceholder(false),
                     \Filament\Forms\Components\Toggle::make('status')
                         ->inline(false)
                         ->helperText('Admin panel access')
@@ -77,15 +77,15 @@ class EditUser extends EditRecord
                         ->dehydrateStateUsing(fn ($state) => Hash::make($state))
                         ->dehydrated(fn ($state) => filled($state))
                         ->same('confirm_password')
-                        ->visible(fn (Closure $get): bool => Filament::auth()->user()->id == $this->record->id),
+                        ->visible(fn (\Filament\Forms\Get $get): bool => Filament::auth()->user()->id == $this->record->id),
                     \Filament\Forms\Components\TextInput::make('confirm_password')
                         ->dehydrated(false)
                         ->password()
-                        ->visible(fn (Closure $get): bool => Filament::auth()->user()->id == $this->record->id),
+                        ->visible(fn (\Filament\Forms\Get $get): bool => Filament::auth()->user()->id == $this->record->id),
                 ])
-                ->visible(fn (Closure $get): bool => Filament::auth()->user()->id == $this->record->id)
+                ->visible(fn (\Filament\Forms\Get $get): bool => Filament::auth()->user()->id == $this->record->id)
                 ->columns(2)
-        ];
+        ]);
     }
     // protected function getRedirectUrl(): string
     // {

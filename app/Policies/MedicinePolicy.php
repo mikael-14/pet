@@ -14,9 +14,9 @@ class MedicinePolicy
      * Determine whether the user can view any models.
      *
      * @param  \App\Models\User  $user
-     * @return \Illuminate\Auth\Access\Response|bool
+     * @return bool
      */
-    public function viewAny(User $user)
+    public function viewAny(User $user): bool
     {
         return $user->can('view_any_medicine');
     }
@@ -26,9 +26,9 @@ class MedicinePolicy
      *
      * @param  \App\Models\User  $user
      * @param  \App\Models\Medicine  $medicine
-     * @return \Illuminate\Auth\Access\Response|bool
+     * @return bool
      */
-    public function view(User $user, Medicine $medicine)
+    public function view(User $user, Medicine $medicine): bool
     {
         return $user->can('view_medicine');
     }
@@ -37,9 +37,9 @@ class MedicinePolicy
      * Determine whether the user can create models.
      *
      * @param  \App\Models\User  $user
-     * @return \Illuminate\Auth\Access\Response|bool
+     * @return bool
      */
-    public function create(User $user)
+    public function create(User $user): bool
     {
         return $user->can('create_medicine');
     }
@@ -49,9 +49,9 @@ class MedicinePolicy
      *
      * @param  \App\Models\User  $user
      * @param  \App\Models\Medicine  $medicine
-     * @return \Illuminate\Auth\Access\Response|bool
+     * @return bool
      */
-    public function update(User $user, Medicine $medicine)
+    public function update(User $user, Medicine $medicine): bool
     {
         return $user->can('update_medicine');
     }
@@ -61,9 +61,9 @@ class MedicinePolicy
      *
      * @param  \App\Models\User  $user
      * @param  \App\Models\Medicine  $medicine
-     * @return \Illuminate\Auth\Access\Response|bool
+     * @return bool
      */
-    public function delete(User $user, Medicine $medicine)
+    public function delete(User $user, Medicine $medicine): bool
     {
         return $user->can('delete_medicine');
     }
@@ -72,9 +72,9 @@ class MedicinePolicy
      * Determine whether the user can bulk delete.
      *
      * @param  \App\Models\User  $user
-     * @return \Illuminate\Auth\Access\Response|bool
+     * @return bool
      */
-    public function deleteAny(User $user)
+    public function deleteAny(User $user): bool
     {
         return $user->can('delete_any_medicine');
     }
@@ -84,9 +84,9 @@ class MedicinePolicy
      *
      * @param  \App\Models\User  $user
      * @param  \App\Models\Medicine  $medicine
-     * @return \Illuminate\Auth\Access\Response|bool
+     * @return bool
      */
-    public function forceDelete(User $user, Medicine $medicine)
+    public function forceDelete(User $user, Medicine $medicine): bool
     {
         return $user->can('force_delete_medicine');
     }
@@ -95,9 +95,9 @@ class MedicinePolicy
      * Determine whether the user can permanently bulk delete.
      *
      * @param  \App\Models\User  $user
-     * @return \Illuminate\Auth\Access\Response|bool
+     * @return bool
      */
-    public function forceDeleteAny(User $user)
+    public function forceDeleteAny(User $user): bool
     {
         return $user->can('force_delete_any_medicine');
     }
@@ -107,9 +107,9 @@ class MedicinePolicy
      *
      * @param  \App\Models\User  $user
      * @param  \App\Models\Medicine  $medicine
-     * @return \Illuminate\Auth\Access\Response|bool
+     * @return bool
      */
-    public function restore(User $user, Medicine $medicine)
+    public function restore(User $user, Medicine $medicine): bool
     {
         return $user->can('restore_medicine');
     }
@@ -118,9 +118,9 @@ class MedicinePolicy
      * Determine whether the user can bulk restore.
      *
      * @param  \App\Models\User  $user
-     * @return \Illuminate\Auth\Access\Response|bool
+     * @return bool
      */
-    public function restoreAny(User $user)
+    public function restoreAny(User $user): bool
     {
         return $user->can('restore_any_medicine');
     }
@@ -130,9 +130,9 @@ class MedicinePolicy
      *
      * @param  \App\Models\User  $user
      * @param  \App\Models\Medicine  $medicine
-     * @return \Illuminate\Auth\Access\Response|bool
+     * @return bool
      */
-    public function replicate(User $user, Medicine $medicine)
+    public function replicate(User $user, Medicine $medicine): bool
     {
         return $user->can('replicate_medicine');
     }
@@ -141,9 +141,9 @@ class MedicinePolicy
      * Determine whether the user can reorder.
      *
      * @param  \App\Models\User  $user
-     * @return \Illuminate\Auth\Access\Response|bool
+     * @return bool
      */
-    public function reorder(User $user)
+    public function reorder(User $user): bool
     {
         return $user->can('reorder_medicine');
     }

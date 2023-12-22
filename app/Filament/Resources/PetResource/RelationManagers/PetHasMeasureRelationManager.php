@@ -4,9 +4,9 @@ namespace App\Filament\Resources\PetResource\RelationManagers;
 
 use App\Models\Person;
 use Filament\Forms;
-use Filament\Resources\Form;
+use Filament\Forms\Form;
 use Filament\Resources\RelationManagers\RelationManager;
-use Filament\Resources\Table;
+use Filament\Tables\Table;
 use Filament\Tables;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
@@ -16,6 +16,7 @@ use Filament\Facades\Filament;
 use Filament\Notifications\Notification;
 use Filament\Tables\Actions\CreateAction;
 use Filament\Tables\Contracts\HasRelationshipTable;
+use Filament\Support\RawJs;
 
 class PetHasMeasureRelationManager extends RelationManager
 {
@@ -29,7 +30,7 @@ class PetHasMeasureRelationManager extends RelationManager
 
     protected static ?string $pluralModelLabel = 'measures';
 
-    public static function form(Form $form): Form
+    public function form(Form $form): Form
     {
         $configs = __('pet/measures');
         $schema = [];
@@ -43,17 +44,10 @@ class PetHasMeasureRelationManager extends RelationManager
                     ->disabled(),
                 Forms\Components\TextInput::make('value-' . $key)
                     ->label('Value')
+                    ->inputMode('decimal')
+                    ->minValue(0)
                     ->visibleOn('create')
                     ->numeric()
-                    ->mask(
-                        fn (Forms\Components\TextInput\Mask $mask) => $mask
-                            ->numeric()
-                            ->decimalPlaces(3) // Set the number of digits after the decimal point.
-                            ->decimalSeparator('.') // Add a separator for decimal numbers.
-                            ->mapToDecimalSeparator([',']) // Map additional characters to the decimal separator.
-                            ->minValue(0) // Set the minimum value that the number can be.
-                            ->padFractionalZeros() // Pad zeros at the end of the number to always maintain the maximum number of decimal places.
-                    ),
             ]);
         }
         $schema = array_merge($schema, [
@@ -65,26 +59,19 @@ class PetHasMeasureRelationManager extends RelationManager
                 ->disabled(),
             Forms\Components\TextInput::make('value')
                 ->numeric()
-                ->visibleOn('edit')
-                ->mask(
-                    fn (Forms\Components\TextInput\Mask $mask) => $mask
-                        ->numeric()
-                        ->decimalPlaces(3) // Set the number of digits after the decimal point.
-                        ->decimalSeparator('.') // Add a separator for decimal numbers.
-                        ->mapToDecimalSeparator([',']) // Map additional characters to the decimal separator.
-                        ->minValue(0) // Set the minimum value that the number can be.
-                        ->padFractionalZeros() // Pad zeros at the end of the number to always maintain the maximum number of decimal places.
-                ),
-            Forms\Components\DatePicker::make('date')->displayFormat(config('filament.date_format'))->required(),
+                ->inputMode('decimal')
+                ->minValue(0)
+                ->visibleOn('edit'),
+            Forms\Components\DatePicker::make('date')->native(false)->displayFormat(config('filament.date_format'))->required(),
             Forms\Components\TextInput::make('local')->maxLength(50),
-            Forms\Components\Select::make('person_id')->options(Person::getPersonByFlag(['veterinary','medication_volunteer'])->toArray())->searchable()->columnSpanFull(),
+            Forms\Components\Select::make('person_id')->options(Person::getPersonByFlag(['veterinary', 'medication_volunteer'])->toArray())->searchable()->columnSpanFull(),
             Forms\Components\Textarea::make('observation')->maxLength(300)->columnSpanFull(),
         ]);
         return $form
             ->schema($schema);
     }
 
-    public static function table(Table $table): Table
+    public function table(Table $table): Table
     {
         return $table
             ->columns([
@@ -104,8 +91,8 @@ class PetHasMeasureRelationManager extends RelationManager
             ])
             ->filters([
                 Tables\Filters\SelectFilter::make('person_id')
-                ->relationship('person', 'name')
-                ->searchable()
+                    ->relationship('person', 'name')
+                    ->searchable()
             ])
             ->headerActions([
                 Tables\Actions\CreateAction::make()->afterFormValidated(function (CreateAction $action, array $data) {
@@ -118,7 +105,7 @@ class PetHasMeasureRelationManager extends RelationManager
                     $filteredArr = array_filter($filteredArr);
                     if (count($filteredArr) === 0)
                         $action->halt();
-                })->using(function (HasRelationshipTable $livewire, array $data) {
+                })->using(function ($livewire, array $data) {
                     $filteredArr = array_filter(
                         $data,
                         fn ($key) => str_starts_with($key, 'type-'),
@@ -137,24 +124,16 @@ class PetHasMeasureRelationManager extends RelationManager
                         $livewire->getRelationship()->create($row);
                     }
                     return $livewire->getRelationship()->create($data);
-                })->modalHeading(__('filament-support::actions/create.single.modal.heading', ['label' => self::getTitle()])),
+                })->modalHeading(__('filament-actions::create.single.modal.heading', ['label' => self::$title])),
             ])
             ->actions([
-                Tables\Actions\ViewAction::make()->modalHeading(fn ($record) => __('filament-support::actions/view.single.modal.heading', ['label' => $record?->getConfigMeasureName() ?? self::getTitle()])),
-                Tables\Actions\EditAction::make()->modalHeading(fn ($record) => __('filament-support::actions/edit.single.modal.heading', ['label' => $record?->getConfigMeasureName() ?? self::getTitle()])),
+                Tables\Actions\ViewAction::make()->modalHeading(fn ($record) => __('filament-actions::view.single.modal.heading', ['label' => $record?->getConfigMeasureName() ?? self::$title])),
+                Tables\Actions\EditAction::make()->modalHeading(fn ($record) => __('filament-actions::edit.single.modal.heading', ['label' => $record?->getConfigMeasureName() ?? self::$title])),
                 Tables\Actions\DeleteAction::make(),
             ])
             ->bulkActions([
                 Tables\Actions\DeleteBulkAction::make(),
-            ]);
-    }
-    protected function getDefaultTableSortColumn(): ?string
-    {
-        return 'date';
+            ])->defaultSort('date', 'desc');
     }
 
-    protected function getDefaultTableSortDirection(): ?string
-    {
-        return 'desc';
-    }
 }

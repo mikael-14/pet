@@ -6,21 +6,20 @@ use App\Filament\Resources\UserResource;
 use App\Models\ModelHasRole;
 use App\Models\Role;
 use App\Models\User;
-use Filament\Pages\Actions;
+use Filament\Actions;
 use Filament\Resources\Pages\CreateRecord;
-use Filament\Forms\Concerns\InteractsWithForms;
 use Illuminate\Support\Facades\Hash;
-
-class CreateUser extends CreateRecord
+use Filament\Forms\Form;
+class CreateUser extends CreateRecord 
 {
-    use InteractsWithForms;
-
+    
     protected static string $resource = UserResource::class;
 
-    public function getFormSchema(): array
+    public function form(Form $form): Form
     {
-        return [
-            \Filament\Forms\Components\Card::make()
+        return $form
+        ->schema([
+            \Filament\Forms\Components\Section::make()
                 ->schema([
                     \Filament\Forms\Components\TextInput::make('name')
                         ->required(),
@@ -32,7 +31,7 @@ class CreateUser extends CreateRecord
                     \Filament\Forms\Components\Select::make('locale')->options(
                         config('filament-spatie-laravel-translatable-plugin.available_locales')
                     )->default('pt')
-                        ->disablePlaceholderSelection(),
+                        ->selectablePlaceholder(false),
                     \Filament\Forms\Components\Toggle::make('status')
                         ->inline(false)
                         ->helperText('Admin panel access')
@@ -43,7 +42,7 @@ class CreateUser extends CreateRecord
                                 ->toArray()
                         ),
                 ])->columns(2),
-            \Filament\Forms\Components\Card::make()
+            \Filament\Forms\Components\Section::make()
                 ->schema([
                     \Filament\Forms\Components\TextInput::make('password')
                         ->label('Define a password')
@@ -59,7 +58,7 @@ class CreateUser extends CreateRecord
                         ->required(),
                 ])
                 ->columns(2),
-        ];
+        ]);
     }
     protected function afterCreate(): void
     {

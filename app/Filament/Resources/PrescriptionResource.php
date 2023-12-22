@@ -5,19 +5,19 @@ namespace App\Filament\Resources;
 use App\Filament\Resources\PrescriptionResource\Pages;
 use App\Filament\Resources\PrescriptionResource\RelationManagers;
 use App\Models\Clinic;
+use App\Models\Medicine;
 use App\Models\Person;
 use App\Models\Pet;
 use App\Models\Prescription;
 use Filament\Forms;
 use Filament\Forms\Components\SpatieMediaLibraryFileUpload;
-use Filament\Resources\Form;
+use Filament\Forms\Form;
 use Filament\Resources\Resource;
-use Filament\Resources\Table;
+use Filament\Tables\Table;
 use Filament\Tables;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 use Awcodes\FilamentBadgeableColumn\Components\Badge;
-use Awcodes\FilamentBadgeableColumn\Components\BadgeField;
 use Awcodes\FilamentBadgeableColumn\Components\BadgeableColumn;
 
 
@@ -25,13 +25,13 @@ class PrescriptionResource extends Resource
 {
     protected static ?string $model = Prescription::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-collection';
+    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
 
     public static function form(Form $form): Form
     {
         return $form
             ->schema([
-                Forms\Components\Card::make()
+                Forms\Components\Section::make()
                     ->schema([
                         Forms\Components\Select::make('pet_id')
                             ->allowHtml()
@@ -84,14 +84,25 @@ class PrescriptionResource extends Resource
                             ->searchable()
                             ->options(Clinic::limit(10)->pluck('name', 'id')),
                         Forms\Components\DatePicker::make('date')
+                            ->native(false)
                             ->displayFormat(config('filament.date_format'))
                             ->default(now())
                             ->required(),
                         SpatieMediaLibraryFileUpload::make('file')
                             ->disk('petsPrescriptions')
                             ->collection('pets-prescriptions')
-                            ->enableOpen()
-                            ->enableDownload()
+                            ->openable()
+                            ->downloadable()
+                            ->deletable(false)
+                            ->hintAction(
+                                Forms\Components\Actions\Action::make('removeFile')
+                                    ->icon('heroicon-m-x-mark')
+                                    ->color('danger')
+                                    ->requiresConfirmation()
+                                    ->action(function (Forms\Set $set, $state) {
+                                        $set('file', null);
+                                    })
+                            )
                             ->columnSpan('full')
                             ->hiddenOn('view'),
                         Forms\Components\Textarea::make('observation')
@@ -107,6 +118,9 @@ class PrescriptionResource extends Resource
             ->columns([
                 Tables\Columns\TextColumn::make('pet.name')
                     ->searchable(),
+                Tables\Columns\TextColumn::make('number')
+                    ->toggleable(isToggledHiddenByDefault: true)
+                    ->searchable(),
                 Tables\Columns\TextColumn::make('clinic.name')
                     ->toggleable(isToggledHiddenByDefault: true)
                     ->placeholder('-')
@@ -119,48 +133,26 @@ class PrescriptionResource extends Resource
                     ->toggleable(isToggledHiddenByDefault: true),
                 Tables\Columns\TextColumn::make('medicine_start_date')
                     ->dateTime(config('filament.date_time_format'))
+                    ->sortable()
                     ->placeholder('-'),
                 Tables\Columns\TextColumn::make('medicine_end_date')
                     ->dateTime(config('filament.date_time_format'))
                     ->toggleable(isToggledHiddenByDefault: true)
+                    ->sortable()
                     ->placeholder('-'),
                 BadgeableColumn::make('count_medicines')
-                    ->badges(function (?Prescription $record) {
-                        $states = $record->global_state;
-                        $badges = [];
-                        foreach ($states as $name => $value) {
-                            switch ($name) {
-                                case 'active':
-                                    $badges[] = Badge::make($name)
-                                        ->label(__('pet/prescriptionmedicines.status.active') . ($value > 1 ? "($value)" : ''))
-                                        ->color('#dbeafe');
-                                    break;
-                                case 'on_hold':
-                                    $badges[] = Badge::make($name)
-                                        ->label(__('pet/prescriptionmedicines.status.on_hold') . ($value > 1 ? "($value)" : ''))
-                                        ->color('#fef3c7');
-                                    break;
-                                case 'canceled':
-                                    $badges[] = Badge::make($name)
-                                        ->label(__('pet/prescriptionmedicines.status.canceled') . ($value > 1 ? "($value)" : ''))
-                                        ->color('#ffe4e6');
-                                    break;
-                                case 'completed':
-                                    $badges[] = Badge::make($name)
-                                        ->label(__('pet/prescriptionmedicines.status.completed') . ($value > 1 ? "($value)" : ''))
-                                        ->color('#bbf7d0');
-                                    break;
-                                case 'unstarted':
-                                    $badges[] = Badge::make($name)
-                                        ->label(__('pet/prescriptionmedicines.additional_status.unstarted') . ($value > 1 ? "($value)" : ''))
-                                        ->color('#f7f8f8');
-                                    break;
-                                default:
-                                    # code...
-                                    break;
-                            }
-                        }
-                        return $badges;
+                    ->label('Medicines')
+                    ->suffixBadges(function ($record) {
+                        return $record->prescription_has_medicines->map(function ($medicines) {
+                            return Badge::make($medicines->medicine->name)->color(fn () => match ($medicines->status) {
+                                default => 'primary',
+                                'unstarted' => 'gray',
+                                'on_hold' => 'warning',
+                                'active' => 'info',
+                                'completed' => 'success',
+                                'canceled' => 'danger',
+                            });
+                        });
                     }),
                 Tables\Columns\TextColumn::make('created_at')
                     ->dateTime(config('filament.date_time_format'))->toggleable(isToggledHiddenByDefault: true),
@@ -168,10 +160,13 @@ class PrescriptionResource extends Resource
                     ->dateTime(config('filament.date_time_format'))->toggleable(isToggledHiddenByDefault: true),
             ])
             ->filters([
-                // Tables\Filters\SelectFilter::make('global_state')
-                //     ->multiple()
-                //     ->options(fn() =>
-                //          array_merge(__('pet/prescriptionmedicines.additional_status'), __('pet/prescriptionmedicines.status'))),
+                Tables\Filters\SelectFilter::make('pet_id')
+                    ->relationship('pet', 'name')
+                    ->searchable(),
+                Tables\Filters\SelectFilter::make('medicines.id')
+                    ->relationship('medicines', 'name')
+                    ->multiple()
+                    ->searchable(),
                 Tables\Filters\TrashedFilter::make(),
             ])
             ->actions([
@@ -186,7 +181,7 @@ class PrescriptionResource extends Resource
                 Tables\Actions\ViewAction::make(),
             ])
             ->bulkActions([
-                Tables\Actions\DeleteBulkAction::make(),
+                //Tables\Actions\DeleteBulkAction::make(),
                 //Tables\Actions\ForceDeleteBulkAction::make(),
                 Tables\Actions\RestoreBulkAction::make(),
             ]);
@@ -218,7 +213,8 @@ class PrescriptionResource extends Resource
     }
     public static function getOptionPet(Pet $model): string
     {
-        $image = $model->getMedia('pets-main-image')[0]?->getUrl();
+        $mediaCollection = $model->getMedia('pets-main-image');
+        $image = $mediaCollection->isNotEmpty() ? $mediaCollection[0]->getUrl() : '';
         return
             view('filament.components.select-with-image')
             ->with('label', $model?->name)
@@ -235,4 +231,5 @@ class PrescriptionResource extends Resource
             ->with('image', false)
             ->render();
     }
+
 }

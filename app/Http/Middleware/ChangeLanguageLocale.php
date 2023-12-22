@@ -5,7 +5,7 @@ namespace App\Http\Middleware;
 use Closure;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-
+use Illuminate\Support\Facades\App;
 class ChangeLanguageLocale
 {
         /**
@@ -19,8 +19,9 @@ class ChangeLanguageLocale
     {
         $locale = session()->get('locale') ?? $request->get('locale') ?? (Auth::user() ? Auth::user()->locale : null) ?? config('app.locale', 'en');
 
-        if (in_array($locale, config('filament-spatie-laravel-translatable-plugin.default_locales'))) {
-            app()->setLocale($locale);
+        if (array_key_exists($locale, config('filament-spatie-laravel-translatable-plugin.available_locales'))) {
+            App::setLocale($locale);
+            session(['locale'=> $locale]);
         }
 
         return $next($request);

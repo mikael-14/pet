@@ -6,9 +6,9 @@ use App\Filament\Resources\MedicineResource\Pages;
 use App\Filament\Resources\MedicineResource\RelationManagers;
 use App\Models\Medicine;
 use Filament\Forms;
-use Filament\Resources\Form;
+use Filament\Forms\Form;
 use Filament\Resources\Resource;
-use Filament\Resources\Table;
+use Filament\Tables\Table;
 use Filament\Tables;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
@@ -18,7 +18,7 @@ class MedicineResource extends Resource
 {
     protected static ?string $model = Medicine::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-collection';
+    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
 
     public static function form(Form $form): Form
     {
@@ -55,9 +55,11 @@ class MedicineResource extends Resource
                 Tables\Columns\TextColumn::make('name')
                     ->searchable(),
                 Tables\Columns\TextColumn::make('type')
-                    ->enum(__('pet/medicine')),
+                ->formatStateUsing(fn (string $state): string =>  __('pet/medicine')[$state] ?? '-'),
                 Tables\Columns\TextColumn::make('dosage'),
-                Tables\Columns\TagsColumn::make('active_ingredient')
+                Tables\Columns\TextColumn::make('active_ingredient')
+                ->badge()
+                ->color('primary')
                     ->searchable(),
                 Tables\Columns\TextColumn::make('aplication'),
                 Tables\Columns\TextColumn::make('created_at')

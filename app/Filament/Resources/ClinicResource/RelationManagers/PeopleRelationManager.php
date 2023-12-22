@@ -5,11 +5,10 @@ namespace App\Filament\Resources\ClinicResource\RelationManagers;
 use App\Filament\Resources\ClinicResource\Pages\ViewClinic;
 use App\Filament\Resources\PersonResource;
 use App\Models\Person;
-use Awcodes\FilamentBadgeableColumn\Components\BadgeableTagsColumn;
 use Filament\Forms;
-use Filament\Resources\Form;
+use Filament\Forms\Form;
 use Filament\Resources\RelationManagers\RelationManager;
-use Filament\Resources\Table;
+use Filament\Tables\Table;
 use Filament\Tables;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
@@ -20,18 +19,19 @@ class PeopleRelationManager extends RelationManager
 
     protected static ?string $recordTitleAttribute = 'name';
 
-    public static function form(Form $form): Form
+    public function form(Form $form): Form
     {
         return PersonResource::form($form);
     }
 
-    public static function table(Table $table): Table
+    public function table(Table $table): Table
     {
         return $table
             ->columns([
                 Tables\Columns\TextColumn::make('name')->searchable(),
                 Tables\Columns\TextColumn::make('email')->searchable(),
-                BadgeableTagsColumn::make('flags')
+                Tables\Columns\TextColumn::make('flags')
+                ->badge()
                 ->colors([
                     'danger' => 'Black list',
                     '#fdecce' => 'Adopter',
@@ -51,7 +51,7 @@ class PeopleRelationManager extends RelationManager
                 //
             ])
             ->headerActions([
-                Tables\Actions\CreateAction::make()->color('secondary')
+                Tables\Actions\CreateAction::make()->color('gray')
                 ->visible(fn ($livewire) => $livewire->pageClass !== ViewClinic::class),
                 Tables\Actions\AttachAction::make()->color('primary')
                 ->visible(fn ($livewire) => $livewire->pageClass !== ViewClinic::class),

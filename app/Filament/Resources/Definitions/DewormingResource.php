@@ -6,9 +6,9 @@ use App\Filament\Resources\Definitions\DewormingResource\Pages;
 use App\Filament\Resources\Definitions\DewormingResource\RelationManagers;
 use App\Models\Deworming;
 use Filament\Forms;
-use Filament\Resources\Form;
+use Filament\Forms\Form;
 use Filament\Resources\Resource;
-use Filament\Resources\Table;
+use Filament\Tables\Table;
 use Filament\Tables;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
@@ -17,7 +17,7 @@ class DewormingResource extends Resource
 {
     protected static ?string $model = Deworming::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-collection';
+    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
 
     protected static ?string $slug = 'definitions/deworming';
 
@@ -58,11 +58,13 @@ class DewormingResource extends Resource
         return $table
             ->columns([
                 Tables\Columns\TextColumn::make('name'),
-                Tables\Columns\TextColumn::make('type')->enum([
-                    'internal' => 'Internal',
-                    'external' => 'External',
-                    'internal and external' => 'Internal and external',
-                ]),
+                Tables\Columns\TextColumn::make('type')
+                    ->formatStateUsing(fn (string $state): string => match ($state) {
+                        'internal' => 'Internal',
+                        'external' => 'External',
+                        'internal and external' => 'Internal and external',
+                    })->badge()
+                    ->color('primary'),
                 Tables\Columns\TextColumn::make('expire'),
                 Tables\Columns\TextColumn::make('notification'),
                 Tables\Columns\TextColumn::make('created_at')

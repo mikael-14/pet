@@ -7,9 +7,9 @@ use App\Models\PetHasTest;
 use App\Models\Test;
 use Filament\Forms;
 use Filament\Forms\Components\SpatieMediaLibraryFileUpload;
-use Filament\Resources\Form;
+use Filament\Forms\Form;
 use Filament\Resources\RelationManagers\RelationManager;
-use Filament\Resources\Table;
+use Filament\Tables\Table;
 use Filament\Tables;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
@@ -24,15 +24,16 @@ class PetHasTestRelationManager extends RelationManager
 
     protected static ?string $pluralModelLabel = 'tests';
 
-    public static function form(Form $form): Form
+    public function form(Form $form): Form
     {
         return $form
             ->schema([
-                  Forms\Components\Select::make('test_id')
+                Forms\Components\Select::make('test_id')
                     ->options(Test::all()->pluck('name', 'id'))
                     ->columnSpanFull()
                     ->required(),
                 Forms\Components\DatePicker::make('date')
+                    ->native(false)
                     ->displayFormat(config('filament.date_format'))
                     ->required(),
                 Forms\Components\Select::make('result')
@@ -42,21 +43,31 @@ class PetHasTestRelationManager extends RelationManager
                         'negative' => 'Negative',
                     ])
                     ->default('unknown')
-                    ->disablePlaceholderSelection()
+                    ->selectablePlaceholder(false)
                     ->required(),
                 Forms\Components\TextInput::make('local')->maxLength(50),
-                Forms\Components\Select::make('person_id')->options(Person::getPersonByFlag(['veterinary','medication_volunteer'])->toArray())->searchable(),
+                Forms\Components\Select::make('person_id')->options(Person::getPersonByFlag(['veterinary', 'medication_volunteer'])->toArray())->searchable(),
                 Forms\Components\Textarea::make('observation')->maxLength(300)->columnSpanFull(),
                 SpatieMediaLibraryFileUpload::make('file')
-                ->disk('petsTests')
-                ->collection('pets-tests')
-                ->enableOpen()
-                ->enableDownload()
-                ->columnSpan('full'),
+                    ->disk('petsTests')
+                    ->collection('pets-tests')
+                    ->openable()
+                    ->downloadable()
+                    ->deletable(false)
+                    ->hintAction(
+                        Forms\Components\Actions\Action::make('removeFile')
+                            ->icon('heroicon-m-x-mark')
+                            ->color('danger')
+                            ->requiresConfirmation()
+                            ->action(function (Forms\Set $set, $state) {
+                                $set('file', null);
+                            })
+                    )
+                    ->columnSpan('full'),
             ]);
     }
 
-    public static function table(Table $table): Table
+    public function table(Table $table): Table
     {
         return $table
             ->columns([
@@ -65,7 +76,8 @@ class PetHasTestRelationManager extends RelationManager
                 Tables\Columns\TextColumn::make('date')
                     ->sortable()
                     ->date(config('filament.date_format')),
-                Tables\Columns\BadgeColumn::make('result')
+                Tables\Columns\TextColumn::make('result')
+                    ->badge()
                     ->colors([
                         'warning' => 'unknown',
                         'danger' => 'positive',
@@ -75,43 +87,43 @@ class PetHasTestRelationManager extends RelationManager
                 Tables\Columns\TextColumn::make('local')
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
-                    Tables\Columns\TextColumn::make('person.name')
+                Tables\Columns\TextColumn::make('person.name')
                     ->toggleable(),
                 Tables\Columns\TextColumn::make('observation')
                     ->toggleable(isToggledHiddenByDefault: true),
             ])
             ->filters([
                 Tables\Filters\SelectFilter::make('person_id')
-                ->relationship('person', 'name')
-                ->searchable(),
+                    ->relationship('person', 'name')
+                    ->searchable(),
                 Tables\Filters\SelectFilter::make('result')
-                ->options([
-                    'unknown' => 'Unkown',
-                    'positive' => 'Positive',
-                    'negative' => 'Negative',
-                ]),
+                    ->options([
+                        'unknown' => 'Unkown',
+                        'positive' => 'Positive',
+                        'negative' => 'Negative',
+                    ]),
             ])
             ->headerActions([
                 Tables\Actions\CreateAction::make()
-                ->modalHeading( __('filament-support::actions/create.single.modal.heading', ['label' => self::getTitle()])),
+                    ->modalHeading(__('filament-actions::create.single.modal.heading', ['label' => self::$title])),
             ])
             ->actions([
                 Tables\Actions\Action::make('file')
-                ->label('View file')
-                ->color('info')
-                ->url(fn  (PetHasTest $record) => $record->getMedia('pets-tests')[0]?->getFullUrl())
-                ->visible(fn (PetHasTest $record): bool => isset($record->getMedia('pets-tests')[0]) ? true : false)
-                ->openUrlInNewTab()
-                ->icon('tabler-file-download'),
-                Tables\Actions\ViewAction::make()->modalHeading(fn ($record) => __('filament-support::actions/view.single.modal.heading', ['label' => $record->test()?->first()->name ?? self::getTitle()])),
-                Tables\Actions\EditAction::make()->modalHeading(fn ($record) => __('filament-support::actions/edit.single.modal.heading', ['label' => $record->test()?->first()->name ?? self::getTitle()])),
+                    ->label('View file')
+                    ->color('info')
+                    ->url(fn (PetHasTest $record) => $record->getMedia('pets-tests')[0]?->getFullUrl())
+                    ->visible(fn (PetHasTest $record): bool => isset($record->getMedia('pets-tests')[0]) ? true : false)
+                    ->openUrlInNewTab()
+                    ->icon('tabler-file-download'),
+                Tables\Actions\ViewAction::make()->modalHeading(fn ($record) => __('filament-actions::view.single.modal.heading', ['label' => $record->test()?->first()->name ?? self::$title])),
+                Tables\Actions\EditAction::make()->modalHeading(fn ($record) => __('filament-actions::edit.single.modal.heading', ['label' => $record->test()?->first()->name ?? self::$title])),
                 Tables\Actions\DeleteAction::make(),
             ])
             ->bulkActions([
                 Tables\Actions\DeleteBulkAction::make(),
                 Tables\Actions\ForceDeleteBulkAction::make(),
                 Tables\Actions\RestoreBulkAction::make(),
-            ]);
+            ])->defaultSort('date', 'desc');
     }
     public static function getEloquentQuery(): Builder
     {
@@ -119,14 +131,6 @@ class PetHasTestRelationManager extends RelationManager
             ->withoutGlobalScopes([
                 SoftDeletingScope::class,
             ]);
-    }  
-    protected function getDefaultTableSortColumn(): ?string
-    {
-        return 'date';
     }
-
-    protected function getDefaultTableSortDirection(): ?string
-    {
-        return 'desc';
-    } 
+  
 }

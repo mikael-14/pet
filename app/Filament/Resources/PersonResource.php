@@ -12,18 +12,18 @@ use Awcodes\DropInAction\Forms\Components\DropInAction;
 use BezhanSalleh\FilamentShield\Contracts\HasShieldPermissions;
 use Filament\Facades\Filament;
 use Filament\Forms;
-use Filament\Forms\Components\Card;
-use Filament\Resources\Form;
+use Filament\Forms\Form;
 use Filament\Resources\Resource;
-use Filament\Resources\Table;
+use Filament\Tables\Table;
 use Filament\Tables;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 use Cheesegrits\FilamentGoogleMaps\Fields\Map;
 use Cheesegrits\FilamentGoogleMaps\Fields\Geocomplete;
 use Closure;
+use Filament\Forms\Get;
+use Filament\Forms\Set;
 use Filament\Resources\Pages\ViewRecord;
-use Awcodes\FilamentBadgeableColumn\Components\BadgeableTagsColumn;
 use Filament\Resources\Pages\Page;
 
 class PersonResource extends Resource implements HasShieldPermissions
@@ -55,7 +55,7 @@ class PersonResource extends Resource implements HasShieldPermissions
     {
         return $form
             ->schema([
-                Card::make()
+                Forms\Components\Section::make()
                     ->schema([
                         Forms\Components\TextInput::make('name')
                             ->required()
@@ -82,6 +82,7 @@ class PersonResource extends Resource implements HasShieldPermissions
                         Forms\Components\TextInput::make('cc')
                             ->maxLength(30),
                         Forms\Components\DatePicker::make('birth_date')
+                        ->native(false)
                             ->displayFormat(config('filament.date_format')),
                         Forms\Components\Select::make('user_id')->options(
                             Person::avaibleUsers()
@@ -98,6 +99,27 @@ class PersonResource extends Resource implements HasShieldPermissions
                     ])->columns(2),
                 Forms\Components\Section::make('Address')
                     ->schema([
+                        Forms\Components\TextInput::make('street')
+                            ->maxLength(100)
+                            ->suffixActions([
+                                Forms\Components\Actions\Action::make('map')
+                                    ->icon('tabler-map-search')
+                                    ->label('Map')
+                                    ->hiddenLabel()
+                                    ->action(function (Get $get, Set $set) {
+                                        $set('show_geocomplete', false);
+                                        $set('show_map', !$get('show_map'));
+                                    }),
+                                Forms\Components\Actions\Action::make('geolocate')
+                                    ->icon('tabler-input-search')
+                                    ->label('Geocode')
+                                    ->hiddenLabel()
+                                    ->action(function (Get $get, Set $set) {
+                                        $set('show_geocomplete', !$get('show_geocomplete'));
+                                        $set('show_map', false);
+                                    })
+                            ])
+                            ->columnSpan(10),
                         Geocomplete::make('location')
                             ->isLocation()
                             ->reverseGeocode([
@@ -111,7 +133,7 @@ class PersonResource extends Resource implements HasShieldPermissions
                             ->updateLatLng() // update the lat/lng fields on your form when a Place is selected
                             ->maxLength(1024)
                             ->placeholder('Search ...')
-                            ->visible(fn (Closure $get): bool => $get('show_geocomplete'))
+                            ->visible(fn (\Filament\Forms\Get $get): bool => $get('show_geocomplete'))
                             ->hint('Search by Google')
                             ->helperText('Search an address to help get data')
                             ->hiddenOn('view')
@@ -143,7 +165,7 @@ class PersonResource extends Resource implements HasShieldPermissions
                             })
                             ->hint('Map by Google')
                             ->helperText('Move the pin to help get data')
-                            ->visible(fn (Closure $get, $livewire): bool => $livewire instanceof ViewRecord && $get('latitude') && $get('longitude') ? true : $get('show_map'))
+                            ->visible(fn (\Filament\Forms\Get $get, $livewire): bool => $livewire instanceof ViewRecord && $get('latitude') && $get('longitude') ? true : $get('show_map'))
                             ->columnSpanFull(),
                         Forms\Components\Toggle::make('show_geocomplete')->reactive()->default(false)->dehydrated(false)->hidden(),
                         Forms\Components\Toggle::make('show_map')->reactive()->default(false)->dehydrated(false)->hidden(),
@@ -175,34 +197,6 @@ class PersonResource extends Resource implements HasShieldPermissions
                             })
                             ->hidden()
                             ->lazy(),
-                        Forms\Components\TextInput::make('street')
-                            ->maxLength(100)
-                            ->columnSpan(9),
-                        DropInAction::make('buttons_show_hide')
-                            ->disableLabel()
-                            ->execute(function (Closure $get, Closure $set,Page $livewire) {
-                                $form[] = Forms\Components\Actions\Action::make('map')
-                                    ->icon('tabler-map-search')
-                                    ->label('Map')
-                                    ->action(function () use ($get, $set) {
-                                        $set('show_geocomplete', false);
-                                        $set('show_map', !$get('show_map'));
-                                    });
-                                if ($livewire instanceof ViewPerson !== true) {
-                                    array_unshift(
-                                        $form,
-                                        Forms\Components\Actions\Action::make('geolocate')
-                                            ->icon('tabler-input-search')
-                                            ->label('Geocode')
-                                            ->action(function () use ($get, $set) {
-                                                $set('show_geocomplete', !$get('show_geocomplete'));
-                                                $set('show_map', false);
-                                            })
-                                    );
-                                }
-                                return $form;
-                            })
-                            ->columnSpan(1),
                         Forms\Components\Select::make('country')
                             ->options(__('pet/country'))
                             ->columnSpan(5),
@@ -213,8 +207,8 @@ class PersonResource extends Resource implements HasShieldPermissions
                             ->maxLength(100)
                             ->columnSpan(5),
                         Forms\Components\TextInput::make('zip')
-                            ->placeholder('0000-000')
-                            ->mask(fn (Forms\Components\TextInput\Mask $mask) => $mask->pattern('0000-000'))
+                            ->placeholder('9999-999')
+                            ->mask('9999-999')
                             ->maxLength(20)
                             ->columnSpan(5),
                     ])->columns(10),
@@ -231,16 +225,18 @@ class PersonResource extends Resource implements HasShieldPermissions
                 Tables\Columns\TextColumn::make('phone')->searchable(),
                 Tables\Columns\TextColumn::make('vat')->searchable(),
                 Tables\Columns\TextColumn::make('cc')->toggleable(isToggledHiddenByDefault: true),
-                BadgeableTagsColumn::make('flags')
-                    ->colors([
-                        'danger' => 'Black list',
-                        '#fdecce' => 'Adopter',
-                        '#fceacc' => 'Temporary host family',
-                        '#f7e7cd' => 'Sponsor',
-                        '#f7e3c3' => 'Veterinary',
-                    ])
+                Tables\Columns\TextColumn::make('flags')
+                ->badge()
+                ->color(fn (string $state): string => match ($state) {
+                    'Black list' => 'danger',
+                    'Adopter' => 'info',
+                    'Temporary host family' => 'warning',
+                    'Sponsor' => 'info',
+                    'Veterinary' => 'success',
+                    default => 'primary',
+                })
                     ->getStateUsing(function ($record) {
-                        return $record->person_flags()->get()->map(function ($item){
+                        return $record->person_flags()->get()->map(function ($item) {
                             return $item->getName();
                         })->toArray();
                     })

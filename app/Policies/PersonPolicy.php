@@ -14,9 +14,9 @@ class PersonPolicy
      * Determine whether the user can view any models.
      *
      * @param  \App\Models\User  $user
-     * @return \Illuminate\Auth\Access\Response|bool
+     * @return bool
      */
-    public function viewAny(User $user)
+    public function viewAny(User $user): bool
     {
         return $user->can('view_any_person');
     }
@@ -26,9 +26,9 @@ class PersonPolicy
      *
      * @param  \App\Models\User  $user
      * @param  \App\Models\Person  $person
-     * @return \Illuminate\Auth\Access\Response|bool
+     * @return bool
      */
-    public function view(User $user, Person $person)
+    public function view(User $user, Person $person): bool
     {
         return $user->can('view_person');
     }
@@ -37,9 +37,9 @@ class PersonPolicy
      * Determine whether the user can create models.
      *
      * @param  \App\Models\User  $user
-     * @return \Illuminate\Auth\Access\Response|bool
+     * @return bool
      */
-    public function create(User $user)
+    public function create(User $user): bool
     {
         return $user->can('create_person');
     }
@@ -49,9 +49,9 @@ class PersonPolicy
      *
      * @param  \App\Models\User  $user
      * @param  \App\Models\Person  $person
-     * @return \Illuminate\Auth\Access\Response|bool
+     * @return bool
      */
-    public function update(User $user, Person $person)
+    public function update(User $user, Person $person): bool
     {
         return $user->can('update_person');
     }
@@ -61,9 +61,9 @@ class PersonPolicy
      *
      * @param  \App\Models\User  $user
      * @param  \App\Models\Person  $person
-     * @return \Illuminate\Auth\Access\Response|bool
+     * @return bool
      */
-    public function delete(User $user, Person $person)
+    public function delete(User $user, Person $person): bool
     {
         return $user->can('delete_person');
     }
@@ -72,9 +72,9 @@ class PersonPolicy
      * Determine whether the user can bulk delete.
      *
      * @param  \App\Models\User  $user
-     * @return \Illuminate\Auth\Access\Response|bool
+     * @return bool
      */
-    public function deleteAny(User $user)
+    public function deleteAny(User $user): bool
     {
         return $user->can('delete_any_person');
     }
@@ -84,9 +84,9 @@ class PersonPolicy
      *
      * @param  \App\Models\User  $user
      * @param  \App\Models\Person  $person
-     * @return \Illuminate\Auth\Access\Response|bool
+     * @return bool
      */
-    public function forceDelete(User $user, Person $person)
+    public function forceDelete(User $user, Person $person): bool
     {
         return $user->can('{{ ForceDelete }}');
     }
@@ -95,9 +95,9 @@ class PersonPolicy
      * Determine whether the user can permanently bulk delete.
      *
      * @param  \App\Models\User  $user
-     * @return \Illuminate\Auth\Access\Response|bool
+     * @return bool
      */
-    public function forceDeleteAny(User $user)
+    public function forceDeleteAny(User $user): bool
     {
         return $user->can('{{ ForceDeleteAny }}');
     }
@@ -107,9 +107,9 @@ class PersonPolicy
      *
      * @param  \App\Models\User  $user
      * @param  \App\Models\Person  $person
-     * @return \Illuminate\Auth\Access\Response|bool
+     * @return bool
      */
-    public function restore(User $user, Person $person)
+    public function restore(User $user, Person $person): bool
     {
         return $user->can('{{ Restore }}');
     }
@@ -118,9 +118,9 @@ class PersonPolicy
      * Determine whether the user can bulk restore.
      *
      * @param  \App\Models\User  $user
-     * @return \Illuminate\Auth\Access\Response|bool
+     * @return bool
      */
-    public function restoreAny(User $user)
+    public function restoreAny(User $user): bool
     {
         return $user->can('{{ RestoreAny }}');
     }
@@ -130,9 +130,9 @@ class PersonPolicy
      *
      * @param  \App\Models\User  $user
      * @param  \App\Models\Person  $person
-     * @return \Illuminate\Auth\Access\Response|bool
+     * @return bool
      */
-    public function replicate(User $user, Person $person)
+    public function replicate(User $user, Person $person): bool
     {
         return $user->can('{{ Replicate }}');
     }
@@ -141,9 +141,9 @@ class PersonPolicy
      * Determine whether the user can reorder.
      *
      * @param  \App\Models\User  $user
-     * @return \Illuminate\Auth\Access\Response|bool
+     * @return bool
      */
-    public function reorder(User $user)
+    public function reorder(User $user): bool
     {
         return $user->can('{{ Reorder }}');
     }

@@ -14,9 +14,9 @@ class ShelterPolicy
      * Determine whether the user can view any models.
      *
      * @param  \App\Models\User  $user
-     * @return \Illuminate\Auth\Access\Response|bool
+     * @return bool
      */
-    public function viewAny(User $user)
+    public function viewAny(User $user): bool
     {
         return $user->can('view_any_definitions::shelter');
     }
@@ -26,9 +26,9 @@ class ShelterPolicy
      *
      * @param  \App\Models\User  $user
      * @param  \App\Models\Shelter  $shelter
-     * @return \Illuminate\Auth\Access\Response|bool
+     * @return bool
      */
-    public function view(User $user, Shelter $shelter)
+    public function view(User $user, Shelter $shelter): bool
     {
         return $user->can('view_definitions::shelter');
     }
@@ -37,9 +37,9 @@ class ShelterPolicy
      * Determine whether the user can create models.
      *
      * @param  \App\Models\User  $user
-     * @return \Illuminate\Auth\Access\Response|bool
+     * @return bool
      */
-    public function create(User $user)
+    public function create(User $user): bool
     {
         return $user->can('create_definitions::shelter');
     }
@@ -49,9 +49,9 @@ class ShelterPolicy
      *
      * @param  \App\Models\User  $user
      * @param  \App\Models\Shelter  $shelter
-     * @return \Illuminate\Auth\Access\Response|bool
+     * @return bool
      */
-    public function update(User $user, Shelter $shelter)
+    public function update(User $user, Shelter $shelter): bool
     {
         return $user->can('update_definitions::shelter');
     }
@@ -61,9 +61,9 @@ class ShelterPolicy
      *
      * @param  \App\Models\User  $user
      * @param  \App\Models\Shelter  $shelter
-     * @return \Illuminate\Auth\Access\Response|bool
+     * @return bool
      */
-    public function delete(User $user, Shelter $shelter)
+    public function delete(User $user, Shelter $shelter): bool
     {
         return $user->can('delete_definitions::shelter');
     }
@@ -72,9 +72,9 @@ class ShelterPolicy
      * Determine whether the user can bulk delete.
      *
      * @param  \App\Models\User  $user
-     * @return \Illuminate\Auth\Access\Response|bool
+     * @return bool
      */
-    public function deleteAny(User $user)
+    public function deleteAny(User $user): bool
     {
         return $user->can('delete_any_definitions::shelter');
     }
@@ -84,9 +84,9 @@ class ShelterPolicy
      *
      * @param  \App\Models\User  $user
      * @param  \App\Models\Shelter  $shelter
-     * @return \Illuminate\Auth\Access\Response|bool
+     * @return bool
      */
-    public function forceDelete(User $user, Shelter $shelter)
+    public function forceDelete(User $user, Shelter $shelter): bool
     {
         return $user->can('force_delete_definitions::shelter');
     }
@@ -95,9 +95,9 @@ class ShelterPolicy
      * Determine whether the user can permanently bulk delete.
      *
      * @param  \App\Models\User  $user
-     * @return \Illuminate\Auth\Access\Response|bool
+     * @return bool
      */
-    public function forceDeleteAny(User $user)
+    public function forceDeleteAny(User $user): bool
     {
         return $user->can('force_delete_any_definitions::shelter');
     }
@@ -107,9 +107,9 @@ class ShelterPolicy
      *
      * @param  \App\Models\User  $user
      * @param  \App\Models\Shelter  $shelter
-     * @return \Illuminate\Auth\Access\Response|bool
+     * @return bool
      */
-    public function restore(User $user, Shelter $shelter)
+    public function restore(User $user, Shelter $shelter): bool
     {
         return $user->can('restore_definitions::shelter');
     }
@@ -118,9 +118,9 @@ class ShelterPolicy
      * Determine whether the user can bulk restore.
      *
      * @param  \App\Models\User  $user
-     * @return \Illuminate\Auth\Access\Response|bool
+     * @return bool
      */
-    public function restoreAny(User $user)
+    public function restoreAny(User $user): bool
     {
         return $user->can('restore_any_definitions::shelter');
     }
@@ -130,9 +130,9 @@ class ShelterPolicy
      *
      * @param  \App\Models\User  $user
      * @param  \App\Models\Shelter  $shelter
-     * @return \Illuminate\Auth\Access\Response|bool
+     * @return bool
      */
-    public function replicate(User $user, Shelter $shelter)
+    public function replicate(User $user, Shelter $shelter): bool
     {
         return $user->can('replicate_definitions::shelter');
     }
@@ -141,9 +141,9 @@ class ShelterPolicy
      * Determine whether the user can reorder.
      *
      * @param  \App\Models\User  $user
-     * @return \Illuminate\Auth\Access\Response|bool
+     * @return bool
      */
-    public function reorder(User $user)
+    public function reorder(User $user): bool
     {
         return $user->can('reorder_definitions::shelter');
     }

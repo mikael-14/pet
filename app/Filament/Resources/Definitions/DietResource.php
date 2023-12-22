@@ -6,9 +6,9 @@ use App\Filament\Resources\Definitions\DietResource\Pages;
 use App\Filament\Resources\Definitions\DietResource\RelationManagers;
 use App\Models\Diet;
 use Filament\Forms;
-use Filament\Resources\Form;
+use Filament\Forms\Form;
 use Filament\Resources\Resource;
-use Filament\Resources\Table;
+use Filament\Tables\Table;
 use Filament\Tables;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
@@ -17,7 +17,7 @@ class DietResource extends Resource
 {
     protected static ?string $model = Diet::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-collection';
+    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
 
     protected static ?string $slug = 'definitions/diet';
 
