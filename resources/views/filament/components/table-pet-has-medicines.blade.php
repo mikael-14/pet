@@ -6,7 +6,7 @@ $date_format = config('filament.date_time_format');
 <div class="flex flex-col ">
     <div class="fi-ta-ctn divide-y divide-gray-200 overflow-hidden rounded-xl bg-white shadow-sm ring-1 ring-gray-950/5 dark:divide-white/10 dark:bg-gray-900 dark:ring-white/10">
         <div class="fi-ta-content relative divide-y divide-gray-200 overflow-x-auto dark:divide-white/10 dark:border-t-white/10">
-            @if ($data)
+            @if ($data->isNotEmpty())
             <table class="fi-ta-table w-full table-auto divide-y divide-gray-200 text-start dark:divide-white/5">
                 <thead class="bg-gray-50 dark:bg-white/5">
                     <tr>
@@ -159,6 +159,17 @@ $date_format = config('filament.date_time_format');
                     @endforeach
                 </tbody>
             </table>
+            @else
+            <div class="fi-fo-placeholder text-sm leading-6">
+                <div role="alert" class="shout-component  
+rounded-lg p-4 fi-color-custom bg-custom-50 text-custom-600 ring-custom-600/10 dark:bg-custom-400/10 dark:text-custom-400 dark:ring-custom-400/30" style="--c-50:var(--info-50);--c-400:var(--info-400);--c-600:var(--info-600);">
+                    <div class="flex">
+                        <div class="text-sm font-medium">
+                            @lang('pet/prescriptionmedicines.schedule.empty')
+                        </div>
+                    </div>
+                </div>
+            </div>
             @endif
         </div>
     </div>

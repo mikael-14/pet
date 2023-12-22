@@ -170,15 +170,17 @@ class PrescriptionHasMedicine extends Model
 	}
 	private static function create_process(PrescriptionHasMedicine $model, null|Carbon $start_from_date = null)
 	{
-		$now = Carbon::now();
-		$pet_id = $model->prescription->pet_id;
-		if (empty($model->frequency) || (int)$model->frequency < 1) {
-			self::create_pet_has_medicne($model, $model->start_date, $now, $pet_id);
-		} else {
-			$start_date = $start_from_date ?? $model->start_date;
-			while ($start_date < $model->end_date) {
-				self::create_pet_has_medicne($model, $start_date, $now, $pet_id);
-				$start_date = $start_date->addHours($model->frequency);
+		if ($model->emergency === false) {
+			$now = Carbon::now();
+			$pet_id = $model->prescription->pet_id;
+			if (empty($model->frequency) || (int)$model->frequency < 1) {
+				self::create_pet_has_medicne($model, $model->start_date, $now, $pet_id);
+			} else {
+				$start_date = $start_from_date ?? $model->start_date;
+				while ($start_date < $model->end_date) {
+					self::create_pet_has_medicne($model, $start_date, $now, $pet_id);
+					$start_date = $start_date->addHours($model->frequency);
+				}
 			}
 		}
 	}

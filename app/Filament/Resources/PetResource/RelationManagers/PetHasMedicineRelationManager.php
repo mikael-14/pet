@@ -88,13 +88,13 @@ class PetHasMedicineRelationManager extends RelationManager
                     ->icon(fn (PetHasMedicine $record): string => $record->emergency ? 'uni-medical-square-o' : '')
                     ->iconPosition('after')
                     ->description(fn (PetHasMedicine $record): string => $record->emergency ? '(SOS) ' : '' . $record->observation ?? ''),
+                    Tables\Columns\TextColumn::make('date')
+                        ->sortable()
+                        ->date(config('filament.date_time_format')),
+                        Tables\Columns\IconColumn::make('administered')
+                            ->boolean(),
                 Tables\Columns\TextColumn::make('dosage'),
                 Tables\Columns\TextColumn::make('person.name'),
-                Tables\Columns\TextColumn::make('date')
-                    ->sortable()
-                    ->date(config('filament.date_time_format')),
-                Tables\Columns\IconColumn::make('administered')
-                    ->boolean(),
             ])
             ->filters([
                 Tables\Filters\SelectFilter::make('administered')

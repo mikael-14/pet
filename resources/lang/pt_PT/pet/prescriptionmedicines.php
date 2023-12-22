@@ -20,5 +20,8 @@ return [
         'every_days' => 'Vai levar :dosage de :medicine a cada :total_times dias. (Total :takes)',
         'repeat_hour' => 'cada :frequency horas',
         'repeat_day' => 'cada :frequency dias',
-    ]
+    ],
+    'schedule' =>[
+        'empty'  => 'Este medicamento não têm agendamento',
+    ],
 ];

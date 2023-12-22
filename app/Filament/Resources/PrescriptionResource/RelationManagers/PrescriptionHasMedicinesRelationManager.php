@@ -152,7 +152,7 @@ class PrescriptionHasMedicinesRelationManager extends RelationManager
                                     ->maxLength(200)
                                     ->autosize()
                                     ->columnSpanFull(),
-                            ]),
+                            ])->columns(2),
                         Forms\Components\Tabs\Tab::make('Scheduled')
                             ->schema([
                                 ViewField::make('rating')

@@ -20,4 +20,7 @@ return [
         'repeat_hour' => 'every :frequency hours',
         'repeat_day' => 'every :frequency days',
     ],
+    'schedule' =>[
+        'empty'  => 'This medicine doesn\'t have scheule',
+    ],
 ];
