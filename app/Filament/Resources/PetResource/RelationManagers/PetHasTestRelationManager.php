@@ -123,7 +123,7 @@ class PetHasTestRelationManager extends RelationManager
                 Tables\Actions\DeleteBulkAction::make(),
                 Tables\Actions\ForceDeleteBulkAction::make(),
                 Tables\Actions\RestoreBulkAction::make(),
-            ]);
+            ])->defaultSort('date', 'desc');
     }
     public static function getEloquentQuery(): Builder
     {
@@ -132,13 +132,5 @@ class PetHasTestRelationManager extends RelationManager
                 SoftDeletingScope::class,
             ]);
     }
-    protected function getDefaultTableSortColumn(): ?string
-    {
-        return 'date';
-    }
-
-    protected function getDefaultTableSortDirection(): ?string
-    {
-        return 'desc';
-    }
+  
 }

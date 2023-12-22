@@ -108,15 +108,7 @@ class PetHasVaccineRelationManager extends RelationManager
             ])
             ->bulkActions([
                 Tables\Actions\DeleteBulkAction::make(),
-            ]);
+            ])->defaultSort('date', 'desc');
     }
-    protected function getDefaultTableSortColumn(): ?string
-    {
-        return 'date';
-    }
-
-    protected function getDefaultTableSortDirection(): ?string
-    {
-        return 'desc';
-    }
+ 
 }

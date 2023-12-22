@@ -133,15 +133,7 @@ class PetHasMeasureRelationManager extends RelationManager
             ])
             ->bulkActions([
                 Tables\Actions\DeleteBulkAction::make(),
-            ]);
-    }
-    protected function getDefaultTableSortColumn(): ?string
-    {
-        return 'date';
+            ])->defaultSort('date', 'desc');
     }
 
-    protected function getDefaultTableSortDirection(): ?string
-    {
-        return 'desc';
-    }
 }

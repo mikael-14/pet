@@ -90,17 +90,19 @@ class PrescriptionHasMedicine extends Model
 			DB::beginTransaction();
 			try {
 				$originalValues = $model->getOriginal();
-				if ($model->end_date->greaterThan($originalValues['end_date'])) {
-					//ending date was increased
-					if ((int)$model->frequency > 1) {
-						$date = $originalValues['end_date']->addHours($model->frequency);
-						self::create_process($model, $date);
+				if (!empty($originalValues['end_date'])) {
+					if ($model->end_date->greaterThan($originalValues['end_date'])) {
+						//ending date was increased
+						if ((int)$model->frequency > 1) {
+							$date = $originalValues['end_date']->addHours($model->frequency);
+							self::create_process($model, $date);
+						}
+					} elseif ($model->end_date->lessThan($originalValues['end_date'])) {
+						//ending date was increased
+						PetHasMedicine::where('date', '>', $originalValues['end_date']->format('Y-m-d H:i:s'))
+							->where('prescription_has_medicine_id', '=', $model->id)
+							->delete();
 					}
-				} elseif ($model->end_date->lessThan($originalValues['end_date'])) {
-					//ending date was increased
-					PetHasMedicine::where('date', '>', $originalValues['end_date']->format('Y-m-d H:i:s'))
-						->where('prescription_has_medicine_id', '=', $model->id)
-						->delete();
 				}
 				//ending date is equal 
 				DB::commit();
@@ -177,7 +179,7 @@ class PrescriptionHasMedicine extends Model
 				self::create_pet_has_medicne($model, $model->start_date, $now, $pet_id);
 			} else {
 				$start_date = $start_from_date ?? $model->start_date;
-				while ($start_date < $model->end_date) {
+				while ($start_date <= $model->end_date) {
 					self::create_pet_has_medicne($model, $start_date, $now, $pet_id);
 					$start_date = $start_date->addHours($model->frequency);
 				}

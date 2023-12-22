@@ -158,7 +158,9 @@ class PrescriptionHasMedicinesRelationManager extends RelationManager
                                 ViewField::make('rating')
                                     ->view('filament.components.table-pet-has-medicines')
                                     ->columnSpan('full')
-                            ])->hiddenOn('create'),
+                            ])->hiddenOn('create')
+                            ->badge(fn ($record) => $record->pet_has_medicines->count())
+                            ->badgeColor('primary'),
                     ])->columnSpanFull(),
             ]);
     }
@@ -171,8 +173,15 @@ class PrescriptionHasMedicinesRelationManager extends RelationManager
                     ->color(fn (PrescriptionHasMedicine $record): string => $record->emergency ? 'danger' : '')
                     ->icon(fn (PrescriptionHasMedicine $record): string => $record->emergency ? 'uni-medical-square-o' : '')
                     ->iconPosition('after')
-                    ->description(fn (PrescriptionHasMedicine $record): string|null => $record->emergency ? '(SOS) ' : '' . \Illuminate\Support\Str::limit($record->observation, 25))
-                    ->tooltip(fn (PrescriptionHasMedicine $record): string|null  => $record->emergency ? '(SOS) ' : '' . $record->observation),
+                    ->description(fn (PrescriptionHasMedicine $record): string|null => ($record->emergency ? '(SOS) ' : '') . \Illuminate\Support\Str::limit($record->observation, 25))
+                    ->tooltip(fn (PrescriptionHasMedicine $record): string|null  => ($record->emergency ? '(SOS) ' : '') . $record->observation),
+                Tables\Columns\TextColumn::make('start_date')
+                    ->sortable()
+                    ->date(config('filament.date_time_format')),
+                Tables\Columns\TextColumn::make('end_date')
+                    ->placeholder('-')
+                    ->sortable()
+                    ->date(config('filament.date_time_format')),
                 Tables\Columns\TextColumn::make('status')
                     ->badge()
                     ->formatStateUsing(fn (string $state): string =>  __('pet/prescriptionmedicines.status')[$state] ?? '-')
@@ -195,13 +204,6 @@ class PrescriptionHasMedicinesRelationManager extends RelationManager
                         $frequency = intdiv($value, 24);
                         return __('pet/prescriptionmedicines.shout.repeat_day', ['frequency' => $frequency]);
                     }),
-                Tables\Columns\TextColumn::make('start_date')
-                    ->sortable()
-                    ->date(config('filament.date_time_format')),
-                Tables\Columns\TextColumn::make('end_date')
-                    ->placeholder('-')
-                    ->sortable()
-                    ->date(config('filament.date_time_format')),
             ])
             ->filters([
                 Tables\Filters\SelectFilter::make('status')
@@ -249,15 +251,6 @@ class PrescriptionHasMedicinesRelationManager extends RelationManager
                     ->deselectRecordsAfterCompletion(),
 
                 Tables\Actions\DeleteBulkAction::make(),
-            ]);
-    }
-    protected function getDefaultTableSortColumn(): ?string
-    {
-        return 'start_date';
-    }
-
-    protected function getDefaultTableSortDirection(): ?string
-    {
-        return 'desc';
+            ])->defaultSort('start_date', 'asc');
     }
 }
