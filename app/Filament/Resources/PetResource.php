@@ -26,7 +26,6 @@ class PetResource extends Resource
 
     protected static ?int $navigationSort = 0;
 
-
     public static function table(Table $table): Table
     {
         return $table

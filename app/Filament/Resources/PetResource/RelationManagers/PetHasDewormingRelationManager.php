@@ -115,17 +115,9 @@ class PetHasDewormingRelationManager extends RelationManager
             ])
             ->bulkActions([
                 Tables\Actions\DeleteBulkAction::make(),
-            ]);
-    }
-    protected function getDefaultTableSortColumn(): ?string
-    {
-        return 'date';
+            ])->defaultSort('start_date', 'desc');
     }
 
-    protected function getDefaultTableSortDirection(): ?string
-    {
-        return 'desc';
-    }
     //custom functions outside filament 
     public static function getOptionWithHelp(\Illuminate\Database\Eloquent\Collection $model)
     {

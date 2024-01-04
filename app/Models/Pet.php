@@ -87,6 +87,7 @@ class Pet extends Model implements HasMedia
 		'color',
 		'coat',
 		'breed',
+		'qrcode',
 		'observation'
 	];
 
