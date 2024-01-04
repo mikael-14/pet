@@ -24,9 +24,13 @@ class ClinicResource extends Resource
 {
     protected static ?string $model = Clinic::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+    protected static ?string $navigationIcon = 'tabler-building-hospital';
 
     protected static ?string $recordTitleAttribute = 'name';
+
+    protected static ?string $slug = 'medication/clinics';
+
+    protected static ?string $navigationGroup = 'Medical';
 
     public static function form(Form $form): Form
     {

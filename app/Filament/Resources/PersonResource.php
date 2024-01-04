@@ -35,6 +35,7 @@ class PersonResource extends Resource implements HasShieldPermissions
 
     protected static ?string $recordTitleAttribute = 'name';
 
+    protected static ?int $navigationSort = 1;
 
     public static function getPermissionPrefixes(): array
     {

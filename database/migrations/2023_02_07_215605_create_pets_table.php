@@ -32,9 +32,11 @@ return new class extends Migration
             $table->string('color',50)->nullable();
             $table->string('coat',50)->nullable();
             $table->string('breed',50)->nullable();
+            $table->string('qrcode', 32)->nullable()->unique();
             $table->text('observation')->nullable();
             $table->timestamps();
             $table->softDeletes();
+            $table->index('qrcode');
         });
     }
 

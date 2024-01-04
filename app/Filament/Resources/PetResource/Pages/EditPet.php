@@ -13,6 +13,7 @@ use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\Grid;
+use Filament\Forms\Components\Hidden;
 use Filament\Forms\Components\Placeholder;
 use Filament\Forms\Components\RichEditor;
 use Filament\Forms\Components\Section;
@@ -20,6 +21,10 @@ use Filament\Forms\Components\Select;
 use Filament\Forms\Components\SpatieMediaLibraryFileUpload;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
+use Filament\Forms\Components\ViewField;
+use Filament\Forms\Get;
+use Filament\Forms\Set;
+use Filament\Support\Enums\Alignment;
 use Kenepa\ResourceLock\Resources\Pages\Concerns\UsesResourceLock;
 
 class EditPet extends EditRecord
@@ -128,8 +133,55 @@ class EditPet extends EditRecord
                                                     })
                                             )
                                             ->columnSpan('full'),
-                                          
+
                                     ]),
+                                Forms\Components\Section::make('Qrcode')
+                                    ->schema([
+                                        Hidden::make('qrcode')
+                                            ->live(),
+                                        Forms\Components\Actions::make([
+                                            Forms\Components\Actions\Action::make('NewQrcode')
+                                                ->label('New Qrcode')
+                                                ->icon('tabler-new-section')
+                                                ->color('info')
+                                                ->requiresConfirmation()
+                                                ->link()
+                                                ->action(function (Set $set, Pet $record) {
+                                                    $set('qrcode', md5(time() . $this->record->id));
+                                                    $this->refreshFormData([
+                                                        'Qrcodeview',
+                                                    ]);
+                                                }),
+                                            Forms\Components\Actions\Action::make('RemoveQrcode')
+                                                ->label('Remove Qrcode')
+                                                ->icon('heroicon-m-x-mark')
+                                                ->color('danger')
+                                                ->requiresConfirmation()
+                                                ->link()
+                                                ->action(function (Set $set) {
+                                                    $set('qrcode', null);
+                                                    $this->refreshFormData([
+                                                        'Qrcodeview',
+                                                    ]);
+                                                })
+                                        ])->alignment(Alignment::Between),
+                                        Placeholder::make('shout')
+                                            ->label(false)
+                                            ->content(function (\Filament\Forms\Get $get, Pet $record) {
+                                                $qrcode = $record->qrcode;
+                                                $text_save = false;
+                                                $text_empty = false;
+                                                if ($qrcode !== $get('qrcode')) {
+                                                    $text_save = 'Please Save to presist the changes';
+                                                } elseif (empty($qrcode)) {
+                                                    $text_empty = 'No Qrcode';
+                                                }
+                                                return view('filament.components.qrcode')
+                                                    ->with('qrcode', $qrcode)
+                                                    ->with('text_save', $text_save)
+                                                    ->with('text_empty', $text_empty);
+                                            }),
+                                    ])->collapsible(),
                                 Forms\Components\Section::make()
                                     ->schema([
                                         Placeholder::make('Created')

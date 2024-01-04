@@ -25,7 +25,11 @@ class PrescriptionResource extends Resource
 {
     protected static ?string $model = Prescription::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+    protected static ?string $navigationIcon = 'tabler-report-medical';
+
+    protected static ?string $slug = 'medication/prescriptions';
+
+    protected static ?string $navigationGroup = 'Medical';
 
     public static function form(Form $form): Form
     {
