@@ -168,14 +168,15 @@ class EditPet extends EditRecord
                                         Placeholder::make('shout')
                                             ->label(false)
                                             ->content(function (\Filament\Forms\Get $get, Pet $record) {
-                                                $qrcode = $record->qrcode;
-                                                $text_save = false;
-                                                $text_empty = false;
-                                                if ($qrcode !== $get('qrcode')) {
-                                                    $text_save = 'Please Save to presist the changes';
-                                                } elseif (empty($qrcode)) {
-                                                    $text_empty = 'No Qrcode';
-                                                }
+                                                $qrcode = $record->qrcode ?: null;
+                                                $text_empty = $qrcode ? null : 'No Qrcode' ;
+                                                $text_save =null;
+                                                if($qrcode !== $get('qrcode'))
+                                                {
+                                                    $text_save = (empty($get('qrcode'))) ? 'Removed' : 'Generated';
+                                                    $text_save .= '. ';
+                                                    $text_save .= 'Please Save to presist the changes' ;
+                                                } 
                                                 return view('filament.components.qrcode')
                                                     ->with('qrcode', $qrcode)
                                                     ->with('text_save', $text_save)
