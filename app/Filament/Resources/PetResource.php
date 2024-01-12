@@ -171,35 +171,67 @@ class PetResource extends Resource
                     ->schema([
                         Components\Split::make([
                             SpatieMediaLibraryImageEntry::make('image')
-                            ->label(false)
-                            ->collection('pets-main-image')
-                            ->width(300)
-                            ->height(300)
-                            ->grow(false),
-                            Components\Grid::make(6)
+                                ->label(false)
+                                ->collection('pets-main-image')
+                                ->width(300)
+                                ->height(300)
+                                ->grow(false)->extraAttributes(['class' => 'pr-1']),
+                            Components\Grid::make(4)
                                 ->schema([
-                                        Components\TextEntry::make('name'),
-                                        Components\TextEntry::make('species'),
-                                        Components\TextEntry::make('chip'),
-                                        Components\TextEntry::make('chip_date'),
-                                        Components\TextEntry::make('gender')
-                                            ->badge()
-                                            ->color(fn (string $state): string => match ($state) {
-                                                'male' => 'blue',
-                                                'female' => 'rose',
-                                            })
-                                            ->icons([
-                                                'tabler-gender-male' => 'male',
-                                                'tabler-gender-female' => 'female',
-                                            ])->iconPosition('after'),
-                                        Components\IconEntry::make('adoptable')
-                                            ->boolean(),
+                                    Components\TextEntry::make('name'),
+                                    Components\TextEntry::make('species'),
+                                    Components\TextEntry::make('gender')
+                                        ->badge()
+                                        ->color(fn (string $state): string => match ($state) {
+                                            'male' => 'blue',
+                                            'female' => 'rose',
+                                        })
+                                        ->icons([
+                                            'tabler-gender-male' => 'male',
+                                            'tabler-gender-female' => 'female',
+                                        ])->iconPosition('after'),
+                                        Components\TextEntry::make('birth_date')->formatStateUsing(
+                                            function ($state): string {
+                                                if ($state) {
+                                                    $ageInYears = $state->diffInYears();
+                                                    $ageInMonths = $state->diffInMonths();
+                                                    $string = $state->format(config('filament.date_format'));
+                                                    $string .= ' (';
+                                                    if($ageInYears>0) {
+                                                        $string .=  trans_choice('pet/view.age_years', $ageInYears, ['value' => $ageInYears]);
+                                                    }
+                                                    if($ageInMonths>0) {
+                                                        $string .=  trans_choice('pet/view.age_months', $ageInMonths, ['value' => $ageInMonths]);
+                                                    }
+                                                    $string.= ')';
+                                                    return $string;
+    
+                                                }
+                                                return '-';
+                                            }
+                                        ),
+                                    Components\TextEntry::make('chip'),
+                                    Components\TextEntry::make('chip_date'),
+                                    Components\TextEntry::make('color'),
+                                    Components\TextEntry::make('coat'),
+                                    Components\TextEntry::make('breed'),
+                                    Components\IconEntry::make('adoptable')
+                                        ->boolean(),
+                                        Components\TextEntry::make('shelter_block.name'),
+                                        Components\TextEntry::make('entry_status.name'),
                                         Components\TextEntry::make('entry_date')->formatStateUsing(
                                             fn ($state): string => $state ? $state->format(config('filament.date_format')) . ' (' . $state->diffForHumans() . ')' : '-'
                                         ),
-                                
+                                    Components\IconEntry::make('sterilized')
+                                    ->boolean(),
+                                    Components\TextEntry::make('sterilized_date')->formatStateUsing(
+                                        fn ($state): string => $state ? $state->format(config('filament.date_format')) : '-'
+                                    ),
+                                    Components\TextEntry::make('sterilized_local')->formatStateUsing(
+                                        fn ($state): string => $state ? $state->format(config('filament.date_format')) : '-'
+                                    ),
                                 ]),
-                           
+
                         ])
                     ])
             ]);
