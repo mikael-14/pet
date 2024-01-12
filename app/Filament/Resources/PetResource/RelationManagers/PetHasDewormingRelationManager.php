@@ -115,7 +115,7 @@ class PetHasDewormingRelationManager extends RelationManager
             ])
             ->bulkActions([
                 Tables\Actions\DeleteBulkAction::make(),
-            ])->defaultSort('start_date', 'desc');
+            ])->defaultSort('date', 'desc');
     }
 
     //custom functions outside filament 

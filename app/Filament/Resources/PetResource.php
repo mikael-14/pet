@@ -7,9 +7,9 @@ use App\Filament\Resources\PetResource\RelationManagers;
 use App\Models\EntryStatus;
 use App\Models\Pet;
 use App\Models\ShelterBlock;
-use Filament\Forms;
-use Filament\Forms\Components\SpatieMediaLibraryFileUpload;
-use Filament\Forms\Form;
+use Filament\Infolists\Infolist;
+use Filament\Infolists\Components;
+use Filament\Infolists\Components\SpatieMediaLibraryImageEntry;
 use Filament\Resources\Resource;
 use Filament\Tables\Table;
 use Filament\Tables;
@@ -33,14 +33,19 @@ class PetResource extends Resource
                 Tables\Columns\SpatieMediaLibraryImageColumn::make('image')->collection('pets-main-image')->square(),
                 Tables\Columns\TextColumn::make('name')->searchable(),
                 Tables\Columns\TextColumn::make('gender')->badge()->icons([
-                    'tabler-gender-male' =>'male',
-                    'tabler-gender-female' =>'female',
-                ])->iconPosition('after')
+                    'tabler-gender-male' => 'male',
+                    'tabler-gender-female' => 'female',
+                ])
+                    ->color(fn (string $state): string => match ($state) {
+                        'male' => 'blue',
+                        'female' => 'rose',
+                    })
+                    ->iconPosition('after')
                     ->toggleable(),
                 Tables\Columns\TextColumn::make('entry_status.name')->extraAttributes(static function (Pet $record): array {
                     return ['style' => 'background-color:' . $record->entry_status->color, 'class' => 'table-text-column-badge'];
                 })
-                ->toggleable(isToggledHiddenByDefault: true)
+                    ->toggleable(isToggledHiddenByDefault: true)
                     ->sortable(),
                 Tables\Columns\TextColumn::make('shelter_block.name')->extraAttributes(static function (Pet $record): array {
                     return ['style' => 'background-color:' . $record->shelter_block->color, 'class' => 'table-text-column-badge'];
@@ -136,7 +141,7 @@ class PetResource extends Resource
     {
         return ['name', 'chip',];
     }
-    
+
     //custom functions outside filament 
     public static function getOptionWithColor(\Illuminate\Database\Eloquent\Collection $model)
     {
@@ -156,5 +161,79 @@ class PetResource extends Resource
                     ->with('color', $item['color'])
             ];
         });
+    }
+
+    public static function infolist(Infolist $infolist): Infolist
+    {
+        return $infolist
+            ->schema([
+                Components\Section::make()
+                    ->schema([
+                        Components\Split::make([
+                            SpatieMediaLibraryImageEntry::make('image')
+                                ->label(false)
+                                ->collection('pets-main-image')
+                                ->width(300)
+                                ->height(300)
+                                ->grow(false)->extraAttributes(['class' => 'pr-1']),
+                            Components\Grid::make(4)
+                                ->schema([
+                                    Components\TextEntry::make('name'),
+                                    Components\TextEntry::make('species'),
+                                    Components\TextEntry::make('gender')
+                                        ->badge()
+                                        ->color(fn (string $state): string => match ($state) {
+                                            'male' => 'blue',
+                                            'female' => 'rose',
+                                        })
+                                        ->icons([
+                                            'tabler-gender-male' => 'male',
+                                            'tabler-gender-female' => 'female',
+                                        ])->iconPosition('after'),
+                                        Components\TextEntry::make('birth_date')->formatStateUsing(
+                                            function ($state): string {
+                                                if ($state) {
+                                                    $ageInYears = $state->diffInYears();
+                                                    $ageInMonths = $state->diffInMonths();
+                                                    $string = $state->format(config('filament.date_format'));
+                                                    $string .= ' (';
+                                                    if($ageInYears>0) {
+                                                        $string .=  trans_choice('pet/view.age_years', $ageInYears, ['value' => $ageInYears]);
+                                                    }
+                                                    if($ageInMonths>0) {
+                                                        $string .=  trans_choice('pet/view.age_months', $ageInMonths, ['value' => $ageInMonths]);
+                                                    }
+                                                    $string.= ')';
+                                                    return $string;
+    
+                                                }
+                                                return '-';
+                                            }
+                                        ),
+                                    Components\TextEntry::make('chip'),
+                                    Components\TextEntry::make('chip_date'),
+                                    Components\TextEntry::make('color'),
+                                    Components\TextEntry::make('coat'),
+                                    Components\TextEntry::make('breed'),
+                                    Components\IconEntry::make('adoptable')
+                                        ->boolean(),
+                                        Components\TextEntry::make('shelter_block.name'),
+                                        Components\TextEntry::make('entry_status.name'),
+                                        Components\TextEntry::make('entry_date')->formatStateUsing(
+                                            fn ($state): string => $state ? $state->format(config('filament.date_format')) . ' (' . $state->diffForHumans() . ')' : '-'
+                                        ),
+                                    Components\IconEntry::make('sterilized')
+                                    ->boolean(),
+                                    Components\TextEntry::make('sterilized_date')->formatStateUsing(
+                                        fn ($state): string => $state ? $state->format(config('filament.date_format')) : '-'
+                                    ),
+                                    Components\TextEntry::make('sterilized_local')->formatStateUsing(
+                                        fn ($state): string => $state ? $state->format(config('filament.date_format')) : '-'
+                                    ),
+                                ]),
+
+                        ])
+                    ])
+            ]);
     }
 }
