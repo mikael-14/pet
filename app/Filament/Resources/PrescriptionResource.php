@@ -31,6 +31,19 @@ class PrescriptionResource extends Resource
 
     protected static ?string $navigationGroup = 'Medical';
 
+    public static function getNavigationLabel(): string
+    {
+        return __('prescriptions');
+    }
+    public static function getModelLabel(): string
+    {
+        return __('prescription');
+    }
+    public static function getPluralModelLabel(): string
+    {
+        return __('prescriptions');
+    }
+
     public static function form(Form $form): Form
     {
         return $form
@@ -235,5 +248,4 @@ class PrescriptionResource extends Resource
             ->with('image', false)
             ->render();
     }
-
 }

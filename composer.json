@@ -21,6 +21,7 @@
         "laravel/sanctum": "^3.3",
         "laravel/tinker": "^2.8",
         "ryangjchandler/blade-tabler-icons": "*",
+        "simplesoftwareio/simple-qrcode": "^4.2",
         "xlite-dev/filament-impersonate": "*"
     },
     "require-dev": {

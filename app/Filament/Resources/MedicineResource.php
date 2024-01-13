@@ -24,25 +24,40 @@ class MedicineResource extends Resource
 
     protected static ?string $navigationGroup = 'Medical';
 
+    public static function getNavigationLabel(): string
+    {
+        return __('medicines');
+    }
+    public static function getModelLabel(): string
+    {
+        return __('medicine');
+    }
+
     public static function form(Form $form): Form
     {
         return $form
             ->schema([
                 Forms\Components\TextInput::make('name')
+                    ->translateLabel()
                     ->required()
                     ->maxLength(100),
                 Forms\Components\Select::make('type')
+                    ->translateLabel()
                     ->options(__('pet/medicine'))
                     ->required(),
                 Forms\Components\TextInput::make('dosage')
+                    ->translateLabel()
                     ->maxLength(50),
-                Forms\Components\TextInput::make('aplication')
+                Forms\Components\TextInput::make('application')
+                    ->translateLabel()
                     ->maxLength(50),
                 Forms\Components\Textarea::make('description')
+                    ->translateLabel()
                     ->maxLength(500)
                     ->columnSpanFull(),
                 Forms\Components\TagsInput::make('active_ingredient')
-                    ->placeholder('New active')
+                    ->translateLabel()
+                    ->placeholder(__('New active'))
                     // ->keyLabel('Property name')
                     // ->valueLabel('Property value')
                     // ->schema([
@@ -56,24 +71,24 @@ class MedicineResource extends Resource
     {
         return $table
             ->columns([
-                Tables\Columns\TextColumn::make('name')
+                Tables\Columns\TextColumn::make('name')->translateLabel()
                     ->searchable(),
-                Tables\Columns\TextColumn::make('type')
-                ->formatStateUsing(fn (string $state): string =>  __('pet/medicine')[$state] ?? '-'),
-                Tables\Columns\TextColumn::make('dosage'),
-                Tables\Columns\TextColumn::make('active_ingredient')
-                ->badge()
-                ->color('primary')
+                Tables\Columns\TextColumn::make('type')->translateLabel()
+                    ->formatStateUsing(fn (string $state): string =>  __('pet/medicine')[$state] ?? '-'),
+                Tables\Columns\TextColumn::make('dosage')->translateLabel(),
+                Tables\Columns\TextColumn::make('active_ingredient')->translateLabel()
+                    ->badge()
+                    ->color('primary')
                     ->searchable(),
-                Tables\Columns\TextColumn::make('aplication'),
-                Tables\Columns\TextColumn::make('created_at')
+                Tables\Columns\TextColumn::make('application')->translateLabel(),
+                Tables\Columns\TextColumn::make('created_at')->translateLabel()
                     ->dateTime(config('filament.date_time_format'))->toggleable(isToggledHiddenByDefault: true),
-                Tables\Columns\TextColumn::make('deleted_at')
+                Tables\Columns\TextColumn::make('deleted_at')->translateLabel()
                     ->dateTime(config('filament.date_time_format'))->toggleable(isToggledHiddenByDefault: true),
             ])
             ->filters([
                 Tables\Filters\TrashedFilter::make(),
-                Tables\Filters\SelectFilter::make('active_ingredient')
+                Tables\Filters\SelectFilter::make('active_ingredient')->translateLabel()
                     ->multiple()
                     ->options(Medicine::getAllActiveIngredientFormatted())
                     ->query(function (Builder $query, array $data): Builder {

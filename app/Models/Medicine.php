@@ -19,7 +19,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @property string $type
  * @property string|null $dosage
  * @property array|null $active_ingredient
- * @property string|null $aplication
+ * @property string|null $application
  * @property string|null $description
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
@@ -44,7 +44,7 @@ class Medicine extends Model
 		'type',
 		'dosage',
 		'active_ingredient',
-		'aplication',
+		'application',
 		'description'
 	];
 

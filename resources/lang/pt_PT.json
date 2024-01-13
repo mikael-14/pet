@@ -1,0 +1,29 @@
+{
+    "age_years" : "1 ano|:value anos",
+    "age_months" : "1 mês|:value meses",
+
+    "Name": "Nome",
+    "Address": "Morada",
+    "Street": "Rua",
+    "State": "Distrito",
+    "Country": "País",
+    "Local": "Local",
+    "Zip": "Código Postal",
+    "People": "Pessoa",
+    "Email": "Email",
+    "Active": "Activo",
+    "Status": "Estado",
+    "Active ingredient": "Princípio activo",
+    "Type": "Tipo",
+    "Dosage": "Dosagem",
+    "Application": "Aplicação",
+    "New active": "Novo princípio activo",
+
+    "medical": "Medicina",
+    "clinics": "Clínicas",
+    "clinic": "clínica",
+    "medicine": "medicamento",
+    "medicines": "Medicamentos",
+    "prescriptions": "Prescrições",
+    "prescription": "Prescrição"
+}

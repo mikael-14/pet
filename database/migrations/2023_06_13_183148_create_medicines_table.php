@@ -39,7 +39,7 @@ return new class extends Migration
             $table->set('type', ['pill', 'capsule', 'liquid', 'injection', 'toppical', 'inhaler', 'suppository', 'drop', 'powder']);
             $table->string('dosage', 50)->nullable();
             $table->json('active_ingredient')->nullable();
-            $table->string('aplication', 50)->nullable();
+            $table->string('application', 50)->nullable();
             $table->string('description', 500)->nullable();
             $table->timestamps();
             $table->softDeletes();
