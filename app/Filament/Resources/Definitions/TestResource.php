@@ -25,12 +25,22 @@ class TestResource extends Resource
 
     protected static ?string $navigationGroup = 'Definitions';
 
+    public static function getNavigationLabel(): string
+    {
+        return __('Tests');
+    }
+    public static function getModelLabel(): string
+    {
+        return __('test');
+    }
+
     public static function form(Form $form): Form
     {
         return $form
             ->schema([
                 Forms\Components\TextInput::make('name')
-                ->columnSpanFull()
+                    ->translateLabel()
+                    ->columnSpanFull()
                     ->required()
                     ->maxLength(100),
             ]);
@@ -40,11 +50,11 @@ class TestResource extends Resource
     {
         return $table
             ->columns([
-                Tables\Columns\TextColumn::make('name'),
-                Tables\Columns\TextColumn::make('created_at')
+                Tables\Columns\TextColumn::make('name')->translateLabel(),
+                Tables\Columns\TextColumn::make('created_at')->translateLabel()
                     ->dateTime(config('filament.date_time_format'))
                     ->toggleable(),
-                Tables\Columns\TextColumn::make('deleted_at')
+                Tables\Columns\TextColumn::make('deleted_at')->translateLabel()
                     ->dateTime(config('filament.date_time_format'))
                     ->toggleable(isToggledHiddenByDefault: true),
             ])

@@ -98,7 +98,7 @@ class ClinicResource extends Resource
                             ->countries(['pt']) // restrict autocomplete results to these countries
                             ->updateLatLng() // update the lat/lng fields on your form when a Place is selected
                             ->maxLength(1024)
-                            ->placeholder('Search ...')
+                            ->placeholder(__('Search') .' ...')
                             ->visible(fn (\Filament\Forms\Get $get): bool => $get('show_geocomplete'))
                             ->hint(__('Search by Google'))
                             ->helperText(__('Search an address to help get data'))

@@ -206,6 +206,7 @@ class RoleResource extends Resource implements HasShieldPermissions
         return $table
             ->columns([
                 Tables\Columns\TextColumn::make('name')
+                ->label(__('Role'))
                     ->badge()
                     ->label(__('filament-shield::filament-shield.column.name'))
                     ->formatStateUsing(fn ($state): string => Str::headline($state))
@@ -220,6 +221,7 @@ class RoleResource extends Resource implements HasShieldPermissions
                     ->counts('permissions')
                     ->colors(['success']),
                 Tables\Columns\TextColumn::make('updated_at')
+                    ->label(__('Updated at'))
                     ->label(__('filament-shield::filament-shield.column.updated_at'))
                     ->dateTime(),
             ])

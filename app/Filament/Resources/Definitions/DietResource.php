@@ -25,11 +25,21 @@ class DietResource extends Resource
 
     protected static ?string $navigationGroup = 'Definitions';
 
+    public static function getNavigationLabel(): string
+    {
+        return __('diets');
+    }
+    public static function getModelLabel(): string
+    {
+        return __('diet');
+    }
+
     public static function form(Form $form): Form
     {
         return $form
             ->schema([
                 Forms\Components\TextInput::make('name')
+                    ->translateLabel()
                     ->required()
                     ->columnSpanFull()
                     ->maxLength(100),
@@ -40,10 +50,10 @@ class DietResource extends Resource
     {
         return $table
             ->columns([
-                Tables\Columns\TextColumn::make('name'),
-                Tables\Columns\TextColumn::make('created_at')
+                Tables\Columns\TextColumn::make('name')->translateLabel(),
+                Tables\Columns\TextColumn::make('created_at')->translateLabel()
                     ->dateTime(config('filament.date_time_format')),
-                Tables\Columns\TextColumn::make('updated_at')
+                Tables\Columns\TextColumn::make('updated_at')->translateLabel()
                     ->dateTime(config('filament.date_time_format')),
             ])
             ->filters([
@@ -57,11 +67,11 @@ class DietResource extends Resource
                 Tables\Actions\DeleteBulkAction::make(),
             ]);
     }
-    
+
     public static function getPages(): array
     {
         return [
             'index' => Pages\ManageDiets::route('/'),
         ];
-    }    
+    }
 }

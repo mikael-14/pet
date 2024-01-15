@@ -25,31 +25,40 @@ class DewormingResource extends Resource
 
     protected static ?string $navigationGroup = 'Definitions';
 
+    public static function getNavigationLabel(): string
+    {
+        return __('dewormings');
+    }
+    public static function getModelLabel(): string
+    {
+        return __('deworming');
+    }
+
     public static function form(Form $form): Form
     {
         return $form
             ->schema([
                 Forms\Components\TextInput::make('name')
+                    ->translateLabel()
                     ->required()
                     ->maxLength(100),
                 Forms\Components\Select::make('type')
-                    ->options([
-                        'internal' => 'Internal',
-                        'external' => 'External',
-                        'internal and external' => 'Internal and external',
-                    ])
+                    ->translateLabel()
+                    ->options(__('pet/deworming'))
                     ->required(),
                 Forms\Components\TextInput::make('expire')
+                    ->translateLabel()
                     ->numeric()
                     ->minValue(0)
                     ->default(0)
                     ->required()
-                    ->suffix('days')
-                    ->helperText('Number of days to be renewed. Leave 0 (zero) if don\'t need to be renewed'),
+                    ->suffix(__('days'))
+                    ->helperText(__('Number of days to be renewed. Leave 0 (zero) if don\'t need to be renewed')),
                 Forms\Components\TextInput::make('notification')
+                    ->translateLabel()
                     ->numeric()
-                    ->suffix('days')
-                    ->helperText('Number of day before/after to lauch notification to be rescheduled'),
+                    ->suffix(__('days'))
+                    ->helperText(__('Number of day before/after to send notification to be rescheduled')),
             ]);
     }
 
@@ -57,23 +66,30 @@ class DewormingResource extends Resource
     {
         return $table
             ->columns([
-                Tables\Columns\TextColumn::make('name'),
+                Tables\Columns\TextColumn::make('name')
+                    ->translateLabel(),
                 Tables\Columns\TextColumn::make('type')
+                    ->translateLabel()
                     ->formatStateUsing(fn (string $state): string => match ($state) {
-                        'internal' => 'Internal',
-                        'external' => 'External',
+                        'internal' => __('Internal'),
+                        'external' => __('External'),
                         'internal and external' => 'Internal and external',
                     })->badge()
                     ->color('primary'),
-                Tables\Columns\TextColumn::make('expire'),
-                Tables\Columns\TextColumn::make('notification'),
+                Tables\Columns\TextColumn::make('expire')
+                    ->translateLabel(),
+                Tables\Columns\TextColumn::make('notification')
+                    ->translateLabel(),
                 Tables\Columns\TextColumn::make('created_at')
+                    ->translateLabel()
                     ->dateTime(config('filament.date_time_format')),
                 Tables\Columns\TextColumn::make('updated_at')
+                    ->translateLabel()
                     ->dateTime(config('filament.date_time_format')),
                 Tables\Columns\TextColumn::make('deleted_at')
+                    ->translateLabel()
                     ->dateTime(config('filament.date_time_format'))
-                    ->toggledHiddenByDefault(),
+                    ->toggleable(isToggledHiddenByDefault: true),
             ])
             ->filters([
                 Tables\Filters\TrashedFilter::make(),

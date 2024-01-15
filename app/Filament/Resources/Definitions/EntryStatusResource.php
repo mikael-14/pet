@@ -25,11 +25,22 @@ class EntryStatusResource extends Resource
 
     protected static ?string $navigationGroup = 'Definitions';
 
+
+    public static function getNavigationLabel(): string
+    {
+        return __('Entry Statuses');
+    }
+    public static function getModelLabel(): string
+    {
+        return __('entry status');
+    }
+
     public static function form(Form $form): Form
     {
         return $form
             ->schema([
                 Forms\Components\TextInput::make('name')
+                    ->translateLabel()
                     ->required()
                     ->maxLength(20),
                 Forms\Components\ColorPicker::make('color'),
@@ -40,9 +51,10 @@ class EntryStatusResource extends Resource
     {
         return $table
             ->columns([
-                Tables\Columns\TextColumn::make('name'),
-                Tables\Columns\ColorColumn::make('color'),
+                Tables\Columns\TextColumn::make('name')->translateLabel(),
+                Tables\Columns\ColorColumn::make('color')->translateLabel(),
                 Tables\Columns\TextColumn::make('created_at')
+                    ->translateLabel()
                     ->dateTime(config('filament.date_time_format')),
             ])
             ->filters([
@@ -52,15 +64,13 @@ class EntryStatusResource extends Resource
                 Tables\Actions\EditAction::make(),
                 Tables\Actions\DeleteAction::make(),
             ])
-            ->bulkActions([
-               
-            ]);
+            ->bulkActions([]);
     }
-    
+
     public static function getPages(): array
     {
         return [
             'index' => Pages\ManageEntryStatus::route('/'),
         ];
-    }    
+    }
 }

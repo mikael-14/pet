@@ -22,10 +22,12 @@ class CreateUser extends CreateRecord
             \Filament\Forms\Components\Section::make()
                 ->schema([
                     \Filament\Forms\Components\TextInput::make('name')
+                    ->label(__('Username'))
                         ->required(),
                     \Filament\Forms\Components\TextInput::make('email')
+                    ->translateLabel()
                         ->placeholder('email@example.com')
-                        ->helperText('Make sure this email is valid and unique.')
+                        ->helperText(__('Make sure this email is valid and unique'))
                         ->unique(table: User::class, column: 'email', ignoreRecord: true)
                         ->required(),
                     \Filament\Forms\Components\Select::make('locale')->options(
@@ -34,9 +36,10 @@ class CreateUser extends CreateRecord
                         ->selectablePlaceholder(false),
                     \Filament\Forms\Components\Toggle::make('status')
                         ->inline(false)
-                        ->helperText('Admin panel access')
+                        ->helperText(__('Admin panel access'))
                         ->default(1),
                     \Filament\Forms\Components\Select::make('role')
+                    ->translateLabel()
                         ->options(
                             Role::all()->pluck('name', 'id')
                                 ->toArray()
@@ -45,14 +48,14 @@ class CreateUser extends CreateRecord
             \Filament\Forms\Components\Section::make()
                 ->schema([
                     \Filament\Forms\Components\TextInput::make('password')
-                        ->label('Define a password')
+                        ->label(__('Define a password'))
                         ->password()
                         ->dehydrateStateUsing(fn ($state) => Hash::make($state))
                         ->dehydrated(fn ($state) => filled($state))
                         ->same('confirm_password')
                         ->required(),
                     \Filament\Forms\Components\TextInput::make('confirm_password')
-                        ->label('Confirm password')
+                        ->label(__('Confirm password'))
                         ->password()
                         ->dehydrated(false)
                         ->required(),

@@ -32,6 +32,15 @@ class ShelterResource extends Resource
 
     protected static ?string $navigationGroup = 'Definitions';
 
+    public static function getNavigationLabel(): string
+    {
+        return __('Shelters');
+    }
+    public static function getModelLabel(): string
+    {
+        return __('shelter');
+    }
+
     public static function form(Form $form): Form
     {
         return $form
@@ -39,18 +48,23 @@ class ShelterResource extends Resource
                 Forms\Components\Section::make()
                     ->schema([
                         Forms\Components\TextInput::make('name')
+                            ->translateLabel()
                             ->required()
                             ->maxLength(100)
                             ->columnSpan(9),
                         Forms\Components\Toggle::make('status')
+                            ->translateLabel()
                             ->inline(false)
                             ->default(1)
                             ->required()
                             ->columnSpan(1),
                     ])->columns(10),
                 Forms\Components\Section::make('Address')
+                    ->heading(__('Address'))
+                    ->translateLabel()
                     ->schema([
                         Forms\Components\TextInput::make('street')
+                            ->translateLabel()
                             ->maxLength(100)
                             ->suffixActions([
                                 Forms\Components\Actions\Action::make('map')
@@ -83,10 +97,10 @@ class ShelterResource extends Resource
                             ->countries(['pt']) // restrict autocomplete results to these countries
                             ->updateLatLng() // update the lat/lng fields on your form when a Place is selected
                             ->maxLength(1024)
-                            ->placeholder('Search ...')
+                            ->placeholder(__('Search') . ' ...')
                             ->visible(fn (\Filament\Forms\Get $get): bool => $get('show_geocomplete'))
-                            ->hint('Search by Google')
-                            ->helperText('Search an address to help get data')
+                            ->hint(__('Search by Google'))
+                            ->helperText(__('Search an address to help get data'))
                             ->hiddenOn('view')
                             ->columnSpanFull(),
                         Map::make('map')
@@ -114,8 +128,8 @@ class ShelterResource extends Resource
                                 $set('latitude', $state['lat']);
                                 $set('longitude', $state['lng']);
                             })
-                            ->hint('Map by Google')
-                            ->helperText('Move the pin to help get data')
+                            ->hint(__('Map by Google'))
+                            ->helperText(__('Move the pin to help get data'))
                             ->visible(fn (\Filament\Forms\Get $get, $livewire): bool => $livewire instanceof ViewRecord && $get('latitude') && $get('longitude') ? true : $get('show_map'))
                             ->columnSpanFull(),
                         Forms\Components\Toggle::make('show_geocomplete')->reactive()->default(false)->dehydrated(false)->hidden(),
@@ -149,17 +163,21 @@ class ShelterResource extends Resource
                             ->hidden()
                             ->lazy(),
                         Forms\Components\Select::make('country')
+                            ->translateLabel()
                             ->searchable(true)
                             ->native(false)
                             ->options(__('pet/country'))
                             ->columnSpan(5),
                         Forms\Components\TextInput::make('state')
+                            ->translateLabel()
                             ->maxLength(100)
                             ->columnSpan(5),
                         Forms\Components\TextInput::make('local')
+                            ->translateLabel()
                             ->maxLength(100)
                             ->columnSpan(5),
                         Forms\Components\TextInput::make('zip')
+                            ->translateLabel()
                             ->placeholder('9999-999')
                             ->mask('9999-999')
                             ->maxLength(20)
@@ -173,14 +191,14 @@ class ShelterResource extends Resource
     {
         return $table
             ->columns([
-                Tables\Columns\TextColumn::make('name')->searchable(),
-                Tables\Columns\TextColumn::make('country')
+                Tables\Columns\TextColumn::make('name')->translateLabel()->searchable(),
+                Tables\Columns\TextColumn::make('country')->translateLabel()
                     ->toggleable(isToggledHiddenByDefault: true),
-                Tables\Columns\TextColumn::make('state')->searchable(),
-                Tables\Columns\TextColumn::make('local'),
-                Tables\Columns\TextColumn::make('street'),
-                Tables\Columns\TextColumn::make('zip')->searchable(),
-                Tables\Columns\IconColumn::make('status')
+                Tables\Columns\TextColumn::make('state')->translateLabel()->searchable(),
+                Tables\Columns\TextColumn::make('local')->translateLabel(),
+                Tables\Columns\TextColumn::make('street')->translateLabel(),
+                Tables\Columns\TextColumn::make('zip')->translateLabel()->searchable(),
+                Tables\Columns\IconColumn::make('status')->translateLabel()
                     ->boolean(),
             ])
             ->filters([
@@ -188,7 +206,7 @@ class ShelterResource extends Resource
             ])
             ->actions([
                 Tables\Actions\Action::make('map')
-                    ->label('View in map')
+                    ->label(__('View in map'))
                     ->color('info')
                     ->url(fn (Shelter $record) => "https://www.google.com/maps?q=$record->latitude,$record->longitude")
                     ->visible(fn (Shelter $record): bool => !empty($record->latitude) && !empty($record->longitude) ? true : false)
