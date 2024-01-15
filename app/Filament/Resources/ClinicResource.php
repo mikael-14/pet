@@ -32,6 +32,16 @@ class ClinicResource extends Resource
 
     protected static ?string $navigationGroup = 'Medical';
 
+
+    public static function getNavigationLabel(): string
+    {
+        return __('clinics');
+    }
+    public static function getModelLabel(): string
+    {
+        return __('clinic');
+    }
+
     public static function form(Form $form): Form
     {
         return $form
@@ -39,38 +49,43 @@ class ClinicResource extends Resource
                 Forms\Components\Section::make()
                     ->schema([
                         Forms\Components\TextInput::make('name')
+                            ->translateLabel()
                             ->required()
                             ->maxLength(100)
                             ->columnSpan(9),
                         Forms\Components\Toggle::make('status')
+                            ->label(__('Active'))
                             ->inline(false)
                             ->default(1)
                             ->required()
                             ->columnSpan(1),
                     ])->columns(10),
                 Forms\Components\Section::make('Address')
+                    ->heading(__('Address'))
+                    ->translateLabel()
                     ->schema([
                         Forms\Components\TextInput::make('street')
-                        ->maxLength(100)
-                        ->suffixActions([
-                            Forms\Components\Actions\Action::make('map')
-                                ->icon('tabler-map-search')
-                                ->label('Map')
-                                ->hiddenLabel()
-                                ->action(function (Get $get, Set $set) {
-                                    $set('show_geocomplete', false);
-                                    $set('show_map', !$get('show_map'));
-                                }),
-                            Forms\Components\Actions\Action::make('geolocate')
-                                ->icon('tabler-input-search')
-                                ->label('Geocode')
-                                ->hiddenLabel()
-                                ->action(function (Get $get, Set $set) {
-                                    $set('show_geocomplete', !$get('show_geocomplete'));
-                                    $set('show_map', false);
-                                })
-                        ])
-                        ->columnSpan(10),
+                            ->maxLength(100)
+                            ->translateLabel()
+                            ->suffixActions([
+                                Forms\Components\Actions\Action::make('map')
+                                    ->icon('tabler-map-search')
+                                    ->label('Map')
+                                    ->hiddenLabel()
+                                    ->action(function (Get $get, Set $set) {
+                                        $set('show_geocomplete', false);
+                                        $set('show_map', !$get('show_map'));
+                                    }),
+                                Forms\Components\Actions\Action::make('geolocate')
+                                    ->icon('tabler-input-search')
+                                    ->label('Geocode')
+                                    ->hiddenLabel()
+                                    ->action(function (Get $get, Set $set) {
+                                        $set('show_geocomplete', !$get('show_geocomplete'));
+                                        $set('show_map', false);
+                                    })
+                            ])
+                            ->columnSpan(10),
                         Geocomplete::make('location')
                             ->isLocation()
                             ->reverseGeocode([
@@ -83,10 +98,10 @@ class ClinicResource extends Resource
                             ->countries(['pt']) // restrict autocomplete results to these countries
                             ->updateLatLng() // update the lat/lng fields on your form when a Place is selected
                             ->maxLength(1024)
-                            ->placeholder('Search ...')
+                            ->placeholder(__('Search') .' ...')
                             ->visible(fn (\Filament\Forms\Get $get): bool => $get('show_geocomplete'))
-                            ->hint('Search by Google')
-                            ->helperText('Search an address to help get data')
+                            ->hint(__('Search by Google'))
+                            ->helperText(__('Search an address to help get data'))
                             ->hiddenOn('view')
                             ->columnSpanFull(),
                         Map::make('map')
@@ -114,8 +129,8 @@ class ClinicResource extends Resource
                                 $set('latitude', $state['lat']);
                                 $set('longitude', $state['lng']);
                             })
-                            ->hint('Map by Google')
-                            ->helperText('Move the pin to help get data')
+                            ->hint(__('Map by Google'))
+                            ->helperText(__('Move the pin to help get data'))
                             ->visible(fn (\Filament\Forms\Get $get, $livewire): bool => $livewire instanceof ViewRecord && $get('latitude') && $get('longitude') ? true : $get('show_map'))
                             ->columnSpanFull(),
                         Forms\Components\Toggle::make('show_geocomplete')->reactive()->default(false)->dehydrated(false)->hidden(),
@@ -149,15 +164,19 @@ class ClinicResource extends Resource
                             ->hidden()
                             ->lazy(),
                         Forms\Components\Select::make('country')
+                            ->translateLabel()
                             ->options(__('pet/country'))
                             ->columnSpan(5),
                         Forms\Components\TextInput::make('state')
+                            ->translateLabel()
                             ->maxLength(100)
                             ->columnSpan(5),
                         Forms\Components\TextInput::make('local')
+                            ->translateLabel()
                             ->maxLength(100)
                             ->columnSpan(5),
                         Forms\Components\TextInput::make('zip')
+                            ->translateLabel()
                             ->placeholder('9999-999')
                             ->mask('9999-999')
                             ->maxLength(20)
@@ -171,14 +190,15 @@ class ClinicResource extends Resource
     {
         return $table
             ->columns([
-                Tables\Columns\TextColumn::make('name')->searchable(),
-                Tables\Columns\TextColumn::make('country')
+                Tables\Columns\TextColumn::make('name')->translateLabel()->searchable(),
+                Tables\Columns\TextColumn::make('country')->translateLabel()
                     ->toggleable(isToggledHiddenByDefault: true),
-                Tables\Columns\TextColumn::make('state')->searchable(),
-                Tables\Columns\TextColumn::make('local'),
-                Tables\Columns\TextColumn::make('street'),
-                Tables\Columns\TextColumn::make('zip')->searchable(),
+                Tables\Columns\TextColumn::make('state')->translateLabel()->searchable(),
+                Tables\Columns\TextColumn::make('local')->translateLabel(),
+                Tables\Columns\TextColumn::make('street')->translateLabel(),
+                Tables\Columns\TextColumn::make('zip')->translateLabel()->searchable(),
                 Tables\Columns\IconColumn::make('status')
+                    ->label(__('Active'))
                     ->boolean(),
             ])
             ->filters([
@@ -186,7 +206,7 @@ class ClinicResource extends Resource
             ])
             ->actions([
                 Tables\Actions\Action::make('map')
-                    ->label('View in map')
+                    ->label(__('View in map'))
                     ->color('info')
                     ->url(fn (Clinic $record) => "https://www.google.com/maps?q=$record->latitude,$record->longitude")
                     ->visible(fn (Clinic $record): bool => !empty($record->latitude) && !empty($record->longitude) ? true : false)

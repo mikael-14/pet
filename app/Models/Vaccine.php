@@ -45,7 +45,7 @@ class Vaccine extends Model
 	public function pets()
 	{
 		return $this->belongsToMany(Pet::class, 'pet_has_vaccines', 'vaccine_id', 'pet_id')
-					->withPivot('id', 'vaccine_date', 'local', 'aplication', 'observation', 'deleted_at')
+					->withPivot('id', 'vaccine_date', 'local', 'application', 'observation', 'deleted_at')
 					->withTimestamps();
 	}
 }

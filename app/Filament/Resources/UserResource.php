@@ -26,6 +26,19 @@ class UserResource extends Resource implements HasShieldPermissions
 
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
 
+    public static function getNavigationLabel(): string
+    {
+        return __('Users');
+    }
+    public static function getModelLabel(): string
+    {
+        return __('user');
+    }
+    public static function getPluralModelLabel(): string
+    {
+        return __('Users');
+    }
+
     public static function getPermissionPrefixes(): array
     {
         return [
@@ -46,9 +59,12 @@ class UserResource extends Resource implements HasShieldPermissions
     {
         return $table
             ->columns([
-                Tables\Columns\TextColumn::make('name'),
-                Tables\Columns\TextColumn::make('email'),
+                Tables\Columns\TextColumn::make('name')
+                ->label(__('Username')),
+                Tables\Columns\TextColumn::make('email')
+                ->translateLabel(),
                 Tables\Columns\IconColumn::make('status')
+                ->label(__('Active'))
                     ->icons([
                         'heroicon-o-x-circle',
                         'heroicon-o-check-circle' => 1,
@@ -56,8 +72,10 @@ class UserResource extends Resource implements HasShieldPermissions
                         'danger',
                         'success' => 1,
                     ]),
-                Tables\Columns\TextColumn::make('locale'),
-                Tables\Columns\TextColumn::make('created_at'),
+                Tables\Columns\TextColumn::make('locale')
+                ->translateLabel(),
+                Tables\Columns\TextColumn::make('created_at')
+                ->translateLabel(),
             ])
             ->filters([
                 //

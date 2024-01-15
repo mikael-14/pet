@@ -13,41 +13,41 @@ $date_format = config('filament.date_time_format');
                         <th class="fi-ta-header-cell px-3 py-3.5 sm:first-of-type:ps-6 sm:last-of-type:pe-6">
                             <span class="group flex w-full items-center gap-x-1 whitespace-nowrap justify-start">
                                 <span class="fi-ta-header-cell-label text-sm font-semibold text-gray-950 dark:text-white">
-                                    Date
+                                    {{  __('Date') }}
                                 </span>
                             </span>
                         </th>
                         <th class="fi-ta-header-cell px-3 py-3.5 sm:first-of-type:ps-6 sm:last-of-type:pe-6">
                             <span class="group flex w-full items-center gap-x-1 whitespace-nowrap justify-start">
                                 <span class="fi-ta-header-cell-label text-sm font-semibold text-gray-950 dark:text-white">
-                                    Status
+                                    {{ __('Status') }}
                                 </span>
                             </span>
                         </th>
                         <th class="fi-ta-header-cell px-3 py-3.5 sm:first-of-type:ps-6 sm:last-of-type:pe-6">
                             <span class="group flex w-full items-center gap-x-1 whitespace-nowrap justify-start">
                                 <span class="fi-ta-header-cell-label text-sm font-semibold text-gray-950 dark:text-white">
-                                    Administered
+                                    {{ __('Administered') }}
                                 </span>
                             </span>
                         </th>
                         <th class="fi-ta-header-cell px-3 py-3.5 sm:first-of-type:ps-6 sm:last-of-type:pe-6">
                             <span class="group flex w-full items-center gap-x-1 whitespace-nowrap justify-start">
                                 <span class="fi-ta-header-cell-label text-sm font-semibold text-gray-950 dark:text-white">
-                                    Dosage
+                                    {{ __('Dosage') }}
                                 </span>
                             </span>
                         </th>
                         <th class="fi-ta-header-cell px-3 py-3.5 sm:first-of-type:ps-6 sm:last-of-type:pe-6">
                             <span class="group flex w-full items-center gap-x-1 whitespace-nowrap justify-start">
                                 <span class="fi-ta-header-cell-label text-sm font-semibold text-gray-950 dark:text-white">
-                                    Observation
+                                    {{ __('Observation') }}
                                 </span>
                             </span>
                         </th>
                         <th class="fi-ta-header-cell px-3 py-3.5 sm:first-of-type:ps-6 sm:last-of-type:pe-6">
                             <span class="fi-ta-header-cell-label text-sm font-semibold text-gray-950 dark:text-white">
-                                Person
+                                {{ __('Person') }}
                             </span>
                         </th>
                     </tr>

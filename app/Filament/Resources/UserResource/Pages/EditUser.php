@@ -41,51 +41,59 @@ class EditUser extends EditRecord
     public function form(Form $form): Form
     {
         return $form
-        ->schema([
-            Section::make('Update your data')
-                ->description('Update your account information')
-                ->schema([
-                    \Filament\Forms\Components\TextInput::make('name')
-                        ->required(),
-                    \Filament\Forms\Components\TextInput::make('email')
-                        ->placeholder('email@example.com')
-                        ->helperText('Make sure this email is valid and unique.')
-                        ->required()
-                        ->unique(table: User::class, column: 'email', ignorable: fn () => $this->getRecord(), ignoreRecord: true),
-                    \Filament\Forms\Components\Select::make('locale')->options(
-                        config('filament-spatie-laravel-translatable-plugin.available_locales')
-                    )->default('pt')
-                        ->selectablePlaceholder(false),
-                    \Filament\Forms\Components\Toggle::make('status')
-                        ->inline(false)
-                        ->helperText('Admin panel access')
-                        ->disabled(!Filament::auth()->user()->isAdmin())
-                        ->dehydrated(Filament::auth()->user()->isAdmin()),
-                    \Filament\Forms\Components\Select::make('role')
-                        ->options(
-                            Role::all()->pluck('name', 'id')
-                                ->toArray()
-                        )->disabled(!Filament::auth()->user()->isAdmin())
-                        ->dehydrated(Filament::auth()->user()->isAdmin()),
-                ])
-                ->columns(2),
-            Section::make('Change Password')
-                ->description('Fill this in case you want to change password')
-                ->schema([
-                    \Filament\Forms\Components\TextInput::make('password')
-                        ->password()
-                        ->dehydrateStateUsing(fn ($state) => Hash::make($state))
-                        ->dehydrated(fn ($state) => filled($state))
-                        ->same('confirm_password')
-                        ->visible(fn (\Filament\Forms\Get $get): bool => Filament::auth()->user()->id == $this->record->id),
-                    \Filament\Forms\Components\TextInput::make('confirm_password')
-                        ->dehydrated(false)
-                        ->password()
-                        ->visible(fn (\Filament\Forms\Get $get): bool => Filament::auth()->user()->id == $this->record->id),
-                ])
-                ->visible(fn (\Filament\Forms\Get $get): bool => Filament::auth()->user()->id == $this->record->id)
-                ->columns(2)
-        ]);
+            ->schema([
+                Section::make()
+                    ->heading(__('User data'))
+                    ->schema([
+                        \Filament\Forms\Components\TextInput::make('name')
+                            ->label(__('Username'))
+                            ->required(),
+                        \Filament\Forms\Components\TextInput::make('email')
+                            ->translateLabel()
+                            ->placeholder('email@example.com')
+                            ->helperText(__('Make sure this email is valid and unique'))
+                            ->required()
+                            ->unique(table: User::class, column: 'email', ignorable: fn () => $this->getRecord(), ignoreRecord: true),
+                        \Filament\Forms\Components\Select::make('locale')->options(
+                            config('filament-spatie-laravel-translatable-plugin.available_locales')
+                        )->default('pt')
+                            ->translateLabel()
+                            ->selectablePlaceholder(false),
+                        \Filament\Forms\Components\Toggle::make('status')
+                            ->label(__('Active'))
+                            ->inline(false)
+                            ->helperText(__('Admin panel access'))
+                            ->disabled(!Filament::auth()->user()->isAdmin())
+                            ->dehydrated(Filament::auth()->user()->isAdmin()),
+                        \Filament\Forms\Components\Select::make('role')
+                            ->translateLabel()
+                            ->options(
+                                Role::all()->pluck('name', 'id')
+                                    ->toArray()
+                            )->disabled(!Filament::auth()->user()->isAdmin())
+                            ->dehydrated(Filament::auth()->user()->isAdmin()),
+                    ])
+                    ->columns(2),
+                Section::make()
+                    ->heading(__('Change password'))
+                    ->description(__('Fill this in case you want to change password'))
+                    ->schema([
+                        \Filament\Forms\Components\TextInput::make('password')
+                            ->translateLabel()
+                            ->password()
+                            ->dehydrateStateUsing(fn ($state) => Hash::make($state))
+                            ->dehydrated(fn ($state) => filled($state))
+                            ->same('confirm_password')
+                            ->visible(fn (\Filament\Forms\Get $get): bool => Filament::auth()->user()->id == $this->record->id),
+                        \Filament\Forms\Components\TextInput::make('confirm_password')
+                            ->translateLabel()
+                            ->dehydrated(false)
+                            ->password()
+                            ->visible(fn (\Filament\Forms\Get $get): bool => Filament::auth()->user()->id == $this->record->id),
+                    ])
+                    ->visible(fn (\Filament\Forms\Get $get): bool => Filament::auth()->user()->id == $this->record->id)
+                    ->columns(2)
+            ]);
     }
     // protected function getRedirectUrl(): string
     // {

@@ -24,11 +24,15 @@ class PrescriptionHasMedicinesRelationManager extends RelationManager
 {
     protected static string $relationship = 'prescription_has_medicines';
 
-    protected static ?string $title = 'Medicines';
+    public static function getTitle($ownerRecord, $pageClass): string
+    {
+        return __('Medicine');
+    }
 
-    protected static ?string $modelLabel  = 'medicine';
-
-    protected static ?string $pluralModelLabel = 'medicines';
+    public static function getModelLabel(): string
+    {
+        return __('medicine');
+    }
 
     public function form(Form $form): Form
     {
@@ -37,8 +41,10 @@ class PrescriptionHasMedicinesRelationManager extends RelationManager
                 Forms\Components\Tabs::make('Tabs')
                     ->tabs([
                         Forms\Components\Tabs\Tab::make('Medicine')
+                        ->translateLabel()
                             ->schema([
                                 Forms\Components\Select::make('medicine_id')
+                                ->label(__('Medicine'))
                                     ->required()
                                     ->options(Medicine::all()->mapWithKeys(function ($medicine) {
                                         return [$medicine->id => $medicine->name . ' - ' . __("pet/medicine.$medicine->type")];
@@ -47,6 +53,7 @@ class PrescriptionHasMedicinesRelationManager extends RelationManager
                                     ->disabled(fn ($context) => $context !== 'create')
                                     ->searchable(),
                                 Forms\Components\TextInput::make('dosage')
+                                ->translateLabel()
                                     ->required()
                                     ->disabled(fn ($context) => $context !== 'create')
                                     ->suffix(function (\Filament\Forms\Get $get) {
@@ -57,16 +64,18 @@ class PrescriptionHasMedicinesRelationManager extends RelationManager
                                     ->maxLength(50),
                                 Grid::make(8)->schema([
                                     Forms\Components\TextInput::make('frequency')
+                                    ->translateLabel()
                                         ->numeric()
                                         ->mask('99999')
                                         ->integer() // Disallow decimal numbers.
                                         ->minValue(1)
-                                        ->suffix('time in hours')
+                                        ->suffix(__('time in hours'))
                                         ->lazy()
                                         ->live(onBlur: true)
                                         ->disabled(fn ($context) => $context !== 'create')
                                         ->columnSpan(4),
                                     Forms\Components\Select::make('status')
+                                    ->translateLabel()
                                         ->selectablePlaceholder(false)
                                         ->required()
                                         ->options(__('pet/prescriptionmedicines.status'))
@@ -74,6 +83,7 @@ class PrescriptionHasMedicinesRelationManager extends RelationManager
                                         ->default('active')
                                         ->columnSpan(3),
                                     Forms\Components\Toggle::make('emergency')
+                                    ->translateLabel()
                                         ->default(false)
                                         ->inline(false)
                                         ->live(onBlur: true)
@@ -81,6 +91,7 @@ class PrescriptionHasMedicinesRelationManager extends RelationManager
                                         ->columnSpan(1),
                                 ]),
                                 Forms\Components\DateTimePicker::make('start_date')
+                                ->translateLabel()
                                     ->native(false)
                                     ->displayFormat(config('filament.date_time_format'))
                                     ->seconds(false)
@@ -89,6 +100,7 @@ class PrescriptionHasMedicinesRelationManager extends RelationManager
                                     ->live(debounce: 500)
                                     ->required(),
                                 Forms\Components\DateTimePicker::make('end_date')
+                                ->translateLabel()
                                     ->native(false)
                                     ->afterOrEqual('start_date')
                                     ->displayFormat(config('filament.date_time_format'))
@@ -149,11 +161,13 @@ class PrescriptionHasMedicinesRelationManager extends RelationManager
                                     ->visible(fn (\Filament\Forms\Get $get): bool => (bool)$get('medicine_id'))
                                     ->columnSpan('full'),
                                 Forms\Components\Textarea::make('observation')
+                                ->translateLabel()
                                     ->maxLength(200)
                                     ->autosize()
                                     ->columnSpanFull(),
                             ])->columns(2),
                         Forms\Components\Tabs\Tab::make('Scheduled')
+                        ->translateLabel()
                             ->schema([
                                 ViewField::make('rating')
                                     ->view('filament.components.table-pet-has-medicines')
@@ -170,19 +184,23 @@ class PrescriptionHasMedicinesRelationManager extends RelationManager
         return $table
             ->columns([
                 Tables\Columns\TextColumn::make('medicine.name')
+                    ->label(__('Medicine'))
                     ->color(fn (PrescriptionHasMedicine $record): string => $record->emergency ? 'danger' : '')
                     ->icon(fn (PrescriptionHasMedicine $record): string => $record->emergency ? 'uni-medical-square-o' : '')
                     ->iconPosition('after')
                     ->description(fn (PrescriptionHasMedicine $record): string|null => ($record->emergency ? '(SOS) ' : '') . \Illuminate\Support\Str::limit($record->observation, 25))
                     ->tooltip(fn (PrescriptionHasMedicine $record): string|null  => ($record->emergency ? '(SOS) ' : '') . $record->observation),
                 Tables\Columns\TextColumn::make('start_date')
+                    ->translateLabel()
                     ->sortable()
                     ->date(config('filament.date_time_format')),
                 Tables\Columns\TextColumn::make('end_date')
+                    ->translateLabel()
                     ->placeholder('-')
                     ->sortable()
                     ->date(config('filament.date_time_format')),
                 Tables\Columns\TextColumn::make('status')
+                    ->translateLabel()
                     ->badge()
                     ->formatStateUsing(fn (string $state): string =>  __('pet/prescriptionmedicines.status')[$state] ?? '-')
                     ->colors([
@@ -191,8 +209,9 @@ class PrescriptionHasMedicinesRelationManager extends RelationManager
                         'success' => 'completed',
                         'danger' => 'canceled',
                     ]),
-                Tables\Columns\TextColumn::make('dosage'),
+                Tables\Columns\TextColumn::make('dosage')->translateLabel(),
                 Tables\Columns\TextColumn::make('frequency')
+                    ->translateLabel()
                     ->formatStateUsing(function (string|null $state): string {
                         $value = (int)$state;
                         if ($value === 0) {
@@ -207,14 +226,17 @@ class PrescriptionHasMedicinesRelationManager extends RelationManager
             ])
             ->filters([
                 Tables\Filters\SelectFilter::make('status')
+                    ->translateLabel()
                     ->options(__('pet/prescriptionmedicines.status'))
                     ->multiple(),
                 Tables\Filters\SelectFilter::make('emergency')
+                    ->translateLabel()
                     ->options([
                         0 => 'No',
                         1 => 'Yes',
                     ]),
                 Tables\Filters\SelectFilter::make('medicine_id')
+                    ->label(__('Medicine'))
                     ->relationship('medicine', 'name')
                     ->searchable()
             ])
@@ -231,6 +253,7 @@ class PrescriptionHasMedicinesRelationManager extends RelationManager
             ])
             ->bulkActions([
                 Tables\Actions\BulkAction::make('change_status')
+                    ->translateLabel()
                     ->icon('heroicon-s-pencil')
                     ->action(function (Collection $records, array $data): void {
                         if (isset($data['new_status']))
@@ -239,12 +262,13 @@ class PrescriptionHasMedicinesRelationManager extends RelationManager
                                 $record->save();
                             }
                         Notification::make()
-                            ->title('All status changed')
+                            ->title(__('Success'))
                             ->success()
                             ->send();
                     })
                     ->form([
                         Forms\Components\Select::make('new_status')
+                            ->translateLabel()
                             ->options(__('pet/prescriptionmedicines.status'))
                             ->required()
                     ])

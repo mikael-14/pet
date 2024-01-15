@@ -28,9 +28,9 @@ class PeopleRelationManager extends RelationManager
     {
         return $table
             ->columns([
-                Tables\Columns\TextColumn::make('name')->searchable(),
-                Tables\Columns\TextColumn::make('email')->searchable(),
-                Tables\Columns\TextColumn::make('flags')
+                Tables\Columns\TextColumn::make('name')->translateLabel()->searchable(),
+                Tables\Columns\TextColumn::make('email')->translateLabel()->searchable(),
+                Tables\Columns\TextColumn::make('flags')->translateLabel()
                 ->badge()
                 ->colors([
                     'danger' => 'Black list',
@@ -48,7 +48,6 @@ class PeopleRelationManager extends RelationManager
                 ->sortable(),
             ])
             ->filters([
-                //
             ])
             ->headerActions([
                 Tables\Actions\CreateAction::make()->color('gray')

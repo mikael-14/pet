@@ -59,7 +59,7 @@ class PetHasMedicineRelationManager extends RelationManager
                 Forms\Components\DateTimePicker::make('date')
                     ->native(false)
                     ->displayFormat(config('filament.date_time_format'))
-                    ->default(Carbon::now(config('app.timezone'))->format('Y-m-d H:00:00'))
+                    ->default(Carbon::now(config('app.timezone'))->format('Y-m-d 00:00:00'))
                     ->seconds(false)
                     ->minutesStep(15)
                     ->reactive()
@@ -103,7 +103,7 @@ class PetHasMedicineRelationManager extends RelationManager
                         Forms\Components\DateTimePicker::make('from')
                              ->native(false)
                             ->displayFormat(config('filament.date_time_format'))
-                            ->default(Carbon::now(config('app.timezone'))->format('Y-m-d H:00:00'))
+                            ->default(Carbon::now(config('app.timezone'))->format('Y-m-d 00:00:00'))
                             ->seconds(false)
                             ->minutesStep(15),
                         Forms\Components\DateTimePicker::make('until')

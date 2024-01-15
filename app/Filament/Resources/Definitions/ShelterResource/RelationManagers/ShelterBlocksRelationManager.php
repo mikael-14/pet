@@ -17,17 +17,22 @@ class ShelterBlocksRelationManager extends RelationManager
 
     protected static ?string $recordTitleAttribute = 'name';
 
-    protected static ?string $title = 'Shelter Block';
+    public static function getTitle($ownerRecord = null, $pageClass=null): string
+    {
+        return __('Shelter blocks');
+    }
 
-    protected static ?string $modelLabel  = 'shelter block';
-
-    protected static ?string $pluralModelLabel = 'shelter blocks';
+    public static function getModelLabel(): string
+    {
+        return __('shelter block');
+    }
 
     public function form(Form $form): Form
     {
         return $form
             ->schema([
                 Forms\Components\TextInput::make('name')
+                ->translateLabel()
                     ->required()
                     ->maxLength(50),
                 Forms\Components\ColorPicker::make('color'),
@@ -38,9 +43,9 @@ class ShelterBlocksRelationManager extends RelationManager
     {
         return $table
             ->columns([
-                Tables\Columns\TextColumn::make('name'),
-                Tables\Columns\ColorColumn::make('color'),
-                Tables\Columns\TextColumn::make('created_at')
+                Tables\Columns\TextColumn::make('name')->translateLabel(),
+                Tables\Columns\ColorColumn::make('color')->translateLabel(),
+                Tables\Columns\TextColumn::make('created_at')->translateLabel()
                     ->dateTime(config('filament.date_time_format')),
             ])
             ->filters([
@@ -48,7 +53,7 @@ class ShelterBlocksRelationManager extends RelationManager
             ])
             ->headerActions([
                 Tables\Actions\CreateAction::make()
-                ->modalHeading(__('filament-actions::create.single.modal.heading', ['label'  => self::$title]))
+                ->modalHeading(__('filament-actions::create.single.modal.heading', ['label'  => self::getTitle()]))
                 ->visible(fn ($livewire) => $livewire->pageClass !== ViewShelter::class),
             ])
             ->actions([
