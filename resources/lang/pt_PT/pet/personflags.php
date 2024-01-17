@@ -13,31 +13,31 @@
 */
 return [
     'cleaning_volunteer' => [
-        'name' => 'Cleaning volunteer',
+        'name' => 'Voluntário Limpeza',
         'status' => true
     ],
     'driver_volunteer' => [
-        'name' => 'Driver volunteer',
+        'name' => 'Voluntário transporte',
         'status' => true
     ],
     'medication_volunteer' => [
-        'name' => 'Medication volunteer',
+        'name' => 'Voluntário Medicação',
         'status' => true
     ],
     'temporary_family' => [
-        'name' => 'Temporary host family',
+        'name' => 'Família de Acolhimento Temporário',
         'status' => true
     ],
     'veterinary' => [
-        'name' => 'Veterinary',
+        'name' => 'Veterinário',
         'status' => true
     ],
     'adopter' => [
-        'name' => 'Adopter',
+        'name' => 'Adotante',
         'status' => true
     ],
     'sponsor' => [
-        'name' => 'Sponsor',
+        'name' => 'Padrinho',
         'status' => true
     ],
     'black_list' => [

@@ -3,12 +3,9 @@
 namespace App\Filament\Resources;
 
 use App\Filament\Resources\PersonResource\Pages;
-use App\Filament\Resources\PersonResource\Pages\ViewPerson;
 use App\Filament\Resources\PersonResource\RelationManagers;
 use App\Models\Person;
 use App\Models\PersonFlag;
-use App\Models\User;
-use Awcodes\DropInAction\Forms\Components\DropInAction;
 use BezhanSalleh\FilamentShield\Contracts\HasShieldPermissions;
 use Filament\Facades\Filament;
 use Filament\Forms;
@@ -20,11 +17,10 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 use Cheesegrits\FilamentGoogleMaps\Fields\Map;
 use Cheesegrits\FilamentGoogleMaps\Fields\Geocomplete;
-use Closure;
 use Filament\Forms\Get;
 use Filament\Forms\Set;
+use Filament\Infolists\Components\TextEntry;
 use Filament\Resources\Pages\ViewRecord;
-use Filament\Resources\Pages\Page;
 
 class PersonResource extends Resource implements HasShieldPermissions
 {
@@ -36,6 +32,15 @@ class PersonResource extends Resource implements HasShieldPermissions
     protected static ?string $recordTitleAttribute = 'name';
 
     protected static ?int $navigationSort = 1;
+
+    public static function getNavigationLabel(): string
+    {
+        return __('People');
+    }
+    public static function getModelLabel(): string
+    {
+        return __('person');
+    }
 
     public static function getPermissionPrefixes(): array
     {
@@ -59,49 +64,58 @@ class PersonResource extends Resource implements HasShieldPermissions
                 Forms\Components\Section::make()
                     ->schema([
                         Forms\Components\TextInput::make('name')
+                        ->translateLabel()
                             ->required()
                             ->maxLength(200),
                         Forms\Components\Select::make('gender')
+                        ->translateLabel()
                             ->options([
-                                'undefined' => 'Undefined',
-                                'male' => 'Male',
-                                'female' => 'Female',
+                                'undefined' => __('Undefined'),
+                                'male' => __('Male'),
+                                'female' => __('Female'),
                             ])
                             ->required(),
                         Forms\Components\TextInput::make('email')
+                        ->translateLabel()
                             ->email()
                             ->required()
                             ->unique(table: Person::class, column: 'email', ignoreRecord: true)
                             ->maxLength(255),
                         Forms\Components\TextInput::make('phone')
+                        ->translateLabel()
                             ->tel()
                             ->required()
                             ->maxLength(20),
                         Forms\Components\TextInput::make('vat')
+                        ->translateLabel()
                             ->maxLength(20)
                             ->unique(table: Person::class, column: 'vat',  ignoreRecord: true),
                         Forms\Components\TextInput::make('cc')
+                        ->translateLabel()
                             ->maxLength(30),
-                        Forms\Components\DatePicker::make('birth_date')
+                        Forms\Components\DatePicker::make('birth_date')->translateLabel()
                         ->native(false)
                             ->displayFormat(config('filament.date_format')),
                         Forms\Components\Select::make('user_id')->options(
                             Person::avaibleUsers()
-                        )->searchable()
+                        )->searchable()->translateLabel()
                             ->visible(Filament::auth()->user()->can('set_user_person'))
-                            ->placeholder('Select to set user'),
+                            ->placeholder('Select to set user')
+                            ->label(ucfirst(__('user'))),
                         Forms\Components\Grid::make(2)
                             ->schema([
-                                Forms\Components\Textarea::make('observation')
+                                Forms\Components\Textarea::make('observation')->translateLabel()
                                     ->maxLength(65535),
-                                Forms\Components\CheckboxList::make('flags')
+                                Forms\Components\CheckboxList::make('flags')->translateLabel()
                                     ->options(PersonFlag::flags())
                             ])
                     ])->columns(2),
                 Forms\Components\Section::make('Address')
+                ->heading(__('Address'))
                     ->schema([
                         Forms\Components\TextInput::make('street')
                             ->maxLength(100)
+                            ->translateLabel()
                             ->suffixActions([
                                 Forms\Components\Actions\Action::make('map')
                                     ->icon('tabler-map-search')
@@ -133,10 +147,10 @@ class PersonResource extends Resource implements HasShieldPermissions
                             ->countries(['pt']) // restrict autocomplete results to these countries
                             ->updateLatLng() // update the lat/lng fields on your form when a Place is selected
                             ->maxLength(1024)
-                            ->placeholder('Search ...')
+                            ->placeholder(__('Search') .' ...')
                             ->visible(fn (\Filament\Forms\Get $get): bool => $get('show_geocomplete'))
-                            ->hint('Search by Google')
-                            ->helperText('Search an address to help get data')
+                            ->hint(__('Search by Google'))
+                            ->helperText(__('Search an address to help get data'))
                             ->hiddenOn('view')
                             ->columnSpanFull(),
                         Map::make('map')
@@ -164,8 +178,8 @@ class PersonResource extends Resource implements HasShieldPermissions
                                 $set('latitude', $state['lat']);
                                 $set('longitude', $state['lng']);
                             })
-                            ->hint('Map by Google')
-                            ->helperText('Move the pin to help get data')
+                            ->hint(__('Map by Google'))
+                            ->helperText(__('Move the pin to help get data'))
                             ->visible(fn (\Filament\Forms\Get $get, $livewire): bool => $livewire instanceof ViewRecord && $get('latitude') && $get('longitude') ? true : $get('show_map'))
                             ->columnSpanFull(),
                         Forms\Components\Toggle::make('show_geocomplete')->reactive()->default(false)->dehydrated(false)->hidden(),
@@ -199,15 +213,19 @@ class PersonResource extends Resource implements HasShieldPermissions
                             ->hidden()
                             ->lazy(),
                         Forms\Components\Select::make('country')
+                        ->translateLabel()
                             ->options(__('pet/country'))
                             ->columnSpan(5),
                         Forms\Components\TextInput::make('state')
+                        ->translateLabel()
                             ->maxLength(100)
                             ->columnSpan(5),
                         Forms\Components\TextInput::make('local')
+                        ->translateLabel()
                             ->maxLength(100)
                             ->columnSpan(5),
                         Forms\Components\TextInput::make('zip')
+                        ->translateLabel()
                             ->placeholder('9999-999')
                             ->mask('9999-999')
                             ->maxLength(20)
@@ -221,12 +239,12 @@ class PersonResource extends Resource implements HasShieldPermissions
     {
         return $table
             ->columns([
-                Tables\Columns\TextColumn::make('name')->searchable(),
-                Tables\Columns\TextColumn::make('email')->searchable(),
-                Tables\Columns\TextColumn::make('phone')->searchable(),
-                Tables\Columns\TextColumn::make('vat')->searchable(),
-                Tables\Columns\TextColumn::make('cc')->toggleable(isToggledHiddenByDefault: true),
-                Tables\Columns\TextColumn::make('flags')
+                Tables\Columns\TextColumn::make('name')->translateLabel()->searchable(),
+                Tables\Columns\TextColumn::make('email')->translateLabel()->searchable(),
+                Tables\Columns\TextColumn::make('phone')->translateLabel()->searchable(),
+                Tables\Columns\TextColumn::make('vat')->translateLabel()->searchable(),
+                Tables\Columns\TextColumn::make('cc')->translateLabel()->toggleable(isToggledHiddenByDefault: true),
+                Tables\Columns\TextColumn::make('flags')->translateLabel()
                 ->badge()
                 ->color(fn (string $state): string => match ($state) {
                     'Black list' => 'danger',
@@ -243,31 +261,31 @@ class PersonResource extends Resource implements HasShieldPermissions
                     })
                     ->searchable()
                     ->sortable(),
-                Tables\Columns\TextColumn::make('birth_date')
+                Tables\Columns\TextColumn::make('birth_date')->translateLabel()
                     ->date(config('filament.date_format'))
                     ->toggleable(isToggledHiddenByDefault: true),
-                Tables\Columns\TextColumn::make('created_at')
+                Tables\Columns\TextColumn::make('created_at')->translateLabel()
                     ->dateTime(config('filament.date_time_format'))->toggleable(isToggledHiddenByDefault: true),
-                Tables\Columns\TextColumn::make('deleted_at')
+                Tables\Columns\TextColumn::make('deleted_at')->translateLabel()
                     ->dateTime(config('filament.date_time_format'))->toggleable(isToggledHiddenByDefault: true),
             ])
             ->filters([
-                // Tables\Filters\SelectFilter::make('flags')
-                //     ->multiple()
-                //     ->options([
-                //         'adopter' => 'adopter',
-                //         'black_list' => 'black_list',
-                //         'cleaning_volunteer' => 'cleaning_volunteer',
-                //         'driver_volunteer' => 'driver_volunteer',
-                //         'medication_volunteer' => 'medication_volunteer',
-                //         'temporary_family' => 'temporary_family',
-                //         'sponsor' => 'sponsor',
-                //         'veterinary' => 'veterinary',
-                //     ])
-                //     ->query(
-                //         fn (Builder $query, array $data): Builder =>
-                //         $query->join('person_flags', 'person_flags.person_id', '=', 'people.id')
-                //     ),
+                Tables\Filters\SelectFilter::make('flags')
+                    ->multiple()
+                    ->options([
+                        'adopter' => 'adopter',
+                        'black_list' => 'black_list',
+                        'cleaning_volunteer' => 'cleaning_volunteer',
+                        'driver_volunteer' => 'driver_volunteer',
+                        'medication_volunteer' => 'medication_volunteer',
+                        'temporary_family' => 'temporary_family',
+                        'sponsor' => 'sponsor',
+                        'veterinary' => 'veterinary',
+                    ])
+                    ->query(
+                        fn (Builder $query, array $data): Builder =>
+                        $query->join('person_flags', 'person_flags.person_id', '=', 'people.id')
+                    ),
                 Tables\Filters\TrashedFilter::make(),
             ])
             ->actions([

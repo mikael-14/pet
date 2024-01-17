@@ -3,8 +3,11 @@
 namespace App\Filament\Resources\Definitions\ShelterResource\RelationManagers;
 
 use App\Filament\Resources\Definitions\ShelterResource\Pages\ViewShelter;
+use App\Models\Pet;
+use App\Models\ShelterBlock;
 use Filament\Forms;
 use Filament\Forms\Form;
+use Filament\Notifications\Notification;
 use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Tables\Table;
 use Filament\Tables;
@@ -35,7 +38,8 @@ class ShelterBlocksRelationManager extends RelationManager
                 ->translateLabel()
                     ->required()
                     ->maxLength(50),
-                Forms\Components\ColorPicker::make('color'),
+                Forms\Components\ColorPicker::make('color')
+                ->translateLabel(),
             ]);
     }
 
@@ -58,10 +62,19 @@ class ShelterBlocksRelationManager extends RelationManager
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),
-                Tables\Actions\DeleteAction::make(),
+                Tables\Actions\DeleteAction::make()
+                ->before(function (Tables\Actions\DeleteAction $action,ShelterBlock $record) {
+                    if(Pet::where('shelter_block_id',$record->id)->exists()) {
+                        $action->cancel();
+                        Notification::make('cant_delete_record')
+                        ->title(__('Operation canceled. There is data associated with this record'))
+                        ->danger()
+                        ->send();
+                    }
+                }),
             ])
             ->bulkActions([
-                Tables\Actions\DeleteBulkAction::make(),
+                //Tables\Actions\DeleteBulkAction::make(),
             ]);
     } 
 }

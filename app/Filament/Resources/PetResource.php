@@ -10,6 +10,7 @@ use App\Models\ShelterBlock;
 use Filament\Infolists\Infolist;
 use Filament\Infolists\Components;
 use Filament\Infolists\Components\SpatieMediaLibraryImageEntry;
+use Filament\Infolists\Components\TextEntry;
 use Filament\Resources\Resource;
 use Filament\Tables\Table;
 use Filament\Tables;
@@ -26,67 +27,107 @@ class PetResource extends Resource
 
     protected static ?int $navigationSort = 0;
 
+    public static function getNavigationLabel(): string
+    {
+        return __('Pets');
+    }
+    public static function getModelLabel(): string
+    {
+        return __('pet');
+    }
+
+
     public static function table(Table $table): Table
     {
         return $table
             ->columns([
-                Tables\Columns\SpatieMediaLibraryImageColumn::make('image')->collection('pets-main-image')->square(),
-                Tables\Columns\TextColumn::make('name')->searchable(),
-                Tables\Columns\TextColumn::make('gender')->badge()->icons([
-                    'tabler-gender-male' => 'male',
-                    'tabler-gender-female' => 'female',
-                ])
+                Tables\Columns\SpatieMediaLibraryImageColumn::make('image')->collection('pets-main-image')->translateLabel()->square(),
+                Tables\Columns\TextColumn::make('name')
+                    ->translateLabel()
+                    ->searchable(),
+                Tables\Columns\TextColumn::make('gender')
+                    ->translateLabel()
+                    ->badge()
+                    ->formatStateUsing(fn (string $state): string => __("$state"))
+                    ->icons([
+                        'tabler-gender-male' => 'male',
+                        'tabler-gender-female' => 'female',
+                    ])
                     ->color(fn (string $state): string => match ($state) {
                         'male' => 'blue',
                         'female' => 'rose',
                     })
                     ->iconPosition('after')
                     ->toggleable(),
-                Tables\Columns\TextColumn::make('entry_status.name')->extraAttributes(static function (Pet $record): array {
-                    return ['style' => 'background-color:' . $record->entry_status->color, 'class' => 'table-text-column-badge'];
-                })
+                Tables\Columns\TextColumn::make('entry_status.name')
+                    ->translateLabel()
+                    ->badge()
+                    ->color('none')
+                    ->extraAttributes(static function (Pet $record): array {
+                        return ['style' => 'padding: 0;width: fit-content;margin: auto;background-color:' . $record->entry_status->color, 'class' => 'fi-badge flex items-center justify-center gap-x-1 rounded-md text-xs font-medium ring-1 ring-inset px-2 min-w-[theme(spacing.6)] fi-color-custom bg-custom-50 text-custom-600 ring-custom-600/10 dark:bg-custom-400/10 dark:text-custom-400 dark:ring-custom-400/30'];
+                    })
                     ->toggleable(isToggledHiddenByDefault: true)
                     ->sortable(),
-                Tables\Columns\TextColumn::make('shelter_block.name')->extraAttributes(static function (Pet $record): array {
-                    return ['style' => 'background-color:' . $record->shelter_block->color, 'class' => 'table-text-column-badge'];
-                })
+                Tables\Columns\TextColumn::make('shelter_block.name')
+                    ->translateLabel()
+                    ->badge()
+                    ->color('none')
+                    ->extraAttributes(static function (Pet $record): array {
+                        return ['style' => 'padding: 0;width: fit-content;margin: auto;background-color:' . $record->shelter_block->color, 'class' => 'fi-badge flex items-center justify-center gap-x-1 rounded-md text-xs font-medium ring-1 ring-inset px-2 min-w-[theme(spacing.6)] fi-color-custom bg-custom-50 text-custom-600 ring-custom-600/10 dark:bg-custom-400/10 dark:text-custom-400 dark:ring-custom-400/30'];
+                    })
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
                 Tables\Columns\TextColumn::make('species')
+                    ->translateLabel()
                     ->toggleable(isToggledHiddenByDefault: true),
-
-                Tables\Columns\TextColumn::make('chip')->searchable(),
+                Tables\Columns\TextColumn::make('chip')
+                    ->translateLabel()
+                    ->searchable(),
                 Tables\Columns\TextColumn::make('birth_date')
+                    ->translateLabel()
                     ->date(config('filament.date_format'))
                     ->toggleable(isToggledHiddenByDefault: true),
                 Tables\Columns\TextColumn::make('entry_date')
+                    ->translateLabel()
                     ->date(config('filament.date_format'))
                     ->toggleable(isToggledHiddenByDefault: true),
                 Tables\Columns\IconColumn::make('sterilized')
+                    ->translateLabel()
                     ->boolean(),
-                Tables\Columns\TextColumn::make('color'),
-                Tables\Columns\TextColumn::make('coat'),
+                Tables\Columns\TextColumn::make('color')
+                    ->translateLabel(),
+                Tables\Columns\TextColumn::make('coat')
+                    ->translateLabel()
+                    ->toggleable(isToggledHiddenByDefault: true),
                 Tables\Columns\TextColumn::make('created_at')
-                    ->dateTime(config('filament.date_time_format'))->toggleable(isToggledHiddenByDefault: true),
+                    ->translateLabel()
+                    ->dateTime(config('filament.date_time_format'))
+                    ->toggleable(isToggledHiddenByDefault: true),
                 Tables\Columns\TextColumn::make('deleted_at')
-                    ->dateTime(config('filament.date_time_format'))->toggleable(isToggledHiddenByDefault: true),
+                    ->translateLabel()
+                    ->dateTime(config('filament.date_time_format'))
+                    ->toggleable(isToggledHiddenByDefault: true),
             ])
             ->filters([
                 Tables\Filters\TrashedFilter::make(),
                 Tables\Filters\SelectFilter::make('gender')
+                    ->translateLabel()
                     ->options([
-                        'male' => 'Male',
-                        'female' => 'Female',
+                        'male' => __('male'),
+                        'female' => __('female'),
                     ]),
                 Tables\Filters\SelectFilter::make('sterilized')
+                    ->translateLabel()
                     ->options([
-                        1 => 'Yes',
-                        0 => 'No',
+                        1 => __('Yes'),
+                        0 => __('No'),
                     ]),
                 Tables\Filters\SelectFilter::make('entry_status_id')
+                    ->label(__('Entry status'))
                     ->multiple()
                     ->options(EntryStatus::all()->pluck('name', 'id')),
                 Tables\Filters\SelectFilter::make('shelter_block_id')
+                    ->label(__('Shelter block'))
                     ->multiple()
                     ->options(ShelterBlock::all()->pluck('name', 'id')),
             ])
@@ -178,10 +219,14 @@ class PetResource extends Resource
                                 ->grow(false)->extraAttributes(['class' => 'pr-1']),
                             Components\Grid::make(4)
                                 ->schema([
-                                    Components\TextEntry::make('name'),
-                                    Components\TextEntry::make('species'),
+                                    Components\TextEntry::make('name')
+                                        ->translateLabel(),
+                                    Components\TextEntry::make('species')
+                                        ->translateLabel(),
                                     Components\TextEntry::make('gender')
+                                        ->translateLabel()
                                         ->badge()
+                                        ->formatStateUsing(fn (string $state): string => __("$state"))
                                         ->color(fn (string $state): string => match ($state) {
                                             'male' => 'blue',
                                             'female' => 'rose',
@@ -190,7 +235,9 @@ class PetResource extends Resource
                                             'tabler-gender-male' => 'male',
                                             'tabler-gender-female' => 'female',
                                         ])->iconPosition('after'),
-                                    Components\TextEntry::make('birth_date')->formatStateUsing(
+                                    Components\TextEntry::make('birth_date')
+                                    ->translateLabel()
+                                    ->formatStateUsing(
                                         function ($state): string {
                                             if ($state) {
                                                 $ageInYears = $state->diffInYears();
@@ -209,24 +256,25 @@ class PetResource extends Resource
                                             return '-';
                                         }
                                     ),
-                                    Components\TextEntry::make('chip'),
-                                    Components\TextEntry::make('chip_date'),
-                                    Components\TextEntry::make('color'),
-                                    Components\TextEntry::make('coat'),
-                                    Components\TextEntry::make('breed'),
-                                    Components\IconEntry::make('adoptable')
+                                    Components\TextEntry::make('chip')->translateLabel(),
+                                    Components\TextEntry::make('chip_date')->translateLabel(),
+                                    Components\TextEntry::make('color')->translateLabel(),
+                                    Components\TextEntry::make('coat')->translateLabel(),
+                                    Components\TextEntry::make('breed')->translateLabel(),
+                                    Components\IconEntry::make('adoptable')->translateLabel()
                                         ->boolean(),
-                                    Components\TextEntry::make('shelter_block.name'),
-                                    Components\TextEntry::make('entry_status.name'),
-                                    Components\TextEntry::make('entry_date')->formatStateUsing(
+                                    Components\TextEntry::make('shelter_block.name')->translateLabel(),
+                                    Components\TextEntry::make('entry_status.name')->translateLabel(),
+                                    Components\TextEntry::make('entry_date')->translateLabel()->formatStateUsing(
                                         fn ($state): string => $state ? $state->format(config('filament.date_format')) . ' (' . $state->diffForHumans() . ')' : '-'
                                     ),
                                     Components\IconEntry::make('sterilized')
+                                    ->translateLabel()
                                         ->boolean(),
-                                    Components\TextEntry::make('sterilized_date')->formatStateUsing(
+                                    Components\TextEntry::make('sterilized_date')->translateLabel()->formatStateUsing(
                                         fn ($state): string => $state ? $state->format(config('filament.date_format')) : '-'
                                     ),
-                                    Components\TextEntry::make('sterilized_local'),
+                                    Components\TextEntry::make('sterilized_local')->translateLabel(),
                                 ]),
 
                         ]),

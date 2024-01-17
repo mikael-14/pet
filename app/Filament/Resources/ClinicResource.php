@@ -62,7 +62,6 @@ class ClinicResource extends Resource
                     ])->columns(10),
                 Forms\Components\Section::make('Address')
                     ->heading(__('Address'))
-                    ->translateLabel()
                     ->schema([
                         Forms\Components\TextInput::make('street')
                             ->maxLength(100)

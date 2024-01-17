@@ -5,8 +5,10 @@ namespace App\Filament\Resources\Definitions;
 use App\Filament\Resources\Definitions\DewormingResource\Pages;
 use App\Filament\Resources\Definitions\DewormingResource\RelationManagers;
 use App\Models\Deworming;
+use App\Models\PetHasDeworming;
 use Filament\Forms;
 use Filament\Forms\Form;
+use Filament\Notifications\Notification;
 use Filament\Resources\Resource;
 use Filament\Tables\Table;
 use Filament\Tables;
@@ -96,14 +98,18 @@ class DewormingResource extends Resource
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),
-                Tables\Actions\DeleteAction::make(),
+                Tables\Actions\DeleteAction::make()
+                ->before(function (Tables\Actions\DeleteAction $action,Deworming $record) {
+                    if(PetHasDeworming::where('deworming_id',$record->id)->exists()) {
+                        $action->cancel();
+                        Notification::make('cant_delete_record')
+                        ->title(__('Operation canceled. There is data associated with this record'))
+                        ->danger()
+                        ->send();
+                    }
+                }),
                 Tables\Actions\ForceDeleteAction::make(),
                 Tables\Actions\RestoreAction::make(),
-            ])
-            ->bulkActions([
-                Tables\Actions\DeleteBulkAction::make(),
-                Tables\Actions\ForceDeleteBulkAction::make(),
-                Tables\Actions\RestoreBulkAction::make(),
             ]);
     }
 

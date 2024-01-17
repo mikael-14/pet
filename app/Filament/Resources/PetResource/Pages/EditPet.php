@@ -47,42 +47,49 @@ class EditPet extends EditRecord
                                 Section::make()
                                     ->schema([
                                         TextInput::make('name')
+                                        ->translateLabel()
                                             ->required()
                                             ->maxLength(255),
                                         Select::make('species')
+                                        ->translateLabel()
                                             ->options(
                                                 __('pet/species')
                                             )->default(array_key_first(__('pet/species')))
                                             ->selectablePlaceholder(false),
                                         Select::make('gender')
+                                        ->translateLabel()
                                             ->options([
-                                                'male' => 'Male',
-                                                'female' => 'Female',
+                                                'male' => __('male'),
+                                                'female' => __('female'),
                                             ])->required(),
                                         DatePicker::make('birth_date')
+                                        ->translateLabel()
                                             ->native(false)
                                             ->displayFormat(config('filament.date_format')),
                                         TextInput::make('chip')
+                                        ->translateLabel()
                                             ->unique(table: Pet::class, column: 'chip', ignorable: fn () => $this->getRecord(), ignoreRecord: true)
                                             ->maxLength(20)
                                             ->hint(fn ($state) => 'Digits: ' . strlen($state) . '')
                                             ->lazy(),
                                         DatePicker::make('chip_date')
+                                        ->translateLabel()
                                             ->native(false)
                                             ->displayFormat(config('filament.date_format')),
-                                        TextInput::make('color')
+                                        TextInput::make('color')->translateLabel()
                                             ->maxLength(50),
-                                        TextInput::make('coat')
+                                        TextInput::make('coat')->translateLabel()
                                             ->maxLength(50),
-                                        TextInput::make('breed')
+                                        TextInput::make('breed')->translateLabel()
                                             ->maxLength(50),
-                                        Toggle::make('adoptable')
+                                        Toggle::make('adoptable')->translateLabel()
                                             ->inline(false),
-                                        RichEditor::make('observation')->columnSpan('full'),
+                                        RichEditor::make('observation')->translateLabel()->columnSpan('full'),
                                     ])->columns(2),
                                 Section::make('Status')
                                     ->schema([
                                         Select::make('shelter_block_id')
+                                        ->label(__('Shelter block'))
                                             ->allowHtml()
                                             ->searchable()
                                             ->preload()
@@ -90,6 +97,7 @@ class EditPet extends EditRecord
                                                 PetResource::getOptionWithColor(ShelterBlock::getOptions())
                                             )->required(),
                                         Select::make('entry_status_id')
+                                        ->label(__('Entry status'))
                                             ->allowHtml()
                                             ->searchable()
                                             ->preload()
@@ -97,16 +105,17 @@ class EditPet extends EditRecord
                                                 PetResource::getOptionWithColor(EntryStatus::all())
                                             )->required(),
                                         DatePicker::make('entry_date')
+                                        ->translateLabel()
                                             ->displayFormat(config('filament.date_format'))
                                             ->required(),
 
-                                        Toggle::make('sterilized')
+                                        Toggle::make('sterilized')->translateLabel()
                                             ->inline(false)->reactive(),
-                                        DatePicker::make('sterilized_date')
+                                        DatePicker::make('sterilized_date')->translateLabel()
                                             ->native(false)
                                             ->displayFormat(config('filament.date_format'))
                                             ->visible(fn ($get) => $get('sterilized')),
-                                        TextInput::make('sterilized_local')
+                                        TextInput::make('sterilized_local')->translateLabel()
                                             ->visible(fn ($get) => $get('sterilized'))
                                             ->maxLength(50),
                                     ])->collapsible()->columns(2),
@@ -116,6 +125,7 @@ class EditPet extends EditRecord
                                 Forms\Components\Section::make()
                                     ->schema([
                                         SpatieMediaLibraryFileUpload::make('image')
+                                        ->translateLabel()
                                             ->acceptedFileTypes(['image/*'])
                                             ->disk('petsMainImage')
                                             ->visibility('private')
@@ -125,6 +135,7 @@ class EditPet extends EditRecord
                                             ->deletable(false)
                                             ->hintAction(
                                                 Forms\Components\Actions\Action::make('removeImage')
+                                                ->label(__('Remove image'))
                                                     ->icon('heroicon-m-x-mark')
                                                     ->color('danger')
                                                     ->requiresConfirmation()
@@ -141,7 +152,7 @@ class EditPet extends EditRecord
                                             ->live(),
                                         Forms\Components\Actions::make([
                                             Forms\Components\Actions\Action::make('NewQrcode')
-                                                ->label('New Qrcode')
+                                                ->label(__('New').' Qrcode')
                                                 ->icon('tabler-new-section')
                                                 ->color('info')
                                                 ->requiresConfirmation()
@@ -153,7 +164,7 @@ class EditPet extends EditRecord
                                                     ]);
                                                 }),
                                             Forms\Components\Actions\Action::make('RemoveQrcode')
-                                                ->label('Remove Qrcode')
+                                                ->label(__('Remove').' Qrcode')
                                                 ->icon('heroicon-m-x-mark')
                                                 ->color('danger')
                                                 ->requiresConfirmation()
@@ -173,9 +184,9 @@ class EditPet extends EditRecord
                                                 $text_save =null;
                                                 if($qrcode !== $get('qrcode'))
                                                 {
-                                                    $text_save = (empty($get('qrcode'))) ? 'Removed' : 'Generated';
+                                                    $text_save = (empty($get('qrcode'))) ? __('Removed') : __('Generated');
                                                     $text_save .= '. ';
-                                                    $text_save .= 'Please Save to presist the changes' ;
+                                                    $text_save .= __('Please save to persist the changes') ;
                                                 } 
                                                 return view('filament.components.qrcode')
                                                     ->with('qrcode', $qrcode)
@@ -186,10 +197,10 @@ class EditPet extends EditRecord
                                 Forms\Components\Section::make()
                                     ->schema([
                                         Placeholder::make('Created')
-                                            ->label('Created at')
+                                            ->label(__('Created at'))
                                             ->content(fn (): ?string => $this->record?->created_at->diffForHumans()),
                                         Placeholder::make('updated_at')
-                                            ->label('Last modified at')
+                                            ->label(__('Updated at'))
                                             ->content(fn (): ?string => $this->record?->updated_at->diffForHumans()),
                                     ])
                             ])->columnSpan(1),

@@ -1,5 +1,6 @@
 {
     "age_years" : "1 year|:value years",
-    "age_months" : "1 month|:value months"
-    
+    "age_months" : "1 month|:value months",
+    "default_expiration": "Default expiration in :days day|Default expiration in :days days"
+
 }

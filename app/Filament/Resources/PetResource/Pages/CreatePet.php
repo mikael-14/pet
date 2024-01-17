@@ -38,42 +38,47 @@ class CreatePet extends CreateRecord
                                 Forms\Components\Section::make()
                                     ->schema([
                                         TextInput::make('name')
+                                        ->translateLabel()
                                             ->required()
                                             ->maxLength(255),
                                         Select::make('species')
+                                        ->translateLabel()
                                             ->options(
                                                 __('pet/species')
                                             )->default(array_key_first(__('pet/species')))
                                             ->selectablePlaceholder(false),
                                         Select::make('gender')
+                                        ->translateLabel()
                                             ->options([
-                                                'male' => 'Male',
-                                                'female' => 'Female',
+                                                'male' => __('male'),
+                                                'female' => __('female'),
                                             ])->required(),
-                                        DatePicker::make('birth_date')
+                                        DatePicker::make('birth_date')->translateLabel()
                                             ->native(false)
                                             ->displayFormat(config('filament.date_format')),
-                                        TextInput::make('chip')
+                                        TextInput::make('chip')->translateLabel()
                                             ->unique(table: Pet::class, column: 'chip', ignoreRecord: true)
                                             ->maxLength(20)
                                             ->hint(fn ($state) => 'Digits: ' . strlen($state) . '')
                                             ->lazy(),
-                                        DatePicker::make('chip_date')
+                                        DatePicker::make('chip_date')->translateLabel()
                                             ->native(false)
                                             ->displayFormat(config('filament.date_format')),
-                                        TextInput::make('color')
+                                        TextInput::make('color')->translateLabel()
                                             ->maxLength(50),
-                                        TextInput::make('coat')
+                                        TextInput::make('coat')->translateLabel()
                                             ->maxLength(50),
-                                        TextInput::make('breed')
+                                        TextInput::make('breed')->translateLabel()
                                             ->maxLength(50),
-                                        Toggle::make('adoptable')
+                                        Toggle::make('adoptable')->translateLabel()
                                             ->inline(false),
-                                        RichEditor::make('observation')->columnSpan('full'),
+                                        RichEditor::make('observation')->translateLabel()->columnSpan('full'),
                                     ])->columns(2),
                                 Section::make('Status')
+                                ->heading(__('Status'))
                                     ->schema([
                                         Select::make('shelter_block_id')
+                                        ->label(__('Shelter block'))
                                             ->allowHtml()
                                             ->searchable()
                                             ->preload()
@@ -81,6 +86,7 @@ class CreatePet extends CreateRecord
                                                 PetResource::getOptionWithColor(ShelterBlock::getOptions())
                                             )->required(),
                                         Select::make('entry_status_id')
+                                        ->label(__('Entry status'))
                                             ->allowHtml()
                                             ->searchable()
                                             ->preload()
@@ -88,17 +94,21 @@ class CreatePet extends CreateRecord
                                                 PetResource::getOptionWithColor(EntryStatus::all())
                                             )->required(),
                                         DatePicker::make('entry_date')
+                                        ->translateLabel()
                                             ->native(false)
                                             ->displayFormat(config('filament.date_format'))
                                             ->required(),
 
                                         Toggle::make('sterilized')
+                                        ->translateLabel()
                                             ->inline(false)->reactive(),
                                         DatePicker::make('sterilized_date')
+                                        ->translateLabel()
                                             ->native(false)
                                             ->displayFormat(config('filament.date_format'))
                                             ->visible(fn ($get) => $get('sterilized')),
                                         TextInput::make('sterilized_local')
+                                        ->translateLabel()
                                             ->visible(fn ($get) => $get('sterilized'))
                                             ->maxLength(50),
                                     ])->columns(2)->collapsible(),
@@ -108,6 +118,7 @@ class CreatePet extends CreateRecord
                                 Forms\Components\Section::make()
                                     ->schema([
                                         SpatieMediaLibraryFileUpload::make('image')
+                                        ->translateLabel()
                                             ->acceptedFileTypes(['image/*'])
                                             ->disk('petsMainImage')
                                             ->collection('pets-main-image')
@@ -116,6 +127,7 @@ class CreatePet extends CreateRecord
                                             ->deletable(false)
                                             ->hintAction(
                                                 Forms\Components\Actions\Action::make('removeImage')
+                                                ->label(__('Remove image'))
                                                     ->icon('heroicon-m-x-mark')
                                                     ->color('danger')
                                                     ->requiresConfirmation()

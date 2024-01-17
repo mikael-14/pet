@@ -8,18 +8,24 @@ use Filament\Forms\Form;
 use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Tables\Table;
 use Filament\Tables;
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\SoftDeletingScope;
 
 class PetHasDietRelationManager extends RelationManager
 {
     protected static string $relationship = 'pet_has_diet';
 
-    protected static ?string $title = 'Diet';
+    public static function getTitle($ownerRecord = null, $pageClass = null): string
+    {
+        return ucfirst(__('diet'));
+    }
 
-    protected static ?string $modelLabel  = 'diet';
-
-    protected static ?string $pluralModelLabel = 'diets';
+    public static function getModelLabel(): string
+    {
+        return __('diet');
+    }
+    public static function getPluralModelLabel(): string
+    {
+        return __('diets');
+    }
 
     public function form(Form $form): Form
     {
@@ -54,11 +60,11 @@ class PetHasDietRelationManager extends RelationManager
                 //
             ])
             ->headerActions([
-                Tables\Actions\CreateAction::make()->modalHeading( __('filament-actions::create.single.modal.heading', ['label' => self::$title])),
+                Tables\Actions\CreateAction::make()->modalHeading( __('filament-actions::create.single.modal.heading', ['label' => self::getTitle()])),
             ])
             ->actions([
-                Tables\Actions\ViewAction::make()->modalHeading(fn ($record) => __('filament-actions::view.single.modal.heading', ['label' => $record->diet()?->first()->name ?? self::$title])),
-                Tables\Actions\EditAction::make()->modalHeading(fn ($record) => __('filament-actions::edit.single.modal.heading', ['label' => $record->diet()?->first()->name ?? self::$title])),
+                Tables\Actions\ViewAction::make()->modalHeading(fn ($record) => __('filament-actions::view.single.modal.heading', ['label' => $record->diet()?->first()->name ?? self::getTitle()])),
+                Tables\Actions\EditAction::make()->modalHeading(fn ($record) => __('filament-actions::edit.single.modal.heading', ['label' => $record->diet()?->first()->name ?? self::getTitle()])),
                 Tables\Actions\DeleteAction::make(),
             ])
             ->bulkActions([

@@ -4,9 +4,11 @@ namespace App\Filament\Resources\Definitions;
 
 use App\Filament\Resources\Definitions\VaccineResource\Pages;
 use App\Filament\Resources\Definitions\VaccineResource\RelationManagers;
+use App\Models\PetHasVaccine;
 use App\Models\Vaccine;
 use Filament\Forms;
 use Filament\Forms\Form;
+use Filament\Notifications\Notification;
 use Filament\Resources\Resource;
 use Filament\Tables\Table;
 use Filament\Tables;
@@ -83,14 +85,23 @@ class VaccineResource extends Resource
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),
-                Tables\Actions\DeleteAction::make(),
+                Tables\Actions\DeleteAction::make()
+                ->before(function (Tables\Actions\DeleteAction $action,Vaccine $record) {
+                    if(PetHasVaccine::where('vaccine_id',$record->id)->exists()) {
+                        $action->cancel();
+                        Notification::make('cant_delete_record')
+                        ->title(__('Operation canceled. There is data associated with this record'))
+                        ->danger()
+                        ->send();
+                    }
+                }),
                 Tables\Actions\ForceDeleteAction::make(),
                 Tables\Actions\RestoreAction::make(),
             ])
             ->bulkActions([
-                Tables\Actions\DeleteBulkAction::make(),
-                Tables\Actions\ForceDeleteBulkAction::make(),
-                Tables\Actions\RestoreBulkAction::make(),
+                // Tables\Actions\DeleteBulkAction::make(),
+                // Tables\Actions\ForceDeleteBulkAction::make(),
+                // Tables\Actions\RestoreBulkAction::make(),
             ]);
     }
 

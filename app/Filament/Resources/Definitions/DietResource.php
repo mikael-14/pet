@@ -5,8 +5,10 @@ namespace  App\Filament\Resources\Definitions;
 use App\Filament\Resources\Definitions\DietResource\Pages;
 use App\Filament\Resources\Definitions\DietResource\RelationManagers;
 use App\Models\Diet;
+use App\Models\PetHasDiet;
 use Filament\Forms;
 use Filament\Forms\Form;
+use Filament\Notifications\Notification;
 use Filament\Resources\Resource;
 use Filament\Tables\Table;
 use Filament\Tables;
@@ -61,10 +63,16 @@ class DietResource extends Resource
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),
-                Tables\Actions\DeleteAction::make(),
-            ])
-            ->bulkActions([
-                Tables\Actions\DeleteBulkAction::make(),
+                Tables\Actions\DeleteAction::make()
+                ->before(function (Tables\Actions\DeleteAction $action,Diet $record) {
+                    if(PetHasDiet::where('diet_id',$record->id)->exists()) {
+                        $action->cancel();
+                        Notification::make('cant_delete_record')
+                        ->title(__('Operation canceled. There is data associated with this record'))
+                        ->danger()
+                        ->send();
+                    }
+                }),
             ]);
     }
 

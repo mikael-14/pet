@@ -22,13 +22,21 @@ class PetHasMeasureRelationManager extends RelationManager
 {
     protected static string $relationship = 'pet_has_measure';
 
-    protected static ?string $title = 'Measure';
-
     protected static ?string $recordTitleAttribute = 'type';
 
-    protected static ?string $modelLabel  = 'measure';
+    public static function getTitle($ownerRecord = null, $pageClass = null): string
+    {
+        return ucfirst(__('measure'));
+    }
 
-    protected static ?string $pluralModelLabel = 'measures';
+    public static function getModelLabel(): string
+    {
+        return __('measure');
+    }
+    public static function getPluralModelLabel(): string
+    {
+        return __('measures');
+    }
 
     public function form(Form $form): Form
     {
@@ -38,12 +46,12 @@ class PetHasMeasureRelationManager extends RelationManager
             $schema = array_merge($schema, [
                 Forms\Components\Hidden::make('type-' . $key)->default($key)->visibleOn('create'),
                 Forms\Components\TextInput::make('name-type-' . $key)
-                    ->label('Type')
+                    ->label(__('Type'))
                     ->default($config['name'])->visibleOn('create')
                     ->dehydrated(false)
                     ->disabled(),
                 Forms\Components\TextInput::make('value-' . $key)
-                    ->label('Value')
+                    ->label(__('Value'))
                     ->inputMode('decimal')
                     ->minValue(0)
                     ->visibleOn('create')
@@ -54,18 +62,19 @@ class PetHasMeasureRelationManager extends RelationManager
             Forms\Components\Hidden::make('type')->visibleOn('edit'),
             Forms\Components\TextInput::make('name-type')
                 ->formatStateUsing(fn ($record) => $record?->getConfigMeasureName() ?? '')
-                ->visibleOn('edit')
+                ->visibleOn(['edit', 'view'])
                 ->dehydrated(false)
                 ->disabled(),
             Forms\Components\TextInput::make('value')
+                ->label(__('Value'))
                 ->numeric()
                 ->inputMode('decimal')
                 ->minValue(0)
-                ->visibleOn('edit'),
-            Forms\Components\DatePicker::make('date')->native(false)->displayFormat(config('filament.date_format'))->required(),
-            Forms\Components\TextInput::make('local')->maxLength(50),
-            Forms\Components\Select::make('person_id')->options(Person::getPersonByFlag(['veterinary', 'medication_volunteer'])->toArray())->searchable()->columnSpanFull(),
-            Forms\Components\Textarea::make('observation')->maxLength(300)->columnSpanFull(),
+                ->visibleOn(['edit', 'view']),
+            Forms\Components\DatePicker::make('date')->translateLabel()->native(false)->displayFormat(config('filament.date_format'))->required(),
+            Forms\Components\TextInput::make('local')->translateLabel()->maxLength(50),
+            Forms\Components\Select::make('person_id')->label(ucfirst(__('person')))->options(Person::getPersonByFlag(['veterinary', 'medication_volunteer'])->toArray())->searchable()->columnSpanFull(),
+            Forms\Components\Textarea::make('observation')->translateLabel()->maxLength(300)->columnSpanFull(),
         ]);
         return $form
             ->schema($schema);
@@ -76,21 +85,27 @@ class PetHasMeasureRelationManager extends RelationManager
         return $table
             ->columns([
                 Tables\Columns\TextColumn::make('type')->getStateUsing(fn ($record) => $record->getConfigMeasureName())
+                    ->translateLabel()
                     ->searchable(),
                 Tables\Columns\ViewColumn::make('value')->view('filament.tables.columns.label-variation'),
                 Tables\Columns\TextColumn::make('date')
+                    ->translateLabel()
                     ->sortable()
                     ->date(config('filament.date_format')),
                 Tables\Columns\TextColumn::make('local')
+                    ->translateLabel()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
                 Tables\Columns\TextColumn::make('person.name')
+                    ->label(ucfirst(__('person')))
                     ->toggleable(),
                 Tables\Columns\TextColumn::make('observation')
+                    ->translateLabel()
                     ->toggleable(isToggledHiddenByDefault: true),
             ])
             ->filters([
                 Tables\Filters\SelectFilter::make('person_id')
+                    ->label(ucfirst(__('person')))
                     ->relationship('person', 'name')
                     ->searchable()
             ])
@@ -124,16 +139,15 @@ class PetHasMeasureRelationManager extends RelationManager
                         $livewire->getRelationship()->create($row);
                     }
                     return $livewire->getRelationship()->create($data);
-                })->modalHeading(__('filament-actions::create.single.modal.heading', ['label' => self::$title])),
+                })->modalHeading(__('filament-actions::create.single.modal.heading', ['label' => self::getTitle()])),
             ])
             ->actions([
-                Tables\Actions\ViewAction::make()->modalHeading(fn ($record) => __('filament-actions::view.single.modal.heading', ['label' => $record?->getConfigMeasureName() ?? self::$title])),
-                Tables\Actions\EditAction::make()->modalHeading(fn ($record) => __('filament-actions::edit.single.modal.heading', ['label' => $record?->getConfigMeasureName() ?? self::$title])),
+                Tables\Actions\ViewAction::make()->modalHeading(fn ($record) => __('filament-actions::view.single.modal.heading', ['label' => $record?->getConfigMeasureName() ?? self::getTitle()])),
+                Tables\Actions\EditAction::make()->modalHeading(fn ($record) => __('filament-actions::edit.single.modal.heading', ['label' => $record?->getConfigMeasureName() ?? self::getTitle()])),
                 Tables\Actions\DeleteAction::make(),
             ])
             ->bulkActions([
                 Tables\Actions\DeleteBulkAction::make(),
             ])->defaultSort('date', 'desc');
     }
-
 }
