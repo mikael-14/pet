@@ -214,8 +214,7 @@ class ShelterResource extends Resource
                     ->icon('tabler-map-2'),
                 Tables\Actions\EditAction::make(),
                 Tables\Actions\ViewAction::make(),
-            ])
-            ->bulkActions([]);
+            ]);
     }
 
     public static function getRelations(): array

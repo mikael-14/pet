@@ -19,11 +19,19 @@ class PetHasMedicineRelationManager extends RelationManager
 {
     protected static string $relationship = 'pet_has_medicine';
 
-    protected static ?string $title = 'Medicine';
+    public static function getTitle($ownerRecord = null, $pageClass = null): string
+    {
+        return ucfirst(__('medicine'));
+    }
 
-    protected static ?string $modelLabel  = 'medicine';
-
-    protected static ?string $pluralModelLabel = 'medicines';
+    public static function getModelLabel(): string
+    {
+        return __('medicine');
+    }
+    public static function getPluralModelLabel(): string
+    {
+        return __('medicines');
+    }
 
     public function form(Form $form): Form
     {
@@ -152,11 +160,11 @@ class PetHasMedicineRelationManager extends RelationManager
             ])
             ->headerActions([
                 Tables\Actions\CreateAction::make()
-                    ->modalHeading(__('filament-actions::create.single.modal.heading', ['label' => self::$title])),
+                    ->modalHeading(__('filament-actions::create.single.modal.heading', ['label' => self::getTitle()])),
             ])
             ->actions([
-                Tables\Actions\ViewAction::make()->modalHeading(fn ($record) => __('filament-actions::view.single.modal.heading', ['label' => $record->medicine()?->first()->name ?? self::$title])),
-                Tables\Actions\EditAction::make()->modalHeading(fn ($record) => __('filament-actions::edit.single.modal.heading', ['label' => $record->medicine()?->first()->name ?? self::$title])),
+                Tables\Actions\ViewAction::make()->modalHeading(fn ($record) => __('filament-actions::view.single.modal.heading', ['label' => $record->medicine()?->first()->name ?? self::getTitle()])),
+                Tables\Actions\EditAction::make()->modalHeading(fn ($record) => __('filament-actions::edit.single.modal.heading', ['label' => $record->medicine()?->first()->name ?? self::getTitle()])),
                 Tables\Actions\DeleteAction::make(),
             ])
             ->bulkActions([

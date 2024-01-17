@@ -5,24 +5,29 @@ namespace App\Filament\Resources\PetResource\RelationManagers;
 use App\Models\Deworming;
 use App\Models\Person;
 use Carbon\Carbon;
-use Closure;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Tables\Table;
 use Filament\Tables;
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\SoftDeletingScope;
 
 class PetHasDewormingRelationManager extends RelationManager
 {
     protected static string $relationship = 'pet_has_deworming';
 
-    protected static ?string $title = 'Deworming';
+    public static function getTitle($ownerRecord = null, $pageClass = null): string
+    {
+        return ucfirst(__('deworming'));
+    }
 
-    protected static ?string $modelLabel  = 'deworming';
-
-    protected static ?string $pluralModelLabel = 'dewormings';
+    public static function getModelLabel(): string
+    {
+        return __('deworming');
+    }
+    public static function getPluralModelLabel(): string
+    {
+        return __('dewormings');
+    }
 
     public function form(Form $form): Form
     {
@@ -106,11 +111,11 @@ class PetHasDewormingRelationManager extends RelationManager
                 ->searchable()
             ])
             ->headerActions([
-                Tables\Actions\CreateAction::make()->modalHeading(__('filament-actions::create.single.modal.heading', ['label' => self::$title])),
+                Tables\Actions\CreateAction::make()->modalHeading(__('filament-actions::create.single.modal.heading', ['label' => self::getTitle()])),
             ])
             ->actions([
-                Tables\Actions\ViewAction::make()->modalHeading(fn ($record) => __('filament-actions::view.single.modal.heading', ['label' => $record->deworming()?->first()->name ?? self::$title])),
-                Tables\Actions\EditAction::make()->modalHeading(fn ($record) => __('filament-actions::edit.single.modal.heading', ['label' => $record->deworming()?->first()->name ?? self::$title])),
+                Tables\Actions\ViewAction::make()->modalHeading(fn ($record) => __('filament-actions::view.single.modal.heading', ['label' => $record->deworming()?->first()->name ?? self::getTitle()])),
+                Tables\Actions\EditAction::make()->modalHeading(fn ($record) => __('filament-actions::edit.single.modal.heading', ['label' => $record->deworming()?->first()->name ?? self::getTitle()])),
                 Tables\Actions\DeleteAction::make(),
             ])
             ->bulkActions([

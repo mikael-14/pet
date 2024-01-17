@@ -5,8 +5,10 @@ namespace App\Filament\Resources\Definitions;
 use App\Filament\Resources\Definitions\EntryStatusResource\Pages;
 use App\Filament\Resources\Definitions\EntryStatusResource\RelationManagers;
 use App\Models\EntryStatus;
+use App\Models\Pet;
 use Filament\Forms;
 use Filament\Forms\Form;
+use Filament\Notifications\Notification;
 use Filament\Resources\Resource;
 use Filament\Tables\Table;
 use Filament\Tables;
@@ -43,7 +45,8 @@ class EntryStatusResource extends Resource
                     ->translateLabel()
                     ->required()
                     ->maxLength(20),
-                Forms\Components\ColorPicker::make('color'),
+                Forms\Components\ColorPicker::make('color')
+                ->translateLabel(),
             ]);
     }
 
@@ -62,9 +65,17 @@ class EntryStatusResource extends Resource
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),
-                Tables\Actions\DeleteAction::make(),
-            ])
-            ->bulkActions([]);
+                Tables\Actions\DeleteAction::make()
+                ->before(function (Tables\Actions\DeleteAction $action,EntryStatus $record) {
+                    if(Pet::where('entry_status_id',$record->id)->exists()) {
+                        $action->cancel();
+                        Notification::make('cant_delete_record')
+                        ->title(__('Operation canceled. There is data associated with this record'))
+                        ->danger()
+                        ->send();
+                    }
+                }),
+            ]);
     }
 
     public static function getPages(): array

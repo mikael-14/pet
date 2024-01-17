@@ -24,6 +24,17 @@ class PeopleRelationManager extends RelationManager
         return PersonResource::form($form);
     }
 
+    public static function getTitle($ownerRecord, $pageClass): string
+    {
+        return ucfirst(__('person'));
+    }
+
+    public static function getModelLabel(): string
+    {
+        return __('person');
+    }
+
+    
     public function table(Table $table): Table
     {
         return $table

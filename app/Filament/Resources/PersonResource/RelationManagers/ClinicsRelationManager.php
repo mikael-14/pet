@@ -25,14 +25,26 @@ class ClinicsRelationManager extends RelationManager
         return ClinicResource::form($form);
     }
 
+    public static function getTitle($ownerRecord, $pageClass): string
+    {
+        return ucfirst(__('clinic'));
+    }
+
+    public static function getModelLabel(): string
+    {
+        return __('clinic');
+    }
+
     public function table(Table $table): Table
     {
         return $table
             ->columns([
-                Tables\Columns\TextColumn::make('name')->searchable(),
-                Tables\Columns\TextColumn::make('state')->searchable(),
-                Tables\Columns\TextColumn::make('local'),
-                Tables\Columns\TextColumn::make('street'),
+                Tables\Columns\TextColumn::make('name')
+                ->translateLabel()
+                ->searchable(),
+                Tables\Columns\TextColumn::make('state')->translateLabel()->searchable(),
+                Tables\Columns\TextColumn::make('local')->translateLabel(),
+                Tables\Columns\TextColumn::make('street')->translateLabel(),
             ])
             ->filters([
                 //

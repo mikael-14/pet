@@ -15,7 +15,7 @@
 return [
     
     'weight' => [
-        'name' => 'Weight',
+        'name' => 'Peso',
         'unit' => 'Kg',
         'variation' => 0.099,
     ],
