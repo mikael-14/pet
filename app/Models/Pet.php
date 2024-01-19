@@ -10,6 +10,7 @@ use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Support\Facades\DB;
 use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\InteractsWithMedia;
 use Kenepa\ResourceLock\Models\Concerns\HasLocks;
@@ -149,14 +150,34 @@ class Pet extends Model implements HasMedia
 	public function medicines()
 	{
 		return $this->belongsToMany(Medicine::class, 'pet_has_medicines')
-					->withPivot('id', 'dosage', 'status', 'administered', 'date', 'observation', 'person_id', 'prescription_has_medicine_id', 'deleted_at')
-					->withTimestamps();
+			->withPivot('id', 'dosage', 'status', 'administered', 'date', 'observation', 'person_id', 'prescription_has_medicine_id', 'deleted_at')
+			->withTimestamps();
 	}
-	
+
 	public function getConfigSpecie(): string
 	{
 		$configSpecies = __('pet/species');
 		return $configSpecies[$this->species] ?? $this->species;
+	}
+
+	public function getHighlighTestsAttribute()
+	{
+		// $tests = [];
+		//return ['unknown','negative','positive'];
+		return PetHasTest::select('pet_has_tests.date', 'pet_has_tests.result', 'tests.name', 'pet_has_tests.test_id')
+		->join('tests', 'tests.id', '=', 'pet_has_tests.test_id')
+		->whereIn(
+			DB::raw('(pet_has_tests.date, pet_has_tests.test_id)'),
+			function ($query) {
+				$query->select(DB::raw('MAX(date) as date, test_id'))
+					->from('pet_has_tests')
+					->where('pet_id', $this->id)
+					->groupBy('test_id');
+			}
+		)
+		->where('tests.highlight', 1)
+		->where('pet_has_tests.pet_id', $this->id)
+		->get();
 	}
 
 	public function pet_has_vaccine()

@@ -77,7 +77,7 @@
     "Generated": "Criado",
     "Expire at":"Expira a",
     "Result": "Resultado",
-    "Unkown":"Desconhecido",
+    "Unknown":"Desconhecido",
     "Positive":"Positivo",
     "Negative":"Negativo",
     "File":"Ficheiro",
@@ -85,13 +85,15 @@
     "Value":"Valor",
     "Weight":"Peso",
     "Height":"Altura",
-    
+    "Highlight":"Destacar",
+    "Highligh tests":"Testes de destaque",
     "Male": "Masculino",
     "Female": "Feminino",
     "male":"macho",
     "female":"fêmea",
 
-
+    "Definitions": "Definições",
+    "Medications":"Medicações",
     "medical": "Medicina",
     "clinics": "Clínicas",
     "clinic": "clínica",

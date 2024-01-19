@@ -64,11 +64,11 @@ class PersonResource extends Resource implements HasShieldPermissions
                 Forms\Components\Section::make()
                     ->schema([
                         Forms\Components\TextInput::make('name')
-                        ->translateLabel()
+                            ->translateLabel()
                             ->required()
                             ->maxLength(200),
                         Forms\Components\Select::make('gender')
-                        ->translateLabel()
+                            ->translateLabel()
                             ->options([
                                 'undefined' => __('Undefined'),
                                 'male' => __('Male'),
@@ -76,25 +76,25 @@ class PersonResource extends Resource implements HasShieldPermissions
                             ])
                             ->required(),
                         Forms\Components\TextInput::make('email')
-                        ->translateLabel()
+                            ->translateLabel()
                             ->email()
                             ->required()
                             ->unique(table: Person::class, column: 'email', ignoreRecord: true)
                             ->maxLength(255),
                         Forms\Components\TextInput::make('phone')
-                        ->translateLabel()
+                            ->translateLabel()
                             ->tel()
                             ->required()
                             ->maxLength(20),
                         Forms\Components\TextInput::make('vat')
-                        ->translateLabel()
+                            ->translateLabel()
                             ->maxLength(20)
                             ->unique(table: Person::class, column: 'vat',  ignoreRecord: true),
                         Forms\Components\TextInput::make('cc')
-                        ->translateLabel()
+                            ->translateLabel()
                             ->maxLength(30),
                         Forms\Components\DatePicker::make('birth_date')->translateLabel()
-                        ->native(false)
+                            ->native(false)
                             ->displayFormat(config('filament.date_format')),
                         Forms\Components\Select::make('user_id')->options(
                             Person::avaibleUsers()
@@ -111,7 +111,7 @@ class PersonResource extends Resource implements HasShieldPermissions
                             ])
                     ])->columns(2),
                 Forms\Components\Section::make('Address')
-                ->heading(__('Address'))
+                    ->heading(__('Address'))
                     ->schema([
                         Forms\Components\TextInput::make('street')
                             ->maxLength(100)
@@ -147,7 +147,7 @@ class PersonResource extends Resource implements HasShieldPermissions
                             ->countries(['pt']) // restrict autocomplete results to these countries
                             ->updateLatLng() // update the lat/lng fields on your form when a Place is selected
                             ->maxLength(1024)
-                            ->placeholder(__('Search') .' ...')
+                            ->placeholder(__('Search') . ' ...')
                             ->visible(fn (\Filament\Forms\Get $get): bool => $get('show_geocomplete'))
                             ->hint(__('Search by Google'))
                             ->helperText(__('Search an address to help get data'))
@@ -213,19 +213,19 @@ class PersonResource extends Resource implements HasShieldPermissions
                             ->hidden()
                             ->lazy(),
                         Forms\Components\Select::make('country')
-                        ->translateLabel()
+                            ->translateLabel()
                             ->options(__('pet/country'))
                             ->columnSpan(5),
                         Forms\Components\TextInput::make('state')
-                        ->translateLabel()
+                            ->translateLabel()
                             ->maxLength(100)
                             ->columnSpan(5),
                         Forms\Components\TextInput::make('local')
-                        ->translateLabel()
+                            ->translateLabel()
                             ->maxLength(100)
                             ->columnSpan(5),
                         Forms\Components\TextInput::make('zip')
-                        ->translateLabel()
+                            ->translateLabel()
                             ->placeholder('9999-999')
                             ->mask('9999-999')
                             ->maxLength(20)
@@ -245,15 +245,15 @@ class PersonResource extends Resource implements HasShieldPermissions
                 Tables\Columns\TextColumn::make('vat')->translateLabel()->searchable(),
                 Tables\Columns\TextColumn::make('cc')->translateLabel()->toggleable(isToggledHiddenByDefault: true),
                 Tables\Columns\TextColumn::make('flags')->translateLabel()
-                ->badge()
-                ->color(fn (string $state): string => match ($state) {
-                    'Black list' => 'danger',
-                    'Adopter' => 'info',
-                    'Temporary host family' => 'warning',
-                    'Sponsor' => 'info',
-                    'Veterinary' => 'success',
-                    default => 'primary',
-                })
+                    ->badge()
+                    ->color(fn (string $state): string => match ($state) {
+                        'Black list' => 'danger',
+                        'Adopter' => 'info',
+                        'Temporary host family' => 'warning',
+                        'Sponsor' => 'info',
+                        'Veterinary' => 'success',
+                        default => 'primary',
+                    })
                     ->getStateUsing(function ($record) {
                         return $record->person_flags()->get()->map(function ($item) {
                             return $item->getName();

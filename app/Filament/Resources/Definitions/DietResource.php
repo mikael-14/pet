@@ -25,7 +25,12 @@ class DietResource extends Resource
 
     protected static ?string $recordTitleAttribute = 'name';
 
-    protected static ?string $navigationGroup = 'Definitions';
+ 
+    public static function getNavigationGroup(): ?string
+    {
+        return __('Definitions');
+    }
+
 
     public static function getNavigationLabel(): string
     {

@@ -49,7 +49,7 @@ class PetHasTestRelationManager extends RelationManager
                 Forms\Components\Select::make('result')
                     ->translateLabel()
                     ->options([
-                        'unknown' => __('Unkown'),
+                        'unknown' => __('Unknown'),
                         'positive' => __('Positive'),
                         'negative' => __('Negative'),
                     ])
@@ -120,7 +120,7 @@ class PetHasTestRelationManager extends RelationManager
                 Tables\Filters\SelectFilter::make('result')
                     ->translateLabel()
                     ->options([
-                        'unknown' => __('Unkown'),
+                        'unknown' => __('Unknown'),
                         'positive' => __('Positive'),
                         'negative' => __('Negative'),
                     ]),

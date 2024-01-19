@@ -21,8 +21,11 @@ class MedicineResource extends Resource
     protected static ?string $navigationIcon = 'tabler-pill';
 
     protected static ?string $slug = 'medication/medicines';
-
-    protected static ?string $navigationGroup = 'Medical';
+    
+    public static function getNavigationGroup(): ?string
+    {
+        return __('Medications');
+    }
 
     public static function getNavigationLabel(): string
     {
