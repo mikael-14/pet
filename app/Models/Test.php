@@ -16,6 +16,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * 
  * @property int $id
  * @property string $name
+ * @property bool $highlight
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
  * @property string|null $deleted_at
@@ -29,8 +30,13 @@ class Test extends Model
 	use SoftDeletes;
 	protected $table = 'tests';
 
+	protected $casts = [
+		'adoptable' => 'bool',
+	];
+
 	protected $fillable = [
-		'name'
+		'name',
+		'highlight',
 	];
 
 	public function pets()

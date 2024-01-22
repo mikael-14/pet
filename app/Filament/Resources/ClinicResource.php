@@ -30,7 +30,10 @@ class ClinicResource extends Resource
 
     protected static ?string $slug = 'medication/clinics';
 
-    protected static ?string $navigationGroup = 'Medical';
+    public static function getNavigationGroup(): ?string
+    {
+        return __('Medications');
+    }
 
 
     public static function getNavigationLabel(): string

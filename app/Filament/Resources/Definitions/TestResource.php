@@ -25,7 +25,11 @@ class TestResource extends Resource
 
     protected static ?string $recordTitleAttribute = 'name';
 
-    protected static ?string $navigationGroup = 'Definitions';
+
+    public static function getNavigationGroup(): ?string
+    {
+        return __('Definitions');
+    }
 
     public static function getNavigationLabel(): string
     {
@@ -40,11 +44,20 @@ class TestResource extends Resource
     {
         return $form
             ->schema([
-                Forms\Components\TextInput::make('name')
-                    ->translateLabel()
-                    ->columnSpanFull()
-                    ->required()
-                    ->maxLength(100),
+                Forms\Components\Grid::make()
+                    ->columns(8)
+                    ->schema([
+                        Forms\Components\TextInput::make('name')
+                            ->translateLabel()
+                            ->required()
+                            ->columnSpan(7)
+                            ->maxLength(100),
+                            Forms\Components\Toggle::make('highlight')
+                            ->translateLabel()
+                            ->columnSpan(1)
+                            ->inline(false)
+                            ->default(false)
+                    ])
             ]);
     }
 
@@ -53,6 +66,7 @@ class TestResource extends Resource
         return $table
             ->columns([
                 Tables\Columns\TextColumn::make('name')->translateLabel(),
+                Tables\Columns\IconColumn::make('highlight')->translateLabel()->boolean(),
                 Tables\Columns\TextColumn::make('created_at')->translateLabel()
                     ->dateTime(config('filament.date_time_format'))
                     ->toggleable(),
@@ -66,15 +80,15 @@ class TestResource extends Resource
             ->actions([
                 Tables\Actions\EditAction::make(),
                 Tables\Actions\DeleteAction::make()
-                ->before(function (Tables\Actions\DeleteAction $action,Test $record) {
-                    if(PetHasTest::where('test_id',$record->id)->exists()) {
-                        $action->cancel();
-                        Notification::make('cant_delete_record')
-                        ->title(__('Operation canceled. There is data associated with this record'))
-                        ->danger()
-                        ->send();
-                    }
-                }),
+                    ->before(function (Tables\Actions\DeleteAction $action, Test $record) {
+                        if (PetHasTest::where('test_id', $record->id)->exists()) {
+                            $action->cancel();
+                            Notification::make('cant_delete_record')
+                                ->title(__('Operation canceled. There is data associated with this record'))
+                                ->danger()
+                                ->send();
+                        }
+                    }),
                 Tables\Actions\ForceDeleteAction::make(),
                 Tables\Actions\RestoreAction::make(),
             ])

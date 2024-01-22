@@ -83,6 +83,20 @@ class PetResource extends Resource
                 Tables\Columns\TextColumn::make('chip')
                     ->translateLabel()
                     ->searchable(),
+                Tables\Columns\TextColumn::make('chip_date')
+                    ->translateLabel()
+                    ->date(config('filament.date_format'))
+                    ->toggleable(isToggledHiddenByDefault: true),
+                Tables\Columns\TextColumn::make('highligh_tests')
+                    ->badge()
+                    ->formatStateUsing(fn ($state) => $state->name . ' - ' . __(ucfirst($state->result)))
+                    ->color(fn ($state): string => match ($state->result) {
+                        'unknown' => 'warning',
+                        'positive' => 'danger',
+                        'negative' => 'success',
+                        default => 'primary',
+                    })
+                    ->translateLabel(),
                 Tables\Columns\TextColumn::make('birth_date')
                     ->translateLabel()
                     ->date(config('filament.date_format'))
@@ -211,13 +225,25 @@ class PetResource extends Resource
                 Components\Section::make()
                     ->schema([
                         Components\Split::make([
-                            SpatieMediaLibraryImageEntry::make('image')
-                                ->label(false)
-                                ->collection('pets-main-image')
-                                ->width(300)
-                                ->height(300)
-                                ->grow(false)->extraAttributes(['class' => 'pr-1']),
-                            Components\Grid::make(4)
+                            Components\Grid::make(1)->schema([
+                                SpatieMediaLibraryImageEntry::make('image')
+                                    ->label(false)
+                                    ->collection('pets-main-image')
+                                    ->width(300)
+                                    ->height(300),
+                                Components\TextEntry::make('highligh_tests')
+                                ->placeholder('-')
+                                    ->badge()
+                                    ->formatStateUsing(fn ($state) => $state->name . ' - ' . __(ucfirst($state->result)))
+                                    ->color(fn ($state): string => match ($state->result) {
+                                        'unknown' => 'warning',
+                                        'positive' => 'danger',
+                                        'negative' => 'success',
+                                        default => 'primary',
+                                    })
+                                    ->translateLabel()
+                            ])->grow(false),
+                            Components\Grid::make(5)
                                 ->schema([
                                     Components\TextEntry::make('name')
                                         ->translateLabel(),
@@ -235,53 +261,55 @@ class PetResource extends Resource
                                             'tabler-gender-male' => 'male',
                                             'tabler-gender-female' => 'female',
                                         ])->iconPosition('after'),
-                                    Components\TextEntry::make('birth_date')
-                                    ->translateLabel()
-                                    ->formatStateUsing(
-                                        function ($state): string {
-                                            if ($state) {
-                                                $ageInYears = $state->diffInYears();
-                                                $ageInMonths = $state->diffInMonths();
-                                                $string = $state->format(config('filament.date_format'));
-                                                $string .= ' (';
-                                                if ($ageInYears > 0) {
-                                                    $string .=  trans_choice('age_years', $ageInYears, ['value' => $ageInYears]);
+                                    Components\TextEntry::make('birth_date')->placeholder('-')
+                                        ->translateLabel()
+                                        ->formatStateUsing(
+                                            function ($state): string {
+                                                if ($state) {
+                                                    $ageInYears = $state->diffInYears();
+                                                    $ageInMonths = $state->diffInMonths();
+                                                    $string = $state->format(config('filament.date_format'));
+                                                    $string .= ' (';
+                                                    if ($ageInYears > 0) {
+                                                        $string .=  trans_choice('age_years', $ageInYears, ['value' => $ageInYears]);
+                                                    }
+                                                    if ($ageInMonths > 0) {
+                                                        $string .=  trans_choice('age_months', $ageInMonths, ['value' => $ageInMonths]);
+                                                    }
+                                                    $string .= ')';
+                                                    return $string;
                                                 }
-                                                if ($ageInMonths > 0) {
-                                                    $string .=  trans_choice('age_months', $ageInMonths, ['value' => $ageInMonths]);
-                                                }
-                                                $string .= ')';
-                                                return $string;
+                                                return '-';
                                             }
-                                            return '-';
-                                        }
-                                    ),
-                                    Components\TextEntry::make('chip')->translateLabel(),
-                                    Components\TextEntry::make('chip_date')->translateLabel(),
-                                    Components\TextEntry::make('color')->translateLabel(),
-                                    Components\TextEntry::make('coat')->translateLabel(),
-                                    Components\TextEntry::make('breed')->translateLabel(),
+                                        ),
+                                    Components\TextEntry::make('chip')->placeholder('-')->translateLabel(),
+                                    Components\TextEntry::make('chip_date')->placeholder('-')->translateLabel(),
+                                    Components\TextEntry::make('color')->placeholder('-')->translateLabel(),
+                                    Components\TextEntry::make('coat')->placeholder('-')->translateLabel(),
+                                    Components\TextEntry::make('breed')->placeholder('-')->translateLabel(),
                                     Components\IconEntry::make('adoptable')->translateLabel()
                                         ->boolean(),
-                                    Components\TextEntry::make('shelter_block.name')->translateLabel(),
-                                    Components\TextEntry::make('entry_status.name')->translateLabel(),
-                                    Components\TextEntry::make('entry_date')->translateLabel()->formatStateUsing(
+                                    Components\TextEntry::make('shelter_block.name')->placeholder('-')->translateLabel(),
+                                    Components\TextEntry::make('entry_status.name')->placeholder('-')->translateLabel(),
+                                    Components\TextEntry::make('entry_date')->placeholder('-')->translateLabel()->formatStateUsing(
                                         fn ($state): string => $state ? $state->format(config('filament.date_format')) . ' (' . $state->diffForHumans() . ')' : '-'
                                     ),
                                     Components\IconEntry::make('sterilized')
-                                    ->translateLabel()
+                                        ->translateLabel()
                                         ->boolean(),
-                                    Components\TextEntry::make('sterilized_date')->translateLabel()->formatStateUsing(
+                                    Components\TextEntry::make('sterilized_date')->placeholder('-')->translateLabel()->formatStateUsing(
                                         fn ($state): string => $state ? $state->format(config('filament.date_format')) : '-'
                                     ),
-                                    Components\TextEntry::make('sterilized_local')->translateLabel(),
+                                    Components\TextEntry::make('sterilized_local')->placeholder('-')->translateLabel(),
                                 ]),
 
                         ]),
                     ]),
                 Components\Section::make('Observation')
+                    ->heading(__('Observation'))
                     ->schema([
                         Components\TextEntry::make('observation')
+                            ->label(false)
                             ->markdown(),
                     ])
                     ->collapsed(false)

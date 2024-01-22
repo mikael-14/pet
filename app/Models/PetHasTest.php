@@ -71,5 +71,5 @@ class PetHasTest extends Model implements HasMedia
 	{
 		return $this->belongsTo(Test::class);
 	}
-	
+
 }
