@@ -16,7 +16,7 @@ return new class extends Migration
         Schema::create('vaccines', function (Blueprint $table) {
             $table->id();
             $table->string('name',100);
-            $table->integer('expire')->default(0)->comment('days of validation;0 not expiring');
+            $table->integer('expire')->nullable()->comment('days of validation;null not expiring');
             $table->integer('notification')->nullable()->comment('notification before/after expiration date');
             $table->timestamps();
             $table->softDeletes();

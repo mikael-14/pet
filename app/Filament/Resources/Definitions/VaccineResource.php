@@ -52,11 +52,8 @@ class VaccineResource extends Resource
                 Forms\Components\TextInput::make('expire')
                     ->translateLabel()
                     ->numeric()
-                    ->minValue(0)
-                    ->default(0)
-                    ->required()
                     ->suffix('days')
-                    ->helperText(__('Number of days to be renewed. Leave 0 (zero) if don\'t need to be renewed')),
+                    ->helperText(__('Number of days to be renewed. Leave blank if don\'t need to be renewed')),
                 Forms\Components\TextInput::make('notification')
                     ->translateLabel()
                     ->numeric()

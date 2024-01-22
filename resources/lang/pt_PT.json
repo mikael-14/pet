@@ -4,7 +4,7 @@
     "default_expiration": "Por defeito expira a :days dia|Por defeito expira a :days dias",
     "time in hours": "em horas",
     "days": "dias",
-    "Number of days to be renewed. Leave 0 (zero) if don't need to be renewed": "Número de dias a serem renovados. Deixe 0 (zero) se não precisar renovar",
+    "Number of days to be renewed. Leave blank if don't need to be renewed": "Número de dias a serem renovados. Deixe em branco se não precisar renovar",
     "Number of day before/after to send notification to be rescheduled": "Número de dias antes/depois do envio da notificação",
     "Make sure this email is valid and unique": "Certifique-se que é um email válido e único",
     "Define a password":"Definir uma password",
