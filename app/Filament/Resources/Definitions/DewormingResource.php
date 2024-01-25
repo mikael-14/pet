@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\Definitions;
 
+use App\Enums\DewormingType;
 use App\Filament\Resources\Definitions\DewormingResource\Pages;
 use App\Filament\Resources\Definitions\DewormingResource\RelationManagers;
 use App\Models\Deworming;
@@ -49,7 +50,7 @@ class DewormingResource extends Resource
                     ->maxLength(100),
                 Forms\Components\Select::make('type')
                     ->translateLabel()
-                    ->options(__('pet/deworming'))
+                    ->options(DewormingType::class)
                     ->required(),
                 Forms\Components\TextInput::make('expire')
                     ->translateLabel()
@@ -72,11 +73,7 @@ class DewormingResource extends Resource
                     ->translateLabel(),
                 Tables\Columns\TextColumn::make('type')
                     ->translateLabel()
-                    ->formatStateUsing(fn (string $state): string => match ($state) {
-                        'internal' => __('Internal'),
-                        'external' => __('External'),
-                        'internal and external' => 'Internal and external',
-                    })->badge()
+                   ->badge()
                     ->color('primary'),
                 Tables\Columns\TextColumn::make('expire')
                     ->translateLabel(),

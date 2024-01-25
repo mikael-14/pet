@@ -139,7 +139,7 @@ class PrescriptionResource extends Resource
                 Tables\Columns\TextColumn::make('pet.name')
                     ->searchable(),
                 Tables\Columns\TextColumn::make('number')
-                    ->toggleable(isToggledHiddenByDefault: true)
+                    ->toggleable()
                     ->searchable(),
                 Tables\Columns\TextColumn::make('clinic.name')
                     ->toggleable(isToggledHiddenByDefault: true)
@@ -181,9 +181,11 @@ class PrescriptionResource extends Resource
             ])
             ->filters([
                 Tables\Filters\SelectFilter::make('pet_id')
+                    ->label(ucfirst(__('pet')))
                     ->relationship('pet', 'name')
                     ->searchable(),
                 Tables\Filters\SelectFilter::make('medicines.id')
+                    ->label(ucfirst(__('medicines')))
                     ->relationship('medicines', 'name')
                     ->multiple()
                     ->searchable(),
@@ -191,7 +193,7 @@ class PrescriptionResource extends Resource
             ])
             ->actions([
                 Tables\Actions\Action::make('file')
-                    ->label('View file')
+                    ->label(__('View file'))
                     ->color('info')
                     ->url(fn (Prescription $record) => $record->getMedia('pets-prescriptions')[0]?->getFullUrl())
                     ->visible(fn (Prescription $record): bool => isset($record->getMedia('pets-prescriptions')[0]) ? true : false)
@@ -244,6 +246,10 @@ class PrescriptionResource extends Resource
     }
     public static function getOptionPerson(Person $model): string
     {
+        $flags = $model?->person_flags->pluck('name');
+        $flags = array_map( function ($flag) {
+            return __("pet/personflags{$flag->value}");
+        },$flags);
         return
             view('filament.components.select-with-image')
             ->with('label', $model?->name)

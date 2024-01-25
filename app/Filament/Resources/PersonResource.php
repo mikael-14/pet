@@ -2,10 +2,10 @@
 
 namespace App\Filament\Resources;
 
+use App\Enums\PersonFlag;
 use App\Filament\Resources\PersonResource\Pages;
 use App\Filament\Resources\PersonResource\RelationManagers;
 use App\Models\Person;
-use App\Models\PersonFlag;
 use BezhanSalleh\FilamentShield\Contracts\HasShieldPermissions;
 use Filament\Facades\Filament;
 use Filament\Forms;
@@ -107,7 +107,7 @@ class PersonResource extends Resource implements HasShieldPermissions
                                 Forms\Components\Textarea::make('observation')->translateLabel()
                                     ->maxLength(65535),
                                 Forms\Components\CheckboxList::make('flags')->translateLabel()
-                                    ->options(PersonFlag::flags())
+                                    ->options(PersonFlag::class)
                             ])
                     ])->columns(2),
                 Forms\Components\Section::make('Address')
@@ -244,23 +244,10 @@ class PersonResource extends Resource implements HasShieldPermissions
                 Tables\Columns\TextColumn::make('phone')->translateLabel()->searchable(),
                 Tables\Columns\TextColumn::make('vat')->translateLabel()->searchable(),
                 Tables\Columns\TextColumn::make('cc')->translateLabel()->toggleable(isToggledHiddenByDefault: true),
-                Tables\Columns\TextColumn::make('flags')->translateLabel()
+                Tables\Columns\TextColumn::make('flags')
+                    ->translateLabel()
                     ->badge()
-                    ->color(fn (string $state): string => match ($state) {
-                        'Black list' => 'danger',
-                        'Adopter' => 'info',
-                        'Temporary host family' => 'warning',
-                        'Sponsor' => 'info',
-                        'Veterinary' => 'success',
-                        default => 'primary',
-                    })
-                    ->getStateUsing(function ($record) {
-                        return $record->person_flags()->get()->map(function ($item) {
-                            return $item->getName();
-                        })->toArray();
-                    })
-                    ->searchable()
-                    ->sortable(),
+                    ->toggleable(),
                 Tables\Columns\TextColumn::make('birth_date')->translateLabel()
                     ->date(config('filament.date_format'))
                     ->toggleable(isToggledHiddenByDefault: true),
@@ -270,22 +257,14 @@ class PersonResource extends Resource implements HasShieldPermissions
                     ->dateTime(config('filament.date_time_format'))->toggleable(isToggledHiddenByDefault: true),
             ])
             ->filters([
-                Tables\Filters\SelectFilter::make('flags')
-                    ->multiple()
-                    ->options([
-                        'adopter' => 'adopter',
-                        'black_list' => 'black_list',
-                        'cleaning_volunteer' => 'cleaning_volunteer',
-                        'driver_volunteer' => 'driver_volunteer',
-                        'medication_volunteer' => 'medication_volunteer',
-                        'temporary_family' => 'temporary_family',
-                        'sponsor' => 'sponsor',
-                        'veterinary' => 'veterinary',
-                    ])
-                    ->query(
-                        fn (Builder $query, array $data): Builder =>
-                        $query->join('person_flags', 'person_flags.person_id', '=', 'people.id')
-                    ),
+                // Tables\Filters\SelectFilter::make('flags')
+                //     ->multiple()
+                //     ->options(PersonFlag::class)
+                //     ->query(
+                //         fn (Builder $query, array $data): Builder =>
+                //         $query->join('person_flags', 'person_flags.person_id', '=', 'people.id')
+                //        // ->whereIn('person_flags.name', $data['values'])
+                //     ),
                 Tables\Filters\TrashedFilter::make(),
             ])
             ->actions([

@@ -6,6 +6,7 @@
 
 namespace App\Models;
 
+use App\Enums\PersonFlag as EnumsPersonFlag;
 use Illuminate\Database\Eloquent\Model;
 
 /**
@@ -25,7 +26,8 @@ class PersonFlag extends Model
 	public $timestamps = false;
 
 	protected $casts = [
-		'person_id' => 'int'
+		'person_id' => 'int',
+		'name' => EnumsPersonFlag::class
 	];
 	protected $fillable = [
 		'person_id',

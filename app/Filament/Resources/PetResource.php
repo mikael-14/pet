@@ -4,7 +4,7 @@ namespace App\Filament\Resources;
 
 use App\Filament\Resources\PetResource\Pages;
 use App\Filament\Resources\PetResource\RelationManagers;
-use App\Models\EntryStatus;
+use App\Models\Status;
 use App\Models\Pet;
 use App\Models\ShelterBlock;
 use Filament\Infolists\Infolist;
@@ -139,7 +139,7 @@ class PetResource extends Resource
                 Tables\Filters\SelectFilter::make('entry_status_id')
                     ->label(__('Entry status'))
                     ->multiple()
-                    ->options(EntryStatus::all()->pluck('name', 'id')),
+                    ->options(Status::all()->pluck('name', 'id')),
                 Tables\Filters\SelectFilter::make('shelter_block_id')
                     ->label(__('Shelter block'))
                     ->multiple()
@@ -232,7 +232,7 @@ class PetResource extends Resource
                                     ->width(300)
                                     ->height(300),
                                 Components\TextEntry::make('highligh_tests')
-                                ->placeholder('-')
+                                    ->placeholder('-')
                                     ->badge()
                                     ->formatStateUsing(fn ($state) => $state->name . ' - ' . __(ucfirst($state->result)))
                                     ->color(fn ($state): string => match ($state->result) {
@@ -303,7 +303,7 @@ class PetResource extends Resource
                                     Components\TextEntry::make('sterilized_local')->placeholder('-')->translateLabel(),
                                 ]),
 
-                        ]),
+                        ])->from('sm'),
                     ]),
                 Components\Section::make('Observation')
                     ->heading(__('Observation'))

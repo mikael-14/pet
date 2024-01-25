@@ -54,7 +54,7 @@ class Person extends Model
 		'birth_date' => 'datetime',
 		'latitude' => 'float',
 		'longitude' => 'float',
-		'user_id' => 'int'
+		'user_id' => 'int',
 	];
 
 	protected $fillable = [
