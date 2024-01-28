@@ -6,6 +6,7 @@
 
 namespace App\Models;
 
+use App\Enums\PetGender;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
@@ -75,7 +76,8 @@ class Pet extends Model implements HasMedia
 		'status_date' => 'datetime',
 		'birth_date' => 'datetime',
 		'sterilized' => 'bool',
-		'sterilized_date' => 'datetime'
+		'sterilized_date' => 'datetime',
+		'gender' => PetGender::class
 	];
 
 	protected $fillable = [

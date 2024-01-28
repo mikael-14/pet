@@ -14,7 +14,7 @@ enum Species: string implements HasLabel, DefaultValue
 {
     const DefaultValue = 'cat';
 
-    case CAT = 'cat';
+    case Cat = 'cat';
 
     public function getLabel(): ?string
     {
@@ -25,7 +25,7 @@ enum Species: string implements HasLabel, DefaultValue
     }
     public function default(): ?string {
     {
-        return self::DefaultValue;
+        return 'cat';
     }
 
     }

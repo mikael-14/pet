@@ -53,7 +53,7 @@ class EditPet extends EditRecord
                                             ->maxLength(255),
                                         Select::make('species')
                                         ->translateLabel()
-                                            ->options(Species::class)->default(Species::CAT)
+                                            ->options(Species::class)
                                             ->selectablePlaceholder(false),
                                         Select::make('gender')
                                         ->translateLabel()

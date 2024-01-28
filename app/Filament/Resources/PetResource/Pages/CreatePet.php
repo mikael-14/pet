@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\PetResource\Pages;
 
+use App\Enums\PetGender;
 use App\Enums\Species;
 use App\Filament\Resources\PetResource;
 use App\Models\Status;
@@ -24,6 +25,10 @@ class CreatePet extends CreateRecord
 
     protected static string $resource = PetResource::class;
 
+    protected function getRedirectUrl(): string
+    {
+        return $this->getResource()::getUrl('edit', ['record' => $this->record]);
+    }
 
     public function form(Form $form): Form
     {
@@ -44,14 +49,13 @@ class CreatePet extends CreateRecord
                                             ->maxLength(255),
                                         Select::make('species')
                                             ->translateLabel()
-                                            ->options(Species::class)->default(Species::CAT)
+                                            ->options(Species::class)
+                                            ->default(Species::DefaultValue)
                                             ->selectablePlaceholder(false),
                                         Select::make('gender')
                                             ->translateLabel()
-                                            ->options([
-                                                'male' => __('male'),
-                                                'female' => __('female'),
-                                            ])->required(),
+                                            ->options(PetGender::class)
+                                            ->required(),
                                         DatePicker::make('birth_date')->translateLabel()
                                             ->native(false)
                                             ->displayFormat(config('filament.date_format')),
@@ -63,6 +67,19 @@ class CreatePet extends CreateRecord
                                         DatePicker::make('chip_date')->translateLabel()
                                             ->native(false)
                                             ->displayFormat(config('filament.date_format')),
+                                        Select::make('entry_status_id')
+                                            ->label(__('Entry status'))
+                                            ->allowHtml()
+                                            ->searchable()
+                                            ->preload()
+                                            ->options(
+                                                PetResource::getOptionWithColor(Status::all())
+                                            )->required(),
+                                        DatePicker::make('entry_date')
+                                            ->translateLabel()
+                                            ->native(false)
+                                            ->displayFormat(config('filament.date_format'))
+                                            ->required(),
                                         TextInput::make('color')->translateLabel()
                                             ->maxLength(50),
                                         TextInput::make('coat')->translateLabel()
@@ -84,15 +101,15 @@ class CreatePet extends CreateRecord
                                             ->options(
                                                 PetResource::getOptionWithColor(ShelterBlock::getOptions())
                                             )->required(),
-                                        Select::make('entry_status_id')
-                                            ->label(__('Entry status'))
+                                        Select::make('status_id')
+                                            ->label(__('Status'))
                                             ->allowHtml()
                                             ->searchable()
                                             ->preload()
                                             ->options(
                                                 PetResource::getOptionWithColor(Status::all())
                                             )->required(),
-                                        DatePicker::make('entry_date')
+                                        DatePicker::make('status_date')
                                             ->translateLabel()
                                             ->native(false)
                                             ->displayFormat(config('filament.date_format'))
