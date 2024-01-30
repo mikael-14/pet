@@ -6,8 +6,8 @@ return [
         'liquid' => 'Xarope',
         'injection' => 'Injeção',
         'toppical' => 'Tópico',
-        'inhaler' => 'Inaler',
+        'inhaler' => 'Inalador',
         'suppository' => 'Supositório',
-        'drop' => 'Gota',
+        'drop' => 'Gotas',
         'powder' => 'Pó',
 ];

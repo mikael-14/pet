@@ -38,6 +38,10 @@ class PetResource extends Resource
     }
 
 
+    const StyleCustomBadge = [
+        'style' => 'padding: 0;width: max-content;margin-left: 1rem;',
+        'class' => 'fi-badge flex items-center justify-center gap-x-1 rounded-md text-xs font-medium ring-1 ring-inset px-2 min-w-[theme(spacing.6)] fi-color-custom bg-custom-50 text-custom-600 ring-custom-600/10 dark:bg-custom-400/10 dark:text-custom-400 dark:ring-custom-400/30'
+    ];
     public static function table(Table $table): Table
     {
         return $table
@@ -56,7 +60,7 @@ class PetResource extends Resource
                     ->badge()
                     ->color('none')
                     ->extraAttributes(static function (Pet $record): array {
-                        return ['style' => 'padding: 0;width: fit-content;margin: auto;background-color:' . $record->status->color, 'class' => 'fi-badge flex items-center justify-center gap-x-1 rounded-md text-xs font-medium ring-1 ring-inset px-2 min-w-[theme(spacing.6)] fi-color-custom bg-custom-50 text-custom-600 ring-custom-600/10 dark:bg-custom-400/10 dark:text-custom-400 dark:ring-custom-400/30'];
+                        return ['style' => self::StyleCustomBadge['style'] . 'background-color:' . $record->status->color, 'class' => self::StyleCustomBadge['class']];
                     })
                     ->toggleable()
                     ->sortable(),
@@ -65,7 +69,7 @@ class PetResource extends Resource
                     ->badge()
                     ->color('none')
                     ->extraAttributes(static function (Pet $record): array {
-                        return ['style' => 'padding: 0;width: fit-content;margin: auto;background-color:' . $record->entry_status->color, 'class' => 'fi-badge flex items-center justify-center gap-x-1 rounded-md text-xs font-medium ring-1 ring-inset px-2 min-w-[theme(spacing.6)] fi-color-custom bg-custom-50 text-custom-600 ring-custom-600/10 dark:bg-custom-400/10 dark:text-custom-400 dark:ring-custom-400/30'];
+                        return ['style' => self::StyleCustomBadge . 'background-color:' . $record->entry_status->color,  'class' => self::StyleCustomBadge['class']];
                     })
                     ->toggleable(isToggledHiddenByDefault: true)
                     ->sortable(),
@@ -74,7 +78,7 @@ class PetResource extends Resource
                     ->badge()
                     ->color('none')
                     ->extraAttributes(static function (Pet $record): array {
-                        return ['style' => 'padding: 0;width: fit-content;margin: auto;background-color:' . $record->shelter_block->color, 'class' => 'fi-badge flex items-center justify-center gap-x-1 rounded-md text-xs font-medium ring-1 ring-inset px-2 min-w-[theme(spacing.6)] fi-color-custom bg-custom-50 text-custom-600 ring-custom-600/10 dark:bg-custom-400/10 dark:text-custom-400 dark:ring-custom-400/30'];
+                        return ['style' => self::StyleCustomBadge . 'background-color:' . $record->shelter_block->color, 'class' => self::StyleCustomBadge['class']];
                     })
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
@@ -243,9 +247,9 @@ class PetResource extends Resource
                                     ->placeholder('-')
                                     ->badge()
                                     ->color('none')
-                    ->extraAttributes(static function (Pet $record): array {
-                        return ['style' => 'padding: 0;width: fit-content;background-color:' . $record->status->color, 'class' => 'fi-badge flex items-center justify-center gap-x-1 rounded-md text-xs font-medium ring-1 ring-inset px-2 min-w-[theme(spacing.6)] fi-color-custom bg-custom-50 text-custom-600 ring-custom-600/10 dark:bg-custom-400/10 dark:text-custom-400 dark:ring-custom-400/30'];
-                    })
+                                    ->extraAttributes(static function (Pet $record): array {
+                                        return ['style' => 'padding: 0;width: fit-content;background-color:' . $record->status->color, 'class' => 'fi-badge flex items-center justify-center gap-x-1 rounded-md text-xs font-medium ring-1 ring-inset px-2 min-w-[theme(spacing.6)] fi-color-custom bg-custom-50 text-custom-600 ring-custom-600/10 dark:bg-custom-400/10 dark:text-custom-400 dark:ring-custom-400/30'];
+                                    })
                                     ->translateLabel()
                             ])->grow(false),
                             Components\Grid::make(5)
@@ -264,7 +268,7 @@ class PetResource extends Resource
                                             function ($state): string {
                                                 if ($state) {
                                                     $ageInYears = $state->diffInYears();
-                                                    $ageInMonths = $state->diffInMonths() - ($ageInYears*12);
+                                                    $ageInMonths = $state->diffInMonths() - ($ageInYears * 12);
                                                     $string = $state->format(config('filament.date_format'));
                                                     $string .= ' (';
                                                     if ($ageInYears > 0) {
