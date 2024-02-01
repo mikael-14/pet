@@ -6,6 +6,7 @@
 
 namespace App\Models;
 
+use App\Enums\PetMeasure;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Blade;
@@ -37,7 +38,8 @@ class PetHasMeasure extends Model
 		'pet_id' => 'int',
 		'value' => 'float',
 		'date' => 'date',
-		'person_id' => 'int'
+		'person_id' => 'int',
+		'type' => PetMeasure::class,
 	];
 
 	protected $fillable = [

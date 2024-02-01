@@ -3,6 +3,7 @@
 namespace App\Filament\Resources;
 
 use App\Enums\PersonFlag;
+use App\Enums\PersonGender;
 use App\Filament\Resources\PersonResource\Pages;
 use App\Filament\Resources\PersonResource\RelationManagers;
 use App\Models\Person;
@@ -69,11 +70,7 @@ class PersonResource extends Resource implements HasShieldPermissions
                             ->maxLength(200),
                         Forms\Components\Select::make('gender')
                             ->translateLabel()
-                            ->options([
-                                'undefined' => __('Undefined'),
-                                'male' => __('Male'),
-                                'female' => __('Female'),
-                            ])
+                            ->options(PersonGender::class)
                             ->required(),
                         Forms\Components\TextInput::make('email')
                             ->translateLabel()

@@ -7,37 +7,37 @@ use Filament\Support\Contracts\HasLabel;
  
 enum PersonFlag: string implements HasLabel, HasColor
 {
-    case CLEANING_VOLUNTEER = 'cleaning_volunteer';
-    case DRIVER_VOLUNTEER = 'driver_volunteer';
-    case MEDICATION_VOLUNTEER =  'medication_volunteer';
-    case TEAMPORAY_FAMILY = 'temporary_family';
-    case VETERINARY = 'veterinary';
-    case ADOPTER = 'adopter';
-    case SPONSOR = 'sponsor';
-    case BLACK_LIST = 'black_list';
+    case Cleaning_volunteer = 'cleaning_volunteer';
+    case Driver_volunteer = 'driver_volunteer';
+    case Medication_volunteer =  'medication_volunteer';
+    case Temporary_family = 'temporary_family';
+    case Veterinary = 'veterinary';
+    case Adopter = 'adopter';
+    case Sponsor = 'sponsor';
+    case Black_list = 'black_list';
     
     public function getLabel(): ?string
     {
         return match ($this) {
-            self::CLEANING_VOLUNTEER => __('pet/personflag.cleaning_volunteer'),
-            self::DRIVER_VOLUNTEER => __('pet/personflag.driver_volunteer'),
-            self::MEDICATION_VOLUNTEER => __('pet/personflag.medication_volunteer'),
-            self::TEAMPORAY_FAMILY => __('pet/personflag.temporary_family'),
-            self::VETERINARY => __('pet/personflag.veterinary'),
-            self::ADOPTER => __('pet/personflag.adopter'),
-            self::SPONSOR => __('pet/personflag.sponsor'),
-            self::BLACK_LIST => __('pet/personflag.black_list'),
+            self::Cleaning_volunteer => __('pet/personflag.cleaning_volunteer'),
+            self::Driver_volunteer => __('pet/personflag.driver_volunteer'),
+            self::Medication_volunteer => __('pet/personflag.medication_volunteer'),
+            self::Temporary_family => __('pet/personflag.temporary_family'),
+            self::Veterinary => __('pet/personflag.veterinary'),
+            self::Adopter => __('pet/personflag.adopter'),
+            self::Sponsor => __('pet/personflag.sponsor'),
+            self::Black_list => __('pet/personflag.black_list'),
         };
     }
 
     public function getColor(): string | array | null
     {
         return match ($this) {
-            self::TEAMPORAY_FAMILY => 'warning',
-            self::SPONSOR => 'info',
-            self::ADOPTER => 'info',
-            self::BLACK_LIST => 'danger',
-            self::VETERINARY => 'success',
+            self::Temporary_family => 'warning',
+            self::Sponsor => 'info',
+            self::Adopter => 'info',
+            self::Black_list => 'danger',
+            self::Veterinary => 'success',
             default => 'primary',
         };
     }

@@ -13,7 +13,7 @@ enum PetGender: string implements HasLabel, HasColor, HasIcon
     
     public function getLabel(): ?string
     {
-        return __($this->name);
+        return __("pet/gender.{$this->name}");
     }
 
     public function getColor(): string | array | null

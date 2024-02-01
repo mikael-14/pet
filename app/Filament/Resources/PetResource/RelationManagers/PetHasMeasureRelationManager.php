@@ -44,13 +44,13 @@ class PetHasMeasureRelationManager extends RelationManager
         $schema = [];
         foreach ($configs as $key => $config) {
             $schema = array_merge($schema, [
-                Forms\Components\Hidden::make('type-' . $key)->default($key)->visibleOn('create'),
-                Forms\Components\TextInput::make('name-type-' . $key)
+                Forms\Components\Hidden::make("type-{$key}")->default($key)->visibleOn('create'),
+                Forms\Components\TextInput::make("name-type-{$key}")
                     ->label(__('Type'))
                     ->default($config['name'])->visibleOn('create')
                     ->dehydrated(false)
                     ->disabled(),
-                Forms\Components\TextInput::make('value-' . $key)
+                Forms\Components\TextInput::make("value-$key")
                     ->label(__('Value'))
                     ->inputMode('decimal')
                     ->minValue(0)
@@ -73,7 +73,8 @@ class PetHasMeasureRelationManager extends RelationManager
                 ->visibleOn(['edit', 'view']),
             Forms\Components\DatePicker::make('date')->translateLabel()->native(false)->displayFormat(config('filament.date_format'))->required(),
             Forms\Components\TextInput::make('local')->translateLabel()->maxLength(50),
-            Forms\Components\Select::make('person_id')->label(ucfirst(__('person')))->options(Person::getPersonByFlag(['veterinary', 'medication_volunteer'])->toArray())->searchable()->columnSpanFull(),
+            Forms\Components\Select::make('person_id')->label(ucfirst(__('person')))
+            ->options(Person::getPersonByFlag(['veterinary', 'medication_volunteer'])->toArray())->searchable()->columnSpanFull(),
             Forms\Components\Textarea::make('observation')->translateLabel()->maxLength(300)->columnSpanFull(),
         ]);
         return $form

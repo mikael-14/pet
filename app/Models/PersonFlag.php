@@ -37,15 +37,5 @@ class PersonFlag extends Model
 	{
 		return $this->belongsTo(Person::class);
 	}
-	public static function flags()
-	{
-		return collect(__('pet/personflags'))->mapWithKeys(function (array $item, string $key) {
-			if(!isset($key['status']) || $key['status'] !== false)
-			return [$key => $item['name']?? $key];
-		})->all();
-	}
-	public function getName() : string{
-		$data =__('pet/personflags');
-		return $data[$this->name]['name'] ?? $this->name;
-	}
+
 }
