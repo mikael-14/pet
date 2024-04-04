@@ -71,19 +71,5 @@ class PetHasMeasure extends Model
 		}
 		return round($variation,3);
 	}
-	public function getConfigMeasureVariation(): float|null
-	{
-		$configMeasures = __('pet/measures')  ?? [];
-		return $configMeasures[$this->type]['variation'] ?? null;
-	}
-	public function getConfigMeasureUnit(): string
-	{
-		$configMeasures = __('pet/measures') ?? [];
-		return $configMeasures[$this->type]['unit'] ?? '';
-	}
-	public function getConfigMeasureName(): string
-	{
-		$configMeasures = __('pet/measures')  ?? [];
-		return $configMeasures[$this->type]['name'] ?? $this->type;
-	}
+
 }

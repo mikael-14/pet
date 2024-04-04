@@ -1,7 +1,7 @@
 @php
     $calculate = $getRecord()->calculateVariation();
-    $config_variation = $getRecord()->getConfigMeasureVariation();
-    $config_unit = $getRecord()->getConfigMeasureUnit();
+    $config_variation = \App\Enums\PetMeasure::getVariation($getRecord()->type);
+    $config_unit = \App\Enums\PetMeasure::getUnit($getRecord()->type);
 @endphp
 <div class="flex flex-nowrap">
    {{ $getState() }} {{ $config_unit }}
