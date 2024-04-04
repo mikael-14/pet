@@ -1,7 +1,7 @@
 <?php 
 
 return [
-    'Weight' => 'Weight',
+    'weight' => 'Weight',
 ]
 
 ?>

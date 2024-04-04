@@ -48,7 +48,7 @@ class PetHasMeasureRelationManager extends RelationManager
                 Forms\Components\Hidden::make("type-{$config->name}")->default($config->name)->visibleOn('create'),
                 Forms\Components\TextInput::make("name-type-{$config->name}")
                     ->label(__('Type'))
-                    ->default($config->value)->visibleOn('create')
+                    ->default(__("pet/measures.{$config->name}"))->visibleOn('create')
                     ->dehydrated(false)
                     ->disabled(),
                 Forms\Components\TextInput::make("value-{$config->name}")
