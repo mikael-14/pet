@@ -43,7 +43,7 @@ class PetHasMedicineRelationManager extends RelationManager
                         Forms\Components\Select::make('medicine_id')
                             ->required()
                             ->options(Medicine::all()->mapWithKeys(function ($medicine) {
-                                return [$medicine->id => $medicine->name . ' - ' . __("pet/medicine.$medicine->type")];
+                                return [$medicine->id => $medicine->name . ' - ' . $medicine->type->getLabel()];
                             }))
                             ->columnSpan(4)
                             ->reactive()

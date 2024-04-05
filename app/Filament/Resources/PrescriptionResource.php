@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources;
 
+use App\Enums\PersonFlag;
 use App\Filament\Resources\PrescriptionResource\Pages;
 use App\Filament\Resources\PrescriptionResource\RelationManagers;
 use App\Models\Clinic;
@@ -246,14 +247,14 @@ class PrescriptionResource extends Resource
     }
     public static function getOptionPerson(Person $model): string
     {
-        $flags = $model?->person_flags->pluck('name');
-        $flags = array_map( function ($flag) {
-            return __("pet/personflags{$flag->value}");
-        },$flags);
+        $flags = $model ? $model->person_flags->pluck('name')->toArray() : [];
+        $flags = array_map(function ($flag) {
+            return __("pet/personflag.{$flag->value}");
+        }, $flags);
         return
             view('filament.components.select-with-image')
             ->with('label', $model?->name)
-            ->with('description', $model?->person_flags->pluck('name')->implode(','))
+            ->with('description', implode(',', $flags))
             ->with('image', false)
             ->render();
     }
