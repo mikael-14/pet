@@ -12,12 +12,13 @@ use Filament\Infolists\Infolist;
 use Filament\Infolists\Components;
 use Filament\Infolists\Components\SpatieMediaLibraryImageEntry;
 use Filament\Infolists\Components\TextEntry;
+use Filament\Pages\SubNavigationPosition;
 use Filament\Resources\Resource;
 use Filament\Tables\Table;
 use Filament\Tables;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
-
+use Filament\Resources\Pages\Page;
 class PetResource extends Resource
 {
     protected static ?string $model = Pet::class;
@@ -27,6 +28,8 @@ class PetResource extends Resource
     protected static ?string $recordTitleAttribute = 'name';
 
     protected static ?int $navigationSort = 0;
+
+    protected static SubNavigationPosition $subNavigationPosition = SubNavigationPosition::Top;
 
     public static function getNavigationLabel(): string
     {
@@ -183,9 +186,19 @@ class PetResource extends Resource
             'create' => Pages\CreatePet::route('/create'),
             'edit' => Pages\EditPet::route('/{record}/edit'),
             'view' => Pages\ViewPet::route('/{record}'),
+            'deworming' => Pages\ManagePetHasDeworming::route('/{record}/deworming'),
+            'diet' => Pages\ManagePetHasDiet::route('/{record}/diet'),
         ];
     }
-
+    public static function getRecordSubNavigation(Page $page): array
+    {
+        return $page->generateNavigationItems([
+            Pages\ViewPet::class,
+            Pages\EditPet::class,
+            Pages\ManagePetHasDeworming::class,
+            Pages\ManagePetHasDiet::class,
+        ]);
+    }
     public static function getEloquentQuery(): Builder
     {
         return parent::getEloquentQuery()
