@@ -42,6 +42,8 @@ docker-compose down
 ```
 composer install
 ```
+Copy [.env.example](.env.example) and rename to [.env](.env)
+
 Configure file .env 
 ```
 php artisan key:generate
@@ -57,6 +59,8 @@ php artisan shield:super-admin
 
 Now instalation is <b>complete</b>
 ***
+
+# Help
 
 ### Create Migration
 Example for table pets
