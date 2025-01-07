@@ -6,6 +6,7 @@
 
 namespace App\Models;
 
+use App\Enums\PrescriptionMedicineStatus;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -47,7 +48,8 @@ class PetHasMedicine extends Model
 		'administered' => 'bool',
 		'date' => 'datetime',
 		'person_id' => 'int',
-		'prescription_has_medicine_id' => 'int'
+		'prescription_has_medicine_id' => 'int',
+		'status' => PrescriptionMedicineStatus::class
 	];
 
 	protected $fillable = [

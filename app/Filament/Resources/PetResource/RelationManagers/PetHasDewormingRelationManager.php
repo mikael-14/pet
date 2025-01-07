@@ -129,13 +129,13 @@ class PetHasDewormingRelationManager extends RelationManager
         return $model->mapWithKeys(function ($item) {
             switch ($item['type']) {
                 case 'internal':
-                    $second = 'Internal';
+                    $second = __('Internal');
                     break;
                 case 'external':
-                    $second = 'External';
+                    $second = __('External');
                     break;
                 case 'internal and external':
-                    $second = 'Internal and external';
+                    $second = __('Internal and external');
                     break;
                 default:
                     $second = $item['type'];

@@ -2,8 +2,10 @@
 
 namespace App\Filament\Resources\PetResource\Pages;
 
+use App\Enums\PetGender;
+use App\Enums\Species;
 use App\Filament\Resources\PetResource;
-use App\Models\EntryStatus;
+use App\Models\Status;
 use App\Models\Pet;
 use App\Models\ShelterBlock;
 use Carbon\Carbon;
@@ -23,6 +25,10 @@ class CreatePet extends CreateRecord
 
     protected static string $resource = PetResource::class;
 
+    protected function getRedirectUrl(): string
+    {
+        return $this->getResource()::getUrl('edit', ['record' => $this->record]);
+    }
 
     public function form(Form $form): Form
     {
@@ -38,21 +44,18 @@ class CreatePet extends CreateRecord
                                 Forms\Components\Section::make()
                                     ->schema([
                                         TextInput::make('name')
-                                        ->translateLabel()
+                                            ->translateLabel()
                                             ->required()
                                             ->maxLength(255),
                                         Select::make('species')
-                                        ->translateLabel()
-                                            ->options(
-                                                __('pet/species')
-                                            )->default(array_key_first(__('pet/species')))
+                                            ->translateLabel()
+                                            ->options(Species::class)
+                                            ->default(Species::DefaultValue)
                                             ->selectablePlaceholder(false),
                                         Select::make('gender')
-                                        ->translateLabel()
-                                            ->options([
-                                                'male' => __('male'),
-                                                'female' => __('female'),
-                                            ])->required(),
+                                            ->translateLabel()
+                                            ->options(PetGender::class)
+                                            ->required(),
                                         DatePicker::make('birth_date')->translateLabel()
                                             ->native(false)
                                             ->displayFormat(config('filament.date_format')),
@@ -64,6 +67,19 @@ class CreatePet extends CreateRecord
                                         DatePicker::make('chip_date')->translateLabel()
                                             ->native(false)
                                             ->displayFormat(config('filament.date_format')),
+                                        Select::make('entry_status_id')
+                                            ->label(__('Entry status'))
+                                            ->allowHtml()
+                                            ->searchable()
+                                            ->preload()
+                                            ->options(
+                                                PetResource::getOptionWithColor(Status::all())
+                                            )->required(),
+                                        DatePicker::make('entry_date')
+                                            ->translateLabel()
+                                            ->native(false)
+                                            ->displayFormat(config('filament.date_format'))
+                                            ->required(),
                                         TextInput::make('color')->translateLabel()
                                             ->maxLength(50),
                                         TextInput::make('coat')->translateLabel()
@@ -75,40 +91,40 @@ class CreatePet extends CreateRecord
                                         RichEditor::make('observation')->translateLabel()->columnSpan('full'),
                                     ])->columns(2),
                                 Section::make('Status')
-                                ->heading(__('Status'))
+                                    ->heading(__('Status'))
                                     ->schema([
                                         Select::make('shelter_block_id')
-                                        ->label(__('Shelter block'))
+                                            ->label(__('Shelter block'))
                                             ->allowHtml()
                                             ->searchable()
                                             ->preload()
                                             ->options(
                                                 PetResource::getOptionWithColor(ShelterBlock::getOptions())
                                             )->required(),
-                                        Select::make('entry_status_id')
-                                        ->label(__('Entry status'))
+                                        Select::make('status_id')
+                                            ->label(__('Status'))
                                             ->allowHtml()
                                             ->searchable()
                                             ->preload()
                                             ->options(
-                                                PetResource::getOptionWithColor(EntryStatus::all())
+                                                PetResource::getOptionWithColor(Status::all())
                                             )->required(),
-                                        DatePicker::make('entry_date')
-                                        ->translateLabel()
+                                        DatePicker::make('status_date')
+                                            ->translateLabel()
                                             ->native(false)
                                             ->displayFormat(config('filament.date_format'))
                                             ->required(),
 
                                         Toggle::make('sterilized')
-                                        ->translateLabel()
+                                            ->translateLabel()
                                             ->inline(false)->reactive(),
                                         DatePicker::make('sterilized_date')
-                                        ->translateLabel()
+                                            ->translateLabel()
                                             ->native(false)
                                             ->displayFormat(config('filament.date_format'))
                                             ->visible(fn ($get) => $get('sterilized')),
                                         TextInput::make('sterilized_local')
-                                        ->translateLabel()
+                                            ->translateLabel()
                                             ->visible(fn ($get) => $get('sterilized'))
                                             ->maxLength(50),
                                     ])->columns(2)->collapsible(),
@@ -118,7 +134,7 @@ class CreatePet extends CreateRecord
                                 Forms\Components\Section::make()
                                     ->schema([
                                         SpatieMediaLibraryFileUpload::make('image')
-                                        ->translateLabel()
+                                            ->translateLabel()
                                             ->acceptedFileTypes(['image/*'])
                                             ->disk('petsMainImage')
                                             ->collection('pets-main-image')
@@ -127,7 +143,7 @@ class CreatePet extends CreateRecord
                                             ->deletable(false)
                                             ->hintAction(
                                                 Forms\Components\Actions\Action::make('removeImage')
-                                                ->label(__('Remove image'))
+                                                    ->label(__('Remove image'))
                                                     ->icon('heroicon-m-x-mark')
                                                     ->color('danger')
                                                     ->requiresConfirmation()

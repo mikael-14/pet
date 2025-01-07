@@ -11,7 +11,7 @@ use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 
 /**
- * Class EntryStatus
+ * Class Status
  * 
  * @property int $id
  * @property string $name
@@ -23,9 +23,9 @@ use Illuminate\Database\Eloquent\Model;
  *
  * @package App\Models
  */
-class EntryStatus extends Model
+class Status extends Model
 {
-	protected $table = 'entry_statuses';
+	protected $table = 'statuses';
 
 	protected $fillable = [
 		'name',

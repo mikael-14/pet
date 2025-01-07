@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources;
 
+use App\Enums\MedicineType;
 use App\Filament\Resources\MedicineResource\Pages;
 use App\Filament\Resources\MedicineResource\RelationManagers;
 use App\Models\Medicine;
@@ -46,7 +47,7 @@ class MedicineResource extends Resource
                     ->maxLength(100),
                 Forms\Components\Select::make('type')
                     ->translateLabel()
-                    ->options(__('pet/medicine'))
+                    ->options(MedicineType::class)
                     ->required(),
                 Forms\Components\TextInput::make('dosage')
                     ->translateLabel()
@@ -76,8 +77,7 @@ class MedicineResource extends Resource
             ->columns([
                 Tables\Columns\TextColumn::make('name')->translateLabel()
                     ->searchable(),
-                Tables\Columns\TextColumn::make('type')->translateLabel()
-                    ->formatStateUsing(fn (string $state): string =>  __('pet/medicine')[$state] ?? '-'),
+                Tables\Columns\TextColumn::make('type')->translateLabel(),
                 Tables\Columns\TextColumn::make('dosage')->translateLabel(),
                 Tables\Columns\TextColumn::make('active_ingredient')->translateLabel()
                     ->badge()

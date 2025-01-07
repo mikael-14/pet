@@ -106,6 +106,10 @@ php artisan make:filament-relation-manager CategoryResource posts title
 - posts is the name of the relationship you want to manage.
 - title is the name of the attribute that will be used to identify posts.
 
+Relation pages see more in https://filamentphp.com/docs/3.x/panels/resources/relation-managers#relation-pages 
+```
+php artisan make:filament-page ManageCustomerAddresses --resource=CustomerResource --type=ManageRelatedRecords
+```
 
 ### Template
 Icons https://blade-ui-kit.com/blade-icons (installed herocions; tabler; unicons)

@@ -2,21 +2,23 @@
 
 namespace App\Filament\Resources;
 
+use App\Enums\PetGender;
 use App\Filament\Resources\PetResource\Pages;
 use App\Filament\Resources\PetResource\RelationManagers;
-use App\Models\EntryStatus;
+use App\Models\Status;
 use App\Models\Pet;
 use App\Models\ShelterBlock;
 use Filament\Infolists\Infolist;
 use Filament\Infolists\Components;
 use Filament\Infolists\Components\SpatieMediaLibraryImageEntry;
 use Filament\Infolists\Components\TextEntry;
+use Filament\Pages\SubNavigationPosition;
 use Filament\Resources\Resource;
 use Filament\Tables\Table;
 use Filament\Tables;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
-
+use Filament\Resources\Pages\Page;
 class PetResource extends Resource
 {
     protected static ?string $model = Pet::class;
@@ -26,6 +28,8 @@ class PetResource extends Resource
     protected static ?string $recordTitleAttribute = 'name';
 
     protected static ?int $navigationSort = 0;
+
+    protected static SubNavigationPosition $subNavigationPosition = SubNavigationPosition::Top;
 
     public static function getNavigationLabel(): string
     {
@@ -37,6 +41,10 @@ class PetResource extends Resource
     }
 
 
+    const StyleCustomBadge = [
+        'style' => 'padding: 0;width: max-content;margin-left: 1rem;',
+        'class' => 'fi-badge flex items-center justify-center gap-x-1 rounded-md text-xs font-medium ring-1 ring-inset px-2 min-w-[theme(spacing.6)] fi-color-custom bg-custom-50 text-custom-600 ring-custom-600/10 dark:bg-custom-400/10 dark:text-custom-400 dark:ring-custom-400/30'
+    ];
     public static function table(Table $table): Table
     {
         return $table
@@ -48,23 +56,23 @@ class PetResource extends Resource
                 Tables\Columns\TextColumn::make('gender')
                     ->translateLabel()
                     ->badge()
-                    ->formatStateUsing(fn (string $state): string => __("$state"))
-                    ->icons([
-                        'tabler-gender-male' => 'male',
-                        'tabler-gender-female' => 'female',
-                    ])
-                    ->color(fn (string $state): string => match ($state) {
-                        'male' => 'blue',
-                        'female' => 'rose',
-                    })
                     ->iconPosition('after')
                     ->toggleable(),
+                Tables\Columns\TextColumn::make('status.name')
+                    ->translateLabel()
+                    ->badge()
+                    ->color('none')
+                    ->extraAttributes(static function (Pet $record): array {
+                        return ['style' => self::StyleCustomBadge['style'] . 'background-color:' . $record->status->color, 'class' => self::StyleCustomBadge['class']];
+                    })
+                    ->toggleable()
+                    ->sortable(),
                 Tables\Columns\TextColumn::make('entry_status.name')
                     ->translateLabel()
                     ->badge()
                     ->color('none')
                     ->extraAttributes(static function (Pet $record): array {
-                        return ['style' => 'padding: 0;width: fit-content;margin: auto;background-color:' . $record->entry_status->color, 'class' => 'fi-badge flex items-center justify-center gap-x-1 rounded-md text-xs font-medium ring-1 ring-inset px-2 min-w-[theme(spacing.6)] fi-color-custom bg-custom-50 text-custom-600 ring-custom-600/10 dark:bg-custom-400/10 dark:text-custom-400 dark:ring-custom-400/30'];
+                        return ['style' => self::StyleCustomBadge . 'background-color:' . $record->entry_status->color,  'class' => self::StyleCustomBadge['class']];
                     })
                     ->toggleable(isToggledHiddenByDefault: true)
                     ->sortable(),
@@ -73,7 +81,7 @@ class PetResource extends Resource
                     ->badge()
                     ->color('none')
                     ->extraAttributes(static function (Pet $record): array {
-                        return ['style' => 'padding: 0;width: fit-content;margin: auto;background-color:' . $record->shelter_block->color, 'class' => 'fi-badge flex items-center justify-center gap-x-1 rounded-md text-xs font-medium ring-1 ring-inset px-2 min-w-[theme(spacing.6)] fi-color-custom bg-custom-50 text-custom-600 ring-custom-600/10 dark:bg-custom-400/10 dark:text-custom-400 dark:ring-custom-400/30'];
+                        return ['style' => self::StyleCustomBadge . 'background-color:' . $record->shelter_block->color, 'class' => self::StyleCustomBadge['class']];
                     })
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
@@ -126,20 +134,16 @@ class PetResource extends Resource
                 Tables\Filters\TrashedFilter::make(),
                 Tables\Filters\SelectFilter::make('gender')
                     ->translateLabel()
-                    ->options([
-                        'male' => __('male'),
-                        'female' => __('female'),
-                    ]),
+                    ->options(PetGender::class),
                 Tables\Filters\SelectFilter::make('sterilized')
                     ->translateLabel()
                     ->options([
                         1 => __('Yes'),
                         0 => __('No'),
                     ]),
-                Tables\Filters\SelectFilter::make('entry_status_id')
-                    ->label(__('Entry status'))
-                    ->multiple()
-                    ->options(EntryStatus::all()->pluck('name', 'id')),
+                Tables\Filters\SelectFilter::make('status_id')
+                    ->label(__('Status'))
+                    ->options(Status::all()->pluck('name', 'id')),
                 Tables\Filters\SelectFilter::make('shelter_block_id')
                     ->label(__('Shelter block'))
                     ->multiple()
@@ -182,9 +186,19 @@ class PetResource extends Resource
             'create' => Pages\CreatePet::route('/create'),
             'edit' => Pages\EditPet::route('/{record}/edit'),
             'view' => Pages\ViewPet::route('/{record}'),
+            'deworming' => Pages\ManagePetHasDeworming::route('/{record}/deworming'),
+            'diet' => Pages\ManagePetHasDiet::route('/{record}/diet'),
         ];
     }
-
+    public static function getRecordSubNavigation(Page $page): array
+    {
+        return $page->generateNavigationItems([
+            Pages\ViewPet::class,
+            Pages\EditPet::class,
+            Pages\ManagePetHasDeworming::class,
+            Pages\ManagePetHasDiet::class,
+        ]);
+    }
     public static function getEloquentQuery(): Builder
     {
         return parent::getEloquentQuery()
@@ -232,7 +246,7 @@ class PetResource extends Resource
                                     ->width(300)
                                     ->height(300),
                                 Components\TextEntry::make('highligh_tests')
-                                ->placeholder('-')
+                                    ->placeholder('-')
                                     ->badge()
                                     ->formatStateUsing(fn ($state) => $state->name . ' - ' . __(ucfirst($state->result)))
                                     ->color(fn ($state): string => match ($state->result) {
@@ -240,6 +254,14 @@ class PetResource extends Resource
                                         'positive' => 'danger',
                                         'negative' => 'success',
                                         default => 'primary',
+                                    })
+                                    ->translateLabel(),
+                                Components\TextEntry::make('status.name')
+                                    ->placeholder('-')
+                                    ->badge()
+                                    ->color('none')
+                                    ->extraAttributes(static function (Pet $record): array {
+                                        return ['style' => 'padding: 0;width: fit-content;background-color:' . $record->status->color, 'class' => 'fi-badge flex items-center justify-center gap-x-1 rounded-md text-xs font-medium ring-1 ring-inset px-2 min-w-[theme(spacing.6)] fi-color-custom bg-custom-50 text-custom-600 ring-custom-600/10 dark:bg-custom-400/10 dark:text-custom-400 dark:ring-custom-400/30'];
                                     })
                                     ->translateLabel()
                             ])->grow(false),
@@ -252,38 +274,30 @@ class PetResource extends Resource
                                     Components\TextEntry::make('gender')
                                         ->translateLabel()
                                         ->badge()
-                                        ->formatStateUsing(fn (string $state): string => __("$state"))
-                                        ->color(fn (string $state): string => match ($state) {
-                                            'male' => 'blue',
-                                            'female' => 'rose',
-                                        })
-                                        ->icons([
-                                            'tabler-gender-male' => 'male',
-                                            'tabler-gender-female' => 'female',
-                                        ])->iconPosition('after'),
+                                        ->iconPosition('after'),
                                     Components\TextEntry::make('birth_date')->placeholder('-')
                                         ->translateLabel()
                                         ->formatStateUsing(
                                             function ($state): string {
                                                 if ($state) {
                                                     $ageInYears = $state->diffInYears();
-                                                    $ageInMonths = $state->diffInMonths();
+                                                    $ageInMonths = $state->diffInMonths() - ($ageInYears * 12);
                                                     $string = $state->format(config('filament.date_format'));
                                                     $string .= ' (';
                                                     if ($ageInYears > 0) {
-                                                        $string .=  trans_choice('age_years', $ageInYears, ['value' => $ageInYears]);
+                                                        $string .= ' ' . trans_choice('age_years', $ageInYears, ['value' => $ageInYears]);
                                                     }
                                                     if ($ageInMonths > 0) {
-                                                        $string .=  trans_choice('age_months', $ageInMonths, ['value' => $ageInMonths]);
+                                                        $string .= ' ' . trans_choice('age_months', $ageInMonths, ['value' => $ageInMonths]);
                                                     }
-                                                    $string .= ')';
+                                                    $string .= ' )';
                                                     return $string;
                                                 }
                                                 return '-';
                                             }
                                         ),
                                     Components\TextEntry::make('chip')->placeholder('-')->translateLabel(),
-                                    Components\TextEntry::make('chip_date')->placeholder('-')->translateLabel(),
+                                    Components\TextEntry::make('chip_date')->placeholder('-')->dateTime(config('filament.date_format'))->translateLabel(),
                                     Components\TextEntry::make('color')->placeholder('-')->translateLabel(),
                                     Components\TextEntry::make('coat')->placeholder('-')->translateLabel(),
                                     Components\TextEntry::make('breed')->placeholder('-')->translateLabel(),
@@ -291,19 +305,15 @@ class PetResource extends Resource
                                         ->boolean(),
                                     Components\TextEntry::make('shelter_block.name')->placeholder('-')->translateLabel(),
                                     Components\TextEntry::make('entry_status.name')->placeholder('-')->translateLabel(),
-                                    Components\TextEntry::make('entry_date')->placeholder('-')->translateLabel()->formatStateUsing(
-                                        fn ($state): string => $state ? $state->format(config('filament.date_format')) . ' (' . $state->diffForHumans() . ')' : '-'
-                                    ),
+                                    Components\TextEntry::make('entry_date')->placeholder('-')->translateLabel()->dateTime(config('filament.date_format')),
                                     Components\IconEntry::make('sterilized')
                                         ->translateLabel()
                                         ->boolean(),
-                                    Components\TextEntry::make('sterilized_date')->placeholder('-')->translateLabel()->formatStateUsing(
-                                        fn ($state): string => $state ? $state->format(config('filament.date_format')) : '-'
-                                    ),
+                                    Components\TextEntry::make('sterilized_date')->placeholder('-')->translateLabel()->dateTime(config('filament.date_format')),
                                     Components\TextEntry::make('sterilized_local')->placeholder('-')->translateLabel(),
                                 ]),
 
-                        ]),
+                        ])->from('sm'),
                     ]),
                 Components\Section::make('Observation')
                     ->heading(__('Observation'))

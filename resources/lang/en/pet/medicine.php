@@ -1,13 +1,13 @@
 <?php
 
 return [
-        'pill' => 'Pill',
-        'capsule' => 'Capsule',
-        'liquid' => 'Liquid',
-        'injection' => 'Injection',
-        'toppical' => 'Toppical',
-        'inhaler' => 'Inhaler',
-        'suppository' => 'Suppository',
-        'drop' => 'Drop',
-        'powder' => 'Powder',
+        'Pill' => 'Pill',
+        'Capsule' => 'Capsule',
+        'Liquid' => 'Liquid',
+        'Injection' => 'Injection',
+        'Toppical' => 'Toppical',
+        'Inhaler' => 'Inhaler',
+        'Suppository' => 'Suppository',
+        'Drop' => 'Drop',
+        'Powder' => 'Powder',
 ];

@@ -6,6 +6,7 @@
 
 namespace App\Models;
 
+use App\Enums\PersonGender;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -54,7 +55,8 @@ class Person extends Model
 		'birth_date' => 'datetime',
 		'latitude' => 'float',
 		'longitude' => 'float',
-		'user_id' => 'int'
+		'user_id' => 'int',
+		'gender' => PersonGender::class
 	];
 
 	protected $fillable = [

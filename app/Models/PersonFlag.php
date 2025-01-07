@@ -6,6 +6,7 @@
 
 namespace App\Models;
 
+use App\Enums\PersonFlag as EnumsPersonFlag;
 use Illuminate\Database\Eloquent\Model;
 
 /**
@@ -25,7 +26,8 @@ class PersonFlag extends Model
 	public $timestamps = false;
 
 	protected $casts = [
-		'person_id' => 'int'
+		'person_id' => 'int',
+		'name' => EnumsPersonFlag::class
 	];
 	protected $fillable = [
 		'person_id',
@@ -35,15 +37,5 @@ class PersonFlag extends Model
 	{
 		return $this->belongsTo(Person::class);
 	}
-	public static function flags()
-	{
-		return collect(__('pet/personflags'))->mapWithKeys(function (array $item, string $key) {
-			if(!isset($key['status']) || $key['status'] !== false)
-			return [$key => $item['name']?? $key];
-		})->all();
-	}
-	public function getName() : string{
-		$data =__('pet/personflags');
-		return $data[$this->name]['name'] ?? $this->name;
-	}
+
 }

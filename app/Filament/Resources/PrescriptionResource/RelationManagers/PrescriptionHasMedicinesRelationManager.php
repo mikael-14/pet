@@ -47,7 +47,7 @@ class PrescriptionHasMedicinesRelationManager extends RelationManager
                                 ->label(__('Medicine'))
                                     ->required()
                                     ->options(Medicine::all()->mapWithKeys(function ($medicine) {
-                                        return [$medicine->id => $medicine->name . ' - ' . __("pet/medicine.$medicine->type")];
+                                        return [$medicine->id => $medicine->name . ' - ' .$medicine->type->getLabel()];
                                     }))
                                     ->live(onBlur: true)
                                     ->disabled(fn ($context) => $context !== 'create')
@@ -78,7 +78,6 @@ class PrescriptionHasMedicinesRelationManager extends RelationManager
                                     ->translateLabel()
                                         ->selectablePlaceholder(false)
                                         ->required()
-                                        ->options(__('pet/prescriptionmedicines.status'))
                                         ->live(onBlur: true)
                                         ->default('active')
                                         ->columnSpan(3),

@@ -41,22 +41,10 @@ class PeopleRelationManager extends RelationManager
             ->columns([
                 Tables\Columns\TextColumn::make('name')->translateLabel()->searchable(),
                 Tables\Columns\TextColumn::make('email')->translateLabel()->searchable(),
-                Tables\Columns\TextColumn::make('flags')->translateLabel()
-                ->badge()
-                ->colors([
-                    'danger' => 'Black list',
-                    '#fdecce' => 'Adopter',
-                    '#fceacc' => 'Temporary host family',
-                    '#f7e7cd' => 'Sponsor',
-                    '#f7e3c3' => 'Veterinary',
-                ])
-                ->getStateUsing(function ($record) {
-                    return $record->person_flags()->get()->map(function ($item){
-                        return $item->getName();
-                    })->toArray();
-                })
-                ->searchable()
-                ->sortable(),
+                Tables\Columns\TextColumn::make('flags')
+                    ->translateLabel()
+                    ->badge()
+                    ->toggleable(),
             ])
             ->filters([
             ])

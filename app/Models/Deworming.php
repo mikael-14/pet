@@ -6,6 +6,7 @@
 
 namespace App\Models;
 
+use App\Enums\DewormingType;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
@@ -34,7 +35,9 @@ class Deworming extends Model
 
 	protected $casts = [
 		'expire' => 'int',
-		'notification' => 'int'
+		'notification' => 'int',
+		'type' => DewormingType::class
+
 	];
 
 	protected $fillable = [

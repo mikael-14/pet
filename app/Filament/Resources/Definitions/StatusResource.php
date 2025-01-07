@@ -2,9 +2,9 @@
 
 namespace App\Filament\Resources\Definitions;
 
-use App\Filament\Resources\Definitions\EntryStatusResource\Pages;
-use App\Filament\Resources\Definitions\EntryStatusResource\RelationManagers;
-use App\Models\EntryStatus;
+use App\Filament\Resources\Definitions\StatusResource\Pages;
+use App\Filament\Resources\Definitions\StatusResource\RelationManagers;
+use App\Models\Status;
 use App\Models\Pet;
 use Filament\Forms;
 use Filament\Forms\Form;
@@ -15,13 +15,13 @@ use Filament\Tables;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 
-class EntryStatusResource extends Resource
+class StatusResource extends Resource
 {
-    protected static ?string $model = EntryStatus::class;
+    protected static ?string $model = Status::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
 
-    protected static ?string $slug = 'definitions/entry-status';
+    protected static ?string $slug = 'definitions/status';
 
     protected static ?string $recordTitleAttribute = 'name';
 
@@ -34,11 +34,11 @@ class EntryStatusResource extends Resource
 
     public static function getNavigationLabel(): string
     {
-        return __('Entry Statuses');
+        return __('Statuses');
     }
     public static function getModelLabel(): string
     {
-        return __('entry status');
+        return __('status');
     }
 
     public static function form(Form $form): Form
@@ -70,7 +70,7 @@ class EntryStatusResource extends Resource
             ->actions([
                 Tables\Actions\EditAction::make(),
                 Tables\Actions\DeleteAction::make()
-                ->before(function (Tables\Actions\DeleteAction $action,EntryStatus $record) {
+                ->before(function (Tables\Actions\DeleteAction $action,Status $record) {
                     if(Pet::where('entry_status_id',$record->id)->exists()) {
                         $action->cancel();
                         Notification::make('cant_delete_record')
@@ -85,7 +85,7 @@ class EntryStatusResource extends Resource
     public static function getPages(): array
     {
         return [
-            'index' => Pages\ManageEntryStatus::route('/'),
+            'index' => Pages\ManageStatus::route('/'),
         ];
     }
 }
