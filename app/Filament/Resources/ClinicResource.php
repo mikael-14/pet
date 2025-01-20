@@ -217,7 +217,7 @@ class ClinicResource extends Resource
                 Tables\Actions\EditAction::make(),
                 Tables\Actions\ViewAction::make(),
             ])
-            ->bulkActions([]);
+            ->groupedBulkActions([]);
     }
 
     public static function getRelations(): array

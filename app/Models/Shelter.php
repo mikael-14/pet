@@ -110,16 +110,16 @@ class Shelter extends Model
 	public function setLocationAttribute(?array $location): void
 	{
 		if (is_array($location)) {
-			$this->attributes['latitude'] = $location['lat'];
-			$this->attributes['longitude'] = $location['lng'];
+			$this->attributes['latitude'] = $location['lat'] ?? null;
+			$this->attributes['longitude'] = $location['lng'] ?? null;
 			unset($this->attributes['location']);
 		}
 	}
 	public function setMapAttribute(?array $location): void
 	{
 		if (is_array($location)) {
-			$this->attributes['latitude'] = $location['lat'];
-			$this->attributes['longitude'] = $location['lng'];
+			$this->attributes['latitude'] = $location['lat'] ?? null;
+			$this->attributes['longitude'] = $location['lng'] ?? null;
 			unset($this->attributes['location']);
 		}
 	}

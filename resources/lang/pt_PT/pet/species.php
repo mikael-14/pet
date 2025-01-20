@@ -4,7 +4,8 @@
 */
 return [
     //'unique key' => display name ,
-    'cat' => 'Cat',
+    'dog' => 'Canino',
+    'cat' => 'Felino',
 ]
 
 ?>
