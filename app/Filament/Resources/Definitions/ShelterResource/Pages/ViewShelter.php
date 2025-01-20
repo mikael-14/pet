@@ -10,7 +10,7 @@ class ViewShelter extends ViewRecord
 {
     protected static string $resource = ShelterResource::class;
 
-    protected function getActions(): array
+    protected function getHeaderActions(): array
     {
         return [
             Actions\EditAction::make(),

@@ -29,7 +29,7 @@ class PeopleRelationManager extends RelationManager
         return ucfirst(__('person'));
     }
 
-    public static function getModelLabel(): string
+    public static function getModelLabel(): ?string
     {
         return __('person');
     }
@@ -73,7 +73,7 @@ class PeopleRelationManager extends RelationManager
                 Tables\Actions\DetachAction::make()
                 ->visible(fn ($livewire) => $livewire->pageClass !== ViewClinic::class),
             ])
-            ->bulkActions([
+            ->groupedBulkActions([
                 Tables\Actions\DetachBulkAction::make(),
             ]);
     }
