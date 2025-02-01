@@ -23,7 +23,7 @@ class PetHasTestRelationManager extends RelationManager
         return ucfirst(__('test'));
     }
 
-    public static function getModelLabel(): string
+    public static function getModelLabel(): ?string
     {
         return __('test');
     }
@@ -141,7 +141,7 @@ class PetHasTestRelationManager extends RelationManager
                 Tables\Actions\EditAction::make()->modalHeading(fn ($record) => __('filament-actions::edit.single.modal.heading', ['label' => $record->test()?->first()->name ?? self::getTitle()])),
                 Tables\Actions\DeleteAction::make(),
             ])
-            ->bulkActions([
+            ->groupedBulkActions([
                 Tables\Actions\DeleteBulkAction::make(),
                 Tables\Actions\ForceDeleteBulkAction::make(),
                 Tables\Actions\RestoreBulkAction::make(),

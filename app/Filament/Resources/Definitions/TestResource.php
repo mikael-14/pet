@@ -92,7 +92,7 @@ class TestResource extends Resource
                 Tables\Actions\ForceDeleteAction::make(),
                 Tables\Actions\RestoreAction::make(),
             ])
-            ->bulkActions([
+            ->groupedBulkActions([
                 // Tables\Actions\DeleteBulkAction::make(),
                 // Tables\Actions\ForceDeleteBulkAction::make(),
                 // Tables\Actions\RestoreBulkAction::make(),

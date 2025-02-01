@@ -18,7 +18,7 @@ class PetHasDietRelationManager extends RelationManager
         return ucfirst(__('diet'));
     }
 
-    public static function getModelLabel(): string
+    public static function getModelLabel(): ?string
     {
         return __('diet');
     }
@@ -67,7 +67,7 @@ class PetHasDietRelationManager extends RelationManager
                 Tables\Actions\EditAction::make()->modalHeading(fn ($record) => __('filament-actions::edit.single.modal.heading', ['label' => $record->diet()?->first()->name ?? self::getTitle()])),
                 Tables\Actions\DeleteAction::make(),
             ])
-            ->bulkActions([
+            ->groupedBulkActions([
                 Tables\Actions\DeleteBulkAction::make(),
             ])->defaultSort('date', 'desc');
     }

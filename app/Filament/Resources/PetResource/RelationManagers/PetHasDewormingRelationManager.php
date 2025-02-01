@@ -20,7 +20,7 @@ class PetHasDewormingRelationManager extends RelationManager
         return ucfirst(__('deworming'));
     }
 
-    public static function getModelLabel(): string
+    public static function getModelLabel(): ?string
     {
         return __('deworming');
     }
@@ -118,7 +118,7 @@ class PetHasDewormingRelationManager extends RelationManager
                 Tables\Actions\EditAction::make()->modalHeading(fn ($record) => __('filament-actions::edit.single.modal.heading', ['label' => $record->deworming()?->first()->name ?? self::getTitle()])),
                 Tables\Actions\DeleteAction::make(),
             ])
-            ->bulkActions([
+            ->groupedBulkActions([
                 Tables\Actions\DeleteBulkAction::make(),
             ])->defaultSort('date', 'desc');
     }

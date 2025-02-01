@@ -29,7 +29,7 @@ class PrescriptionHasMedicinesRelationManager extends RelationManager
         return __('Medicine');
     }
 
-    public static function getModelLabel(): string
+    public static function getModelLabel(): ?string
     {
         return __('medicine');
     }
@@ -250,7 +250,7 @@ class PrescriptionHasMedicinesRelationManager extends RelationManager
                 Tables\Actions\DeleteAction::make()
                     ->visible(fn ($livewire) => $livewire->pageClass !== ViewPrescription::class),
             ])
-            ->bulkActions([
+            ->groupedBulkActions([
                 Tables\Actions\BulkAction::make('change_status')
                     ->translateLabel()
                     ->icon('heroicon-s-pencil')

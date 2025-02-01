@@ -25,7 +25,7 @@ class ShelterBlocksRelationManager extends RelationManager
         return __('Shelter blocks');
     }
 
-    public static function getModelLabel(): string
+    public static function getModelLabel(): ?string
     {
         return __('shelter block');
     }
@@ -73,7 +73,7 @@ class ShelterBlocksRelationManager extends RelationManager
                     }
                 }),
             ])
-            ->bulkActions([
+            ->groupedBulkActions([
                 //Tables\Actions\DeleteBulkAction::make(),
             ]);
     } 

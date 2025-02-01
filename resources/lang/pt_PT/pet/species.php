@@ -3,8 +3,8 @@
 * values for colmun (species) in table (pets)
 */
 return [
-    //'unique key' => display name ,
-    'Cat' => 'Gato',
+    'dog' => 'Canino',
+    'cat' => 'Felino',
 ]
 
 ?>

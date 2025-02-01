@@ -31,7 +31,7 @@ class RedirectFilament
         */
         // see more at https://filamentphp.com/tricks/redirect-in-case-canaccessfilament-fails
         if ($user instanceof FilamentUser ){ //} && $user instanceof MustVerifyEmail) {
-            if (! $user->canAccessFilament()){ //} && ! $user->hasVerifiedEmail()) {
+            if (! $user->canAccessPanel()){ //} && ! $user->hasVerifiedEmail()) {
                 return redirect()->route('admin.verification.notice');
             }
         }
