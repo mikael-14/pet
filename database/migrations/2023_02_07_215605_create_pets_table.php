@@ -22,9 +22,16 @@ return new class extends Migration
             $table->boolean('adoptable');
             $table->string('chip',20)->nullable()->unique();
             $table->date('chip_date')->nullable();
-            $table->foreignId('shelter_block_id')->constrained()->nullable(); 
+
+            $table->unsignedBigInteger('entry_status_id')->nullable(); 
+            $table->foreign('entry_status_id')->references('id')->on('statuses')->onDelete('set null');
             $table->date('entry_date');
-            $table->foreignId('entry_status_id')->constrained(); 
+            
+            $table->foreignId('shelter_block_id')->constrained()->nullable(); 
+            $table->unsignedBigInteger('status_id')->nullable(); 
+            $table->foreign('status_id')->references('id')->on('statuses')->onDelete('set null');
+            $table->date('status_date');
+
             $table->date('birth_date')->nullable();
             $table->boolean('sterilized');
             $table->date('sterilized_date')->nullable();

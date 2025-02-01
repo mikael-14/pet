@@ -1,6 +1,6 @@
 {
-    "age_years": "1 ano|:value anos",
-    "age_months": "1 mês|:value meses",
+    "age_years": "1 ano |:value anos",
+    "age_months": "1 mês |:value meses",
     "default_expiration": "Por defeito expira a :days dia|Por defeito expira a :days dias",
     "time in hours": "em horas",
     "days": "dias",
@@ -60,7 +60,8 @@
     "Color": "Cor",
     "Entry date": "Data de entrada",
     "Species": "Espécie",
-    "Entry status":"Modo de entrada",
+    "Entry status":"Estado entrada",
+    "Status date": "Data do estado",
     "Shelter block":"Bloco abrigo",
     "Image":"Imagem",
     "Undefined":"Não definido",
@@ -87,10 +88,6 @@
     "Height":"Altura",
     "Highlight":"Destacar",
     "Highligh tests":"Testes de destaque",
-    "Male": "Masculino",
-    "Female": "Feminino",
-    "male":"macho",
-    "female":"fêmea",
 
     "Definitions": "Definições",
     "Medications":"Medicações",
@@ -106,8 +103,8 @@
     "dewormings": "Desparasitações",
     "diet": "dieta",
     "diets": "Dietas",
-    "Entry Statuses": "Modo de entradas",
-    "entry status": "Modo de entrada",
+    "Statuses": "Estados",
+    "status": "estado",
     "Shelters": "Abrigos",
     "shelter": "abrigo",
     "Tests": "Testes",
@@ -123,5 +120,6 @@
     "Pets":"Animais",
     "pet":"animal",
     "measure": "medida",
-    "measures":"medidas"
+    "measures":"medidas",
+    "pet has deworming":"desparasitação"
 }

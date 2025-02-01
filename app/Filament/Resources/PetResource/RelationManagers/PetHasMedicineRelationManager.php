@@ -14,6 +14,7 @@ use Filament\Tables\Table;
 use Filament\Tables;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
+use Illuminate\Support\HtmlString;
 
 class PetHasMedicineRelationManager extends RelationManager
 {
@@ -42,7 +43,7 @@ class PetHasMedicineRelationManager extends RelationManager
                         Forms\Components\Select::make('medicine_id')
                             ->required()
                             ->options(Medicine::all()->mapWithKeys(function ($medicine) {
-                                return [$medicine->id => $medicine->name . ' - ' . __("pet/medicine.$medicine->type")];
+                                return [$medicine->id => $medicine->name . ' - ' . $medicine->type->getLabel()];
                             }))
                             ->columnSpan(4)
                             ->reactive()
@@ -81,6 +82,9 @@ class PetHasMedicineRelationManager extends RelationManager
                     ->default(true)
                     ->inline(false)
                     ->required(),
+                Forms\Components\Placeholder::make('documentation')
+                    ->content(new HtmlString('<a href="https://filamentphp.com/docs" class="text text-primary">filamentphp.com</a>'))
+                    ,
                 Forms\Components\Textarea::make('observation')
                     ->maxLength(200)
                     ->columnSpanFull(),

@@ -6,14 +6,15 @@
 
 namespace App\Models;
 
+use App\Enums\PetGender;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Facades\DB;
+use Kenepa\ResourceLock\Models\Concerns\HasLocks;
 use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\InteractsWithMedia;
-use Kenepa\ResourceLock\Models\Concerns\HasLocks;
 
 /**
  * Class Pet
@@ -25,9 +26,11 @@ use Kenepa\ResourceLock\Models\Concerns\HasLocks;
  * @property bool $adoptable
  * @property string|null $chip
  * @property Carbon|null $chip_date
- * @property int $shelter_block_id
+ * @property int|null $entry_status_id
  * @property Carbon $entry_date
- * @property int $entry_status_id
+ * @property int $shelter_block_id
+ * @property int|null $status_id
+ * @property Carbon $status_date
  * @property Carbon|null $birth_date
  * @property bool $sterilized
  * @property Carbon|null $sterilized_date
@@ -35,17 +38,19 @@ use Kenepa\ResourceLock\Models\Concerns\HasLocks;
  * @property string|null $color
  * @property string|null $coat
  * @property string|null $breed
+ * @property string|null $qrcode
  * @property string|null $observation
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
  * @property string|null $deleted_at
  * 
- * @property EntryStatus $entry_status
+ * @property Status|null $status
  * @property ShelterBlock $shelter_block
  * @property Collection|Person[] $people
  * @property Collection|Deworming[] $dewormings
  * @property Collection|Diet[] $diets
- * @property Collection|PetHasMeasure[] $pets_has_measures
+ * @property Collection|PetHasMeasure[] $pet_has_measures
+ * @property Collection|Medicine[] $medicines
  * @property Collection|Test[] $tests
  * @property Collection|Vaccine[] $vaccines
  * @property Collection|Prescription[] $prescriptions
@@ -58,17 +63,21 @@ class Pet extends Model implements HasMedia
 	use InteractsWithMedia;
 	use HasLocks;
 
+	use SoftDeletes;
 	protected $table = 'pets';
 
 	protected $casts = [
 		'adoptable' => 'bool',
 		'chip_date' => 'datetime',
-		'shelter_block_id' => 'int',
-		'entry_date' => 'datetime',
 		'entry_status_id' => 'int',
+		'entry_date' => 'datetime',
+		'shelter_block_id' => 'int',
+		'status_id' => 'int',
+		'status_date' => 'datetime',
 		'birth_date' => 'datetime',
 		'sterilized' => 'bool',
-		'sterilized_date' => 'datetime'
+		'sterilized_date' => 'datetime',
+		'gender' => PetGender::class
 	];
 
 	protected $fillable = [
@@ -78,9 +87,11 @@ class Pet extends Model implements HasMedia
 		'adoptable',
 		'chip',
 		'chip_date',
-		'shelter_block_id',
-		'entry_date',
 		'entry_status_id',
+		'entry_date',
+		'shelter_block_id',
+		'status_id',
+		'status_date',
 		'birth_date',
 		'sterilized',
 		'sterilized_date',
@@ -92,35 +103,31 @@ class Pet extends Model implements HasMedia
 		'observation'
 	];
 
-	public function entry_status()
+	public function status()
 	{
-		return $this->belongsTo(EntryStatus::class);
+		return $this->belongsTo(Status::class);
 	}
 
-	public function shelter_block()
-	{
-		return $this->belongsTo(ShelterBlock::class);
-	}
 
 	public function people()
 	{
-		return $this->belongsToMany(Person::class, 'person_has_pets', 'pet_id', 'person_id')
-			->withPivot('id', 'start_date', 'end_date', 'type', 'observation', 'deleted_at')
-			->withTimestamps();
+		return $this->belongsToMany(Person::class, 'person_has_pets')
+					->withPivot('id', 'start_date', 'end_date', 'type', 'observation', 'deleted_at')
+					->withTimestamps();
 	}
 
 	public function dewormings()
 	{
-		return $this->belongsToMany(Deworming::class, 'pet_has_dewormings', 'pet_id', 'deworming_id')
-			->withPivot('id', 'date', 'expire_at', 'local', 'person_id', 'observation')
-			->withTimestamps();
+		return $this->belongsToMany(Deworming::class, 'pet_has_dewormings')
+					->withPivot('id', 'date', 'expire_at', 'local', 'person_id', 'observation')
+					->withTimestamps();
 	}
 
 	public function diets()
 	{
-		return $this->belongsToMany(Diet::class, 'pet_has_diets', 'pet_id', 'diet_id')
-			->withPivot('id', 'date', 'portion', 'observation')
-			->withTimestamps();
+		return $this->belongsToMany(Diet::class, 'pet_has_diets')
+					->withPivot('id', 'date', 'portion', 'observation')
+					->withTimestamps();
 	}
 
 	public function pet_has_measures()
@@ -128,18 +135,25 @@ class Pet extends Model implements HasMedia
 		return $this->hasMany(PetHasMeasure::class);
 	}
 
+	public function medicines()
+	{
+		return $this->belongsToMany(Medicine::class, 'pet_has_medicines')
+					->withPivot('id', 'dosage', 'status', 'emergency', 'administered', 'date', 'observation', 'person_id', 'prescription_has_medicine_id', 'deleted_at')
+					->withTimestamps();
+	}
+
 	public function tests()
 	{
-		return $this->belongsToMany(Test::class, 'pet_has_tests', 'pet_id', 'test_id')
-			->withPivot('id', 'date', 'result', 'local', 'person_id', 'observation', 'deleted_at')
-			->withTimestamps();
+		return $this->belongsToMany(Test::class, 'pet_has_tests')
+					->withPivot('id', 'date', 'result', 'local', 'person_id', 'observation', 'deleted_at')
+					->withTimestamps();
 	}
 
 	public function vaccines()
 	{
-		return $this->belongsToMany(Vaccine::class, 'pet_has_vaccines', 'pet_id', 'vaccine_id')
-			->withPivot('id', 'date', 'expire_at', 'local', 'person_id', 'observation', 'deleted_at')
-			->withTimestamps();
+		return $this->belongsToMany(Vaccine::class, 'pet_has_vaccines')
+					->withPivot('id', 'date', 'expire_at', 'local', 'person_id', 'observation', 'deleted_at')
+					->withTimestamps();
 	}
 
 	public function prescriptions()
@@ -147,23 +161,20 @@ class Pet extends Model implements HasMedia
 		return $this->hasMany(Prescription::class);
 	}
 
-	public function medicines()
+
+	public function entry_status()
 	{
-		return $this->belongsToMany(Medicine::class, 'pet_has_medicines')
-			->withPivot('id', 'dosage', 'status', 'administered', 'date', 'observation', 'person_id', 'prescription_has_medicine_id', 'deleted_at')
-			->withTimestamps();
+		return $this->belongsTo(Status::class);
 	}
 
-	public function getConfigSpecie(): string
+	public function shelter_block()
 	{
-		$configSpecies = __('pet/species');
-		return $configSpecies[$this->species] ?? $this->species;
+		return $this->belongsTo(ShelterBlock::class);
 	}
+
 
 	public function getHighlighTestsAttribute()
 	{
-		// $tests = [];
-		//return ['unknown','negative','positive'];
 		return PetHasTest::select('pet_has_tests.date', 'pet_has_tests.result', 'tests.name', 'pet_has_tests.test_id')
 		->join('tests', 'tests.id', '=', 'pet_has_tests.test_id')
 		->whereIn(

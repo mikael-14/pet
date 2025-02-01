@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\PetResource\RelationManagers;
 
+use App\Enums\PetMeasure;
 use App\Models\Person;
 use Filament\Forms;
 use Filament\Forms\Form;
@@ -40,17 +41,17 @@ class PetHasMeasureRelationManager extends RelationManager
 
     public function form(Form $form): Form
     {
-        $configs = __('pet/measures');
+        $configs = PetMeasure::cases();
         $schema = [];
-        foreach ($configs as $key => $config) {
+        foreach ($configs as $config) {
             $schema = array_merge($schema, [
-                Forms\Components\Hidden::make('type-' . $key)->default($key)->visibleOn('create'),
-                Forms\Components\TextInput::make('name-type-' . $key)
+                Forms\Components\Hidden::make("type-{$config->name}")->default($config->name)->visibleOn('create'),
+                Forms\Components\TextInput::make("name-type-{$config->name}")
                     ->label(__('Type'))
-                    ->default($config['name'])->visibleOn('create')
+                    ->default(__("pet/measures.{$config->name}"))->visibleOn('create')
                     ->dehydrated(false)
                     ->disabled(),
-                Forms\Components\TextInput::make('value-' . $key)
+                Forms\Components\TextInput::make("value-{$config->name}")
                     ->label(__('Value'))
                     ->inputMode('decimal')
                     ->minValue(0)
@@ -61,7 +62,7 @@ class PetHasMeasureRelationManager extends RelationManager
         $schema = array_merge($schema, [
             Forms\Components\Hidden::make('type')->visibleOn('edit'),
             Forms\Components\TextInput::make('name-type')
-                ->formatStateUsing(fn ($record) => $record?->getConfigMeasureName() ?? '')
+                ->formatStateUsing(fn ($record) => $record ? PetMeasure::getUnit($record->type) : '')
                 ->visibleOn(['edit', 'view'])
                 ->dehydrated(false)
                 ->disabled(),
@@ -73,7 +74,8 @@ class PetHasMeasureRelationManager extends RelationManager
                 ->visibleOn(['edit', 'view']),
             Forms\Components\DatePicker::make('date')->translateLabel()->native(false)->displayFormat(config('filament.date_format'))->required(),
             Forms\Components\TextInput::make('local')->translateLabel()->maxLength(50),
-            Forms\Components\Select::make('person_id')->label(ucfirst(__('person')))->options(Person::getPersonByFlag(['veterinary', 'medication_volunteer'])->toArray())->searchable()->columnSpanFull(),
+            Forms\Components\Select::make('person_id')->label(ucfirst(__('person')))
+            ->options(Person::getPersonByFlag(['veterinary', 'medication_volunteer'])->toArray())->searchable()->columnSpanFull(),
             Forms\Components\Textarea::make('observation')->translateLabel()->maxLength(300)->columnSpanFull(),
         ]);
         return $form
@@ -84,7 +86,7 @@ class PetHasMeasureRelationManager extends RelationManager
     {
         return $table
             ->columns([
-                Tables\Columns\TextColumn::make('type')->getStateUsing(fn ($record) => $record->getConfigMeasureName())
+                Tables\Columns\TextColumn::make('type')->getStateUsing(fn ($record) => PetMeasure::getUnit($record->type))
                     ->translateLabel()
                     ->searchable(),
                 Tables\Columns\ViewColumn::make('value')->view('filament.tables.columns.label-variation'),
@@ -142,8 +144,8 @@ class PetHasMeasureRelationManager extends RelationManager
                 })->modalHeading(__('filament-actions::create.single.modal.heading', ['label' => self::getTitle()])),
             ])
             ->actions([
-                Tables\Actions\ViewAction::make()->modalHeading(fn ($record) => __('filament-actions::view.single.modal.heading', ['label' => $record?->getConfigMeasureName() ?? self::getTitle()])),
-                Tables\Actions\EditAction::make()->modalHeading(fn ($record) => __('filament-actions::edit.single.modal.heading', ['label' => $record?->getConfigMeasureName() ?? self::getTitle()])),
+                Tables\Actions\ViewAction::make()->modalHeading(fn ($record) => __('filament-actions::view.single.modal.heading', ['label' =>  self::getTitle()])),
+                Tables\Actions\EditAction::make()->modalHeading(fn ($record) => __('filament-actions::edit.single.modal.heading', ['label' =>  self::getTitle()])),
                 Tables\Actions\DeleteAction::make(),
             ])
             ->groupedBulkActions([

@@ -2,8 +2,9 @@
 
 namespace App\Filament\Resources\PetResource\Pages;
 
+use App\Enums\Species;
 use App\Filament\Resources\PetResource;
-use App\Models\EntryStatus;
+use App\Models\Status;
 use App\Models\Pet;
 use App\Models\ShelterBlock;
 use Filament\Actions;
@@ -52,9 +53,7 @@ class EditPet extends EditRecord
                                             ->maxLength(255),
                                         Select::make('species')
                                         ->translateLabel()
-                                            ->options(
-                                                __('pet/species')
-                                            )->default(array_key_first(__('pet/species')))
+                                            ->options(Species::class)
                                             ->selectablePlaceholder(false),
                                         Select::make('gender')
                                         ->translateLabel()
@@ -102,7 +101,7 @@ class EditPet extends EditRecord
                                             ->searchable()
                                             ->preload()
                                             ->options(
-                                                PetResource::getOptionWithColor(EntryStatus::all())
+                                                PetResource::getOptionWithColor(Status::all())
                                             )->required(),
                                         DatePicker::make('entry_date')
                                         ->translateLabel()

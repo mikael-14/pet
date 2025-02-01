@@ -1,4 +1,4 @@
-FROM php:8.1-fpm
+FROM php:8.2-fpm
 
 # Arguments defined in docker-compose.yml
 ARG user
@@ -20,19 +20,16 @@ RUN apt-get update && apt-get install -y \
 RUN docker-php-ext-configure intl \
 && docker-php-ext-install intl
 
-# Install Node.js and npm
-RUN curl -sL https://deb.nodesource.com/setup_16.x | bash - \
-    && apt-get update && apt-get install -y nodejs \
-    && apt-get clean && rm -rf /var/lib/apt/lists/*
 
-# Verify Node.js and npm versions
-RUN node -v && npm -v
+RUN curl -sL https://deb.nodesource.com/setup_20.x | bash - \
+    && apt-get install -y build-essential nodejs yarn
 
 # Clear cache
 RUN apt-get clean && rm -rf /var/lib/apt/lists/*
 
 # Install PHP extensions
-RUN docker-php-ext-install pdo_mysql mbstring exif pcntl bcmath gd zip
+RUN docker-php-ext-install pdo_mysql mbstring exif pcntl bcmath gd intl zip
+
 
 # Get latest Composer
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer

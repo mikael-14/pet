@@ -2,5 +2,5 @@
 return [
     'internal' => 'Interna',
     'external' => 'Externa',
-    'internal and external' => 'Interna e externa',
+    'internal_and_external' => 'Interna e externa',
 ]; 
