@@ -63,7 +63,7 @@ class PetResource extends Resource
                     ->badge()
                     ->color('none')
                     ->extraAttributes(static function (Pet $record): array {
-                        return ['style' => self::StyleCustomBadge['style'] . 'background-color:' . $record->status->color, 'class' => self::StyleCustomBadge['class']];
+                        return ['style' => self::StyleCustomBadge['style'] . 'background-color:' . ($record->status ? $record->status->color : '') , 'class' => self::StyleCustomBadge['class']];
                     })
                     ->toggleable()
                     ->sortable(),
@@ -72,7 +72,7 @@ class PetResource extends Resource
                     ->badge()
                     ->color('none')
                     ->extraAttributes(static function (Pet $record): array {
-                        return ['style' => self::StyleCustomBadge . 'background-color:' . $record->entry_status->color,  'class' => self::StyleCustomBadge['class']];
+                        return ['style' => self::StyleCustomBadge . 'background-color:' . ($record->entry_status ? $record->entry_status->color : ''),  'class' => self::StyleCustomBadge['class']];
                     })
                     ->toggleable(isToggledHiddenByDefault: true)
                     ->sortable(),
@@ -81,7 +81,7 @@ class PetResource extends Resource
                     ->badge()
                     ->color('none')
                     ->extraAttributes(static function (Pet $record): array {
-                        return ['style' => self::StyleCustomBadge . 'background-color:' . $record->shelter_block->color, 'class' => self::StyleCustomBadge['class']];
+                        return ['style' => self::StyleCustomBadge . 'background-color:' . ($record->shelter_block ? $record->shelter_block->color : ''), 'class' => self::StyleCustomBadge['class']];
                     })
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
